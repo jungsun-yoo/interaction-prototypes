@@ -1,0 +1,94 @@
+.ic-quickfilter-img-star {
+    position: relative;
+    overflow: hidden;
+}
+
+.ic-quickfilter-img-star img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    animation-duration: 2800ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-img-star img:nth-child(1) { translate: -26.67% -33.33%; scale: 0; opacity: 0.7; }
+.ic-quickfilter-img-star img:nth-child(2) { translate: 0 0; scale: 1; }
+.ic-quickfilter-img-star img:nth-child(3) { translate: -31.72% -21.67%; scale: 0; }
+.ic-quickfilter-img-star img:nth-child(4) { translate: -24.93% 4.1%; scale: 0; }
+.ic-quickfilter-img-star img:nth-child(5) { translate: -40.83% -40%; scale: 0; }
+
+.ic-quickfilter-img-star.is-play img:nth-child(1) { animation-name: ic-quickfilter-star-img-star3-move, ic-quickfilter-star-img-star3-scale; }
+.ic-quickfilter-img-star.is-play img:nth-child(2) { animation-name: ic-quickfilter-star-img-star1-move, ic-quickfilter-star-img-star1-scale, ic-quickfilter-star-img-star1-fade; }
+.ic-quickfilter-img-star.is-play img:nth-child(3) { animation-name: ic-quickfilter-star-img-star4-move, ic-quickfilter-star-img-star4-scale; }
+.ic-quickfilter-img-star.is-play img:nth-child(4) { animation-name: ic-quickfilter-star-img-star5-move, ic-quickfilter-star-img-star5-scale, ic-quickfilter-star-img-star5-fade; }
+.ic-quickfilter-img-star.is-play img:nth-child(5) { animation-name: ic-quickfilter-star-img-star2-move, ic-quickfilter-star-img-star2-scale; }
+
+.ic-quickfilter-img-star.is-once img { animation-iteration-count: 1; }
+
+/* star 1 */
+@keyframes ic-quickfilter-star-img-star1-fade {
+    0%, 11.9% { opacity: 1; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    30.95%, 100% { opacity: 0.7; }
+}
+@keyframes ic-quickfilter-star-img-star1-move {
+    0% { translate: 0 0; animation-timing-function: cubic-bezier(0.3, 0, 0.83, 0.83); }
+    43.45%, 100% { translate: 41.67% 41.67%; }
+}
+@keyframes ic-quickfilter-star-img-star1-scale {
+    0% { scale: 1; animation-timing-function: cubic-bezier(0.6, 0, 0.83, 0.83); }
+    33.93% { scale: 0.3; animation-timing-function: linear; }
+    43.45%, 100% { scale: 0; }
+}
+
+/* star 2 */
+@keyframes ic-quickfilter-star-img-star2-move {
+    0%, 60.12% { translate: -40.83% -40%; animation-timing-function: cubic-bezier(0.17, 0.17, 0.68, 1); }
+    99.4%, 100% { translate: 0 0; }
+}
+@keyframes ic-quickfilter-star-img-star2-scale {
+    0%, 60.12% { scale: 0; animation-timing-function: cubic-bezier(0.27, 0.26, 0.57, 0.29); }
+    67.86% { scale: 0.2; animation-timing-function: cubic-bezier(0.26, 0.27, 0.56, 0.98); }
+    88.1% { scale: 1.05; animation-timing-function: cubic-bezier(0.16, -0.06, 0.61, 1); }
+    99.4%, 100% { scale: 1; }
+}
+
+/* star 3 */
+@keyframes ic-quickfilter-star-img-star3-move {
+    0%, 13.69% { translate: -26.67% -33.33%; animation-timing-function: cubic-bezier(0.6, 0, 0.67, 1); }
+    79.17%, 100% { translate: 38.33% -3.33%; }
+}
+@keyframes ic-quickfilter-star-img-star3-scale {
+    0%, 13.69% { scale: 0; animation-timing-function: cubic-bezier(0.33, 0, 0.35, 1); }
+    45.83% { scale: 0.6; animation-timing-function: cubic-bezier(0.63, 0, 0.67, 1); }
+    79.17%, 100% { scale: 0; }
+}
+
+/* star 4 */
+@keyframes ic-quickfilter-star-img-star4-move {
+    0%, 3.57% { translate: -31.72% -21.67%; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    60.12%, 100% { translate: 26.67% 25%; }
+}
+@keyframes ic-quickfilter-star-img-star4-scale {
+    0%, 3.57% { scale: 0; animation-timing-function: cubic-bezier(0.7, 0, 0.83, 0.85); }
+    23.21% { scale: 0.92; animation-timing-function: cubic-bezier(0.17, 0.24, 0.58, 1); }
+    30.95% { scale: 1.15; animation-timing-function: cubic-bezier(0.7, 0, 0.67, 1); }
+    60.12%, 100% { scale: 0; }
+}
+
+/* star 5 */
+@keyframes ic-quickfilter-star-img-star5-fade {
+    0%, 69.64% { opacity: 1; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    82.14%, 100% { opacity: 0.8; }
+}
+@keyframes ic-quickfilter-star-img-star5-move {
+    0%, 50% { translate: -24.93% 4.1%; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    95.24%, 100% { translate: 28.33% 31.67%; }
+}
+@keyframes ic-quickfilter-star-img-star5-scale {
+    0%, 50% { scale: 0; animation-timing-function: cubic-bezier(0.33, 0, 0.25, 1); }
+    69.64% { scale: 0.8; animation-timing-function: cubic-bezier(0.7, 0, 0.67, 1); }
+    95.24%, 100% { scale: 0; }
+}

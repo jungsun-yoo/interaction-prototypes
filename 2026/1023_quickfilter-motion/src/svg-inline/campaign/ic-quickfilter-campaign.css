@@ -1,0 +1,53 @@
+svg.ic-quickfilter g, svg.ic-quickfilter path {
+    transform-box: view-box;
+    transform-origin: 0 0;
+}
+
+svg.ic-quickfilter.is-once * {
+    animation-iteration-count: 1;
+}
+
+.ic-quickfilter-campaign [data-stage] {
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-campaign.is-play .ic-quickfilter-campaign-scale1 { animation-name: ic-quickfilter-campaign-scale1; }
+.ic-quickfilter-campaign.is-play .ic-quickfilter-campaign-rotation2 { animation-name: ic-quickfilter-campaign-rotation2; }
+.ic-quickfilter-campaign.is-play .ic-quickfilter-campaign-scale3 { animation-name: ic-quickfilter-campaign-scale3; }
+.ic-quickfilter-campaign.is-play .ic-quickfilter-campaign-rotation4 { animation-name: ic-quickfilter-campaign-rotation4; }
+.ic-quickfilter-campaign.is-play .ic-quickfilter-campaign-scale5 { animation-name: ic-quickfilter-campaign-scale5; }
+
+@keyframes ic-quickfilter-campaign-scale1 {
+    0%, 10% { transform: scale(3); animation-timing-function: cubic-bezier(0.6, 0, 0.2, 1); }
+    40% { transform: scale(3.9); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+    76.66% { transform: scale(3.9); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    82% { transform: scale(2.1); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    87.33% { transform: scale(3.3); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    92.66% { transform: scale(2.94); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    98%, 100% { transform: scale(3); }
+}
+
+@keyframes ic-quickfilter-campaign-rotation2 {
+    0%, 15.33% { transform: rotate(0); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    60%, 100% { transform: rotate(360deg); }
+}
+
+@keyframes ic-quickfilter-campaign-scale3 {
+    0%, 15.33% { transform: scale(0); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+    35.33% { transform: scale(1.2); animation-timing-function: cubic-bezier(0.8, 0, 0.67, 1); }
+    60%, 100% { transform: scale(0); }
+}
+
+@keyframes ic-quickfilter-campaign-rotation4 {
+    0%, 25.33% { transform: rotate(0); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    70%, 100% { transform: rotate(180deg); }
+}
+
+@keyframes ic-quickfilter-campaign-scale5 {
+    0%, 25.33% { transform: scale(0); animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1); }
+    45.33% { transform: scale(1.5); animation-timing-function: cubic-bezier(0.8, 0, 0.67, 1); }
+    70%, 100% { transform: scale(0); }
+}

@@ -1,0 +1,113 @@
+svg.ic-quickfilter g, svg.ic-quickfilter path {
+    transform-box: view-box;
+    transform-origin: 0 0;
+}
+
+svg.ic-quickfilter.is-once * {
+    animation-iteration-count: 1;
+}
+
+.ic-quickfilter-lowestprice-clip1,
+.ic-quickfilter-lowestprice-clip2,
+.ic-quickfilter-lowestprice-clip3,
+.ic-quickfilter-lowestprice-null-scale,
+.ic-quickfilter-lowestprice-p4-move,
+.ic-quickfilter-lowestprice-p4-scale,
+.ic-quickfilter-lowestprice-p4-opacity {
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-clip1 { animation-name: ic-quickfilter-lowestprice-clip1; }
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-clip2 { animation-name: ic-quickfilter-lowestprice-clip2; }
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-clip3 { animation-name: ic-quickfilter-lowestprice-clip3; }
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-null-scale { animation-name: ic-quickfilter-lowestprice-null-scale; }
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-p4-move { animation-name: ic-quickfilter-lowestprice-p4-move; }
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-p4-scale { animation-name: ic-quickfilter-lowestprice-p4-scale; }
+.ic-quickfilter-lowestprice.is-play .ic-quickfilter-lowestprice-p4-opacity { animation-name: ic-quickfilter-lowestprice-p4-opacity; }
+
+@keyframes ic-quickfilter-lowestprice-clip1 {
+    0% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+    4% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    10% { clip-path: polygon(48.75% 54.37%, 19.38% 52.29%, 13.33% 53.75%, 46.67% 55.63%); animation-timing-function: step-end; }
+    24% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 59.58% 12.29%, 85% 12.08%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    31.33% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+    50.67% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    56.67% { clip-path: polygon(48.75% 54.37%, 19.38% 52.29%, 13.33% 53.75%, 46.67% 55.63%); animation-timing-function: step-end; }
+    70.67% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 59.58% 12.29%, 85% 12.08%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    78%, 100% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+}
+
+@keyframes ic-quickfilter-lowestprice-clip2 {
+    0%, 4% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+    9.33% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    13.33% { clip-path: polygon(78.54% 26.25%, 83.54% 38.96%, 81.67% 39.58%, 77.29% 26.46%); animation-timing-function: step-end; }
+    31.33% { clip-path: polygon(19.58% 38.75%, 20.21% 56.04%, 24.17% 55.63%, 23.75% 39.79%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    36%, 50.67% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+    56% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    60% { clip-path: polygon(78.54% 26.25%, 83.54% 38.96%, 81.67% 39.58%, 77.29% 26.46%); animation-timing-function: step-end; }
+    78% { clip-path: polygon(19.58% 38.75%, 20.21% 56.04%, 24.17% 55.63%, 23.75% 39.79%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    82.67%, 100% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+}
+
+@keyframes ic-quickfilter-lowestprice-clip3 {
+    0%, 4% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+    13.33% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    20.67% { clip-path: polygon(19.49% 78.72%, 9.62% 84.64%, 42.94% 94.75%, 46.64% 93.03%); animation-timing-function: step-end; }
+    36% { clip-path: polygon(68.11% 20.73%, 62.68% 26.9%, 89.33% 29.36%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    38.67% { clip-path: polygon(68.11% 20.73%, 51.95% 49.9%, 68.88% 50.03%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    40.67% { clip-path: polygon(68.11% 20.73%, 35.67% 56.75%, 69.59% 56.43%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    44% { clip-path: polygon(68.11% 20.73%, 28.34% 65.81%, 61.36% 67.79%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.4, 1); }
+    48.67%, 50.67% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+    60% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    67.33% { clip-path: polygon(19.49% 78.72%, 9.62% 84.64%, 42.94% 94.75%, 46.64% 93.03%); animation-timing-function: step-end; }
+    82.67% { clip-path: polygon(68.11% 20.73%, 62.68% 26.9%, 89.33% 29.36%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    85.33% { clip-path: polygon(68.11% 20.73%, 51.95% 49.9%, 68.88% 50.03%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    87.33% { clip-path: polygon(68.11% 20.73%, 35.67% 56.75%, 69.59% 56.43%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    90.67% { clip-path: polygon(68.11% 20.73%, 28.34% 65.81%, 61.36% 67.79%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.4, 1); }
+    95.33%, 100% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+}
+
+@keyframes ic-quickfilter-lowestprice-null-scale {
+    0%, 4% { transform: scale(1); }
+    14% { transform: scale(1); animation-timing-function: cubic-bezier(0.17, 0.17, 0.67, 1); }
+    20.67% { transform: scale(0); animation-timing-function: step-end; }
+    36%, 50.67% { transform: scale(1); }
+    60.67% { transform: scale(1); animation-timing-function: cubic-bezier(0.17, 0.17, 0.67, 1); }
+    67.33% { transform: scale(0); animation-timing-function: step-end; }
+    82.67%, 100% { transform: scale(1); }
+}
+
+@keyframes ic-quickfilter-lowestprice-p4-move {
+    0% { transform: translate(3.5px, -14.14px); }
+    4% { transform: translate(3.5px, -14.14px); animation-timing-function: step-end; }
+    36% { transform: translate(22.5px, -32.98px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    46% { transform: translate(3.5px, -14.14px); }
+    50.67% { transform: translate(3.5px, -14.14px); animation-timing-function: step-end; }
+    82.67% { transform: translate(22.5px, -32.98px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    92.67%, 100% { transform: translate(3.5px, -14.14px); }
+}
+
+@keyframes ic-quickfilter-lowestprice-p4-scale {
+    0% { transform: scale(1); }
+    4% { transform: scale(1); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    35.33% { transform: scale(1); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    36% { transform: scale(0); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    46% { transform: scale(1); }
+    50.67% { transform: scale(1); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    82% { transform: scale(1); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    82.67% { transform: scale(0); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    92.67%, 100% { transform: scale(1); }
+}
+
+@keyframes ic-quickfilter-lowestprice-p4-opacity {
+    0% { opacity: 1; }
+    4% { opacity: 1; animation-timing-function: step-end; }
+    20.67% { opacity: 0; animation-timing-function: step-end; }
+    36% { opacity: 1; }
+    50.67% { opacity: 1; animation-timing-function: step-end; }
+    67.33% { opacity: 0; animation-timing-function: step-end; }
+    82.67%, 100% { opacity: 1; }
+}

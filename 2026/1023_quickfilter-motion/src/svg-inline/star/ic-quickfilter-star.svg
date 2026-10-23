@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-star">
+  <defs>
+    <path id="ic-quickfilter-star-shape" d="M0.27 -6.454C0.161 -6.682 -0.163 -6.682 -0.271 -6.454L-2.109 -2.606C-2.152 -2.516 -2.237 -2.453 -2.335 -2.438L-6.536 -1.812C-6.78 -1.775 -6.878 -1.477 -6.704 -1.303L-3.673 1.725C-3.604 1.794 -3.573 1.891 -3.589 1.987L-4.303 6.25C-4.344 6.496 -4.085 6.682 -3.865 6.564L-0.143 4.562C-0.054 4.514 0.053 4.514 0.141 4.562L3.865 6.564C4.084 6.682 4.344 6.496 4.303 6.25L3.587 1.987C3.571 1.891 3.603 1.794 3.671 1.725L6.704 -1.298C6.878 -1.472 6.779 -1.771 6.535 -1.807L2.335 -2.438C2.236 -2.453 2.152 -2.516 2.109 -2.606L0.27 -6.454Z" fill="rgb(250, 146, 0)" fill-rule="nonzero"/>
+  </defs>
+  <g class="ic-quickfilter-star-layer ic-quickfilter-star-star3-show" data-layer="star 3" data-index="5" data-kind="shape" opacity="0.7">
+    <g class="ic-quickfilter-star-star3-move" data-stage="position" transform="translate(27.653 9.715)">
+      <g class="ic-quickfilter-star-star3-scale" data-stage="scale" transform="scale(0 0)">
+        <g transform="translate(-10 -9.884)">
+          <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+            <use href="#ic-quickfilter-star-shape"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-star-layer ic-quickfilter-star-star1-show" data-layer="star 1" data-index="4" data-kind="shape">
+    <g class="ic-quickfilter-star-star1-fade" opacity="1">
+      <g class="ic-quickfilter-star-star1-move" data-stage="position" transform="translate(30 30)">
+        <g class="ic-quickfilter-star-star1-scale" data-stage="scale" transform="scale(1 1)">
+          <g transform="translate(-10 -9.884)">
+            <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+              <use href="#ic-quickfilter-star-shape"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-star-layer ic-quickfilter-star-star4-show" data-layer="star 4" data-index="3" data-kind="shape">
+    <g class="ic-quickfilter-star-star4-move" data-stage="position" transform="translate(10.968 17.093)">
+      <g class="ic-quickfilter-star-star4-scale" data-stage="scale" transform="scale(0 0)">
+        <g transform="translate(-10 -9.884)">
+          <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+            <use href="#ic-quickfilter-star-shape"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-star-layer ic-quickfilter-star-star5-show" data-layer="star 5" data-index="2" data-kind="shape">
+    <g class="ic-quickfilter-star-star5-fade" opacity="1">
+      <g class="ic-quickfilter-star-star5-move" data-stage="position" transform="translate(15.041 32.459)">
+        <g class="ic-quickfilter-star-star5-scale" data-stage="scale" transform="scale(0 0)">
+          <g transform="translate(-10 -9.884)">
+            <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+              <use href="#ic-quickfilter-star-shape"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-star-layer ic-quickfilter-star-star2-show" data-layer="star 2" data-index="1" data-kind="shape">
+    <g class="ic-quickfilter-star-star2-move" data-stage="position" transform="translate(12.045 8.752)">
+      <g class="ic-quickfilter-star-star2-scale" data-stage="scale" transform="scale(0 0)">
+        <g transform="translate(-10 -9.884)">
+          <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+            <use href="#ic-quickfilter-star-shape"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

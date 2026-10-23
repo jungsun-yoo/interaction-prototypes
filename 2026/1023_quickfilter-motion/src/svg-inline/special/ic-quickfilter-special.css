@@ -1,0 +1,47 @@
+svg.ic-quickfilter g, svg.ic-quickfilter path {
+    transform-box: view-box;
+    transform-origin: 0 0;
+}
+
+svg.ic-quickfilter.is-once * {
+    animation-iteration-count: 1;
+}
+
+.ic-quickfilter-special-position1,
+.ic-quickfilter-special-scale2,
+.ic-quickfilter-special-position3,
+.ic-quickfilter-special-scale4 {
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-special.is-play .ic-quickfilter-special-position1 { animation-name: ic-quickfilter-special-position1; }
+.ic-quickfilter-special.is-play .ic-quickfilter-special-scale2 { animation-name: ic-quickfilter-special-scale2; }
+.ic-quickfilter-special.is-play .ic-quickfilter-special-position3 { animation-name: ic-quickfilter-special-position3; }
+.ic-quickfilter-special.is-play .ic-quickfilter-special-scale4 { animation-name: ic-quickfilter-special-scale4; }
+
+@keyframes ic-quickfilter-special-position1 {
+    0%, 10% { transform: translate(30px, 30px); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.8); }
+    25.33% { transform: translate(-10.44px, 69.81px); animation-timing-function: step-end; }
+    63.33% { transform: translate(79.15px, -19.28px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    83.33%, 100% { transform: translate(30px, 30px); }
+}
+
+@keyframes ic-quickfilter-special-scale2 {
+    0%, 10% { transform: scale(1); animation-timing-function: step-end; }
+    63.33% { transform: scale(2); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    83.33%, 100% { transform: scale(1); }
+}
+
+@keyframes ic-quickfilter-special-position3 {
+    0%, 20% { transform: translate(79.15px, -19.28px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    40%, 53.33% { transform: translate(30px, 30px); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.8); }
+    68.66%, 100% { transform: translate(-10.44px, 69.81px); }
+}
+
+@keyframes ic-quickfilter-special-scale4 {
+    0%, 20% { transform: scale(2); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    40%, 100% { transform: scale(1); }
+}

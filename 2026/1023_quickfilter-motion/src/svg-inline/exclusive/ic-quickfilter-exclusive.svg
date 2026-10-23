@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-exclusive">
+  <g transform="translate(30 30) scale(3)">
+    <path class="ic-quickfilter-exclusive-stroke1" d="M-2.33 -5 L-4.56 -5 L-4.56 5 L-2.33 5Z" fill="#000"/>
+    <path class="ic-quickfilter-exclusive-stroke2" d="M0.03 -0.09 L-0.03 -0.09 L-1.35 -5 L-2.33 -5 L-3.26 -5 L-2.33 -1.42 L-2.27 -1.42 L-1.08 2.8 L1.08 2.8Z" fill="#000"/>
+    <path class="ic-quickfilter-exclusive-stroke3" d="M1.35 -5 L0.03 -0.09 L-0.03 -0.09 L-1.08 2.8 L1.08 2.8 L2.27 -1.42 L2.33 -1.42 L3.16 -5 L2.33 -5Z" fill="#000"/>
+    <path class="ic-quickfilter-exclusive-stroke4" d="M2.33 -1.42 L2.33 5 L4.56 5 L4.56 -5 L2.33 -5Z" fill="#000"/>
+  </g>
+</svg>

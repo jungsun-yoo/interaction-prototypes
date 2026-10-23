@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>퀵필터 모션 타입</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --gray100: #F5F5F5;
+    --gray300: #E0E0E0;
+    --gray600: #666666;
+    --blue: #245eff;
+
+    --quickfilter-icon-size: 20px;
+  }
+
+  /* [데모 전용] 페이지 레이아웃: 리셋·제목·재생 방식 라디오·섹션 라벨·행 배경 */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif; padding: 40px 24px;}
+  h1 {font-size: 16px; font-weight: 600; color: #222; margin-bottom: 12px;}
+  
+  .download-button {display: inline-flex; align-items: center; height: 30px; padding: 0 12px; margin-bottom: 20px; border-radius: 4px; background-color: #000; font-size: 13px; font-weight: 500; color: #fff; text-decoration: none;}
+  .download-button:hover {background-color: #333;}
+  .play-mode {display: flex; flex-direction: column; gap: 10px; border: 0; margin-bottom: 32px;}
+  .play-mode label {display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #222; cursor: pointer;}
+  .play-mode input {accent-color: var(--blue); margin: 0; width: 13px; height: 13px;}
+  .play-mode-rules {margin: 4px 0 0 19px; padding-left: 14px; font-size: 12px; line-height: 18px; color: #999;}
+  .play-mode-option:has(input:checked) .play-mode-rules {color: var(--gray600);}
+  .section-label {font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;}
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; background: var(--gray100); padding: 20px;}
+
+  /* [적용] 로티 컨테이너 */
+  .lottie-icon {display: block; width: 100%; height: 100%;}
+
+  /* --------------------- FilterOutlinedItem ------------------------*/
+  /* [적용 참고] 칩 컴포넌트 스타일. 서비스에 이미 있는 컴포넌트 스타일이 있으면 그쪽을 쓰고, 아이콘 영역(.icon 20×20)만 맞춘다 */
+  .FilterOutlinedItem {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding-left: 6px;
+    padding-right: 8px;
+    gap: 0;
+    border: 1px solid var(--gray300);
+    border-radius: 4px;
+    background-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    font: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .FilterOutlinedItem .icon { width: var(--quickfilter-icon-size); height: var(--quickfilter-icon-size); flex-shrink: 0; display: flex; align-items: center; justify-content: center;}
+  .FilterOutlinedItem .label { font-size: 13px; font-weight: 400; line-height: 18px;color: var(--gray600);}
+   /* Active 상태 */
+  .FilterOutlinedItem.is-active {border-color: var(--blue); background-color: #245eff0d;}
+  .FilterOutlinedItem.is-active .label {color: var(--blue); font-weight: 600;}
+
+
+</style>
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- Lottie Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie.min.js"></script>
+<script>
+  window.addEventListener('load', function() {
+
+    // [적용] 아이콘 로드와 재생 제어 — 로티 로드, is-play / is-once 를 붙이고 떼서 SVG Inline·IMG 모션을 시작·정지한다 (playIcon / stopIcon)
+    const ICONS = ['campaign', 'coupon', 'plusdelivery', 'special', 'timesale', 'star', 'exclusive', 'lowestprice'];
+    const RANDOM_INTERVAL = 2800;
+    // 배포 때 빌드 도구의 파일 해시로 바꾼다 (캐시 무효화)
+    const ASSET_VERSION = '20261023';
+
+    // 같은 SVG 가 한 페이지에 여러 번 들어가도 그라디언트·clipPath 참조가 섞이지 않도록 내부 id 를 아이콘마다 고유하게 바꾼다
+    document.querySelectorAll('svg.ic-quickfilter').forEach(function(svg, index) {
+      svg.querySelectorAll('[id]').forEach(function(node) {
+        const oldId = node.id;
+        const newId = oldId + '-' + index;
+        node.id = newId;
+        svg.querySelectorAll('*').forEach(function(el) {
+          ['fill', 'stroke', 'clip-path', 'mask', 'href', 'xlink:href'].forEach(function(attr) {
+            const value = el.getAttribute(attr);
+            if (value && value.indexOf('#' + oldId) !== -1) {
+              el.setAttribute(attr, value.split('#' + oldId + ')').join('#' + newId + ')').replace(new RegExp('^#' + oldId + '$'), '#' + newId));
+            }
+          });
+        });
+      });
+    });
+
+    // 같은 아이콘이 여러 개 있어도 전부 함께 재생한다 (id 대신 클래스로 찾는다)
+    const lotties = {};
+    const loaded = [];
+    ICONS.forEach(function(name) {
+      lotties[name] = [];
+      document.querySelectorAll('.ic-quickfilter-lottie-' + name).forEach(function(container) {
+        const anim = lottie.loadAnimation({
+          container: container,
+          path: './src/lottie/ic_quickfilter_' + name + '.json?v=' + ASSET_VERSION,
+          renderer: 'svg',
+          loop: false,
+          autoplay: false
+        });
+        lotties[name].push(anim);
+        loaded.push(new Promise(function(resolve) { anim.addEventListener('DOMLoaded', resolve); }));
+      });
+    });
+
+    // SVG Inline(svg.ic-quickfilter-이름) 과 IMG(.ic-quickfilter-img-이름) 아이콘 전부
+    const cssTargetsOf = function(name) {
+      return document.querySelectorAll('svg.ic-quickfilter-' + name + ', .ic-quickfilter-img-' + name);
+    };
+
+    function stopIcon(name) {
+      cssTargetsOf(name).forEach(function(el) { el.classList.remove('is-play', 'is-once'); });
+      lotties[name].forEach(function(anim) { anim.goToAndStop(0, true); });
+    }
+
+    // is-play 를 뗐다 붙여야 CSS 애니메이션이 0% 부터 다시 시작한다
+    function playIcon(name, once) {
+      const targets = cssTargetsOf(name);
+      targets.forEach(function(el) { el.classList.remove('is-play', 'is-once'); });
+      void document.body.offsetWidth;
+      targets.forEach(function(el) {
+        el.classList.toggle('is-once', once);
+        el.classList.add('is-play');
+      });
+
+      lotties[name].forEach(function(anim) {
+        anim.loop = !once;
+        anim.goToAndPlay(0, true);
+      });
+    }
+
+    // [데모 전용] 전체 재생 / 랜덤 재생 전환 (라디오 UI). 서비스에 랜덤 재생 원칙을 쓸 경우 아래 순서 로직을 참고한다
+    let randomTimer = null;
+    let current = null;
+    let queue = [];
+
+    // 랜덤 재생 원칙
+    // 1. 2.8초마다 1개씩 모션 재생
+    // 2. 캠페인이 있을 경우, 첫 번째 캠페인이 우선 재생
+    // 3. 모든 아이콘이 한 번씩 재생 후, 다시 랜덤 순서로 재생
+    const PRIORITY = 'campaign';
+
+    function shuffle(list) {
+      const order = list.slice();
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      return order;
+    }
+
+    // 캠페인이 없을 때는 바퀴 경계에서 같은 아이콘이 연달아 나오지 않게 첫 순서를 피한다
+    function shuffledOrder(avoidFirst) {
+      if (ICONS.includes(PRIORITY)) {
+        return [PRIORITY].concat(shuffle(ICONS.filter(function(name) { return name !== PRIORITY; })));
+      }
+      const order = shuffle(ICONS);
+      if (order.length > 1 && order[0] === avoidFirst) {
+        const k = 1 + Math.floor(Math.random() * (order.length - 1));
+        [order[0], order[k]] = [order[k], order[0]];
+      }
+      return order;
+    }
+
+    function playRandomNext() {
+      if (queue.length === 0) queue = shuffledOrder(current);
+      const next = queue.shift();
+      if (current) stopIcon(current);
+      current = next;
+      playIcon(next, true);
+    }
+
+    function setMode(mode) {
+      clearInterval(randomTimer);
+      randomTimer = null;
+      current = null;
+      queue = [];
+      ICONS.forEach(stopIcon);
+
+      if (mode === 'random') {
+        playRandomNext();
+        randomTimer = setInterval(playRandomNext, RANDOM_INTERVAL);
+      } else {
+        ICONS.forEach(function(name) { playIcon(name, false); });
+      }
+    }
+
+    Promise.all(loaded).then(function() {
+      const checked = document.querySelector('input[name="play-mode"]:checked');
+      setMode(checked.value);
+      document.querySelectorAll('input[name="play-mode"]').forEach(function(input) {
+        input.addEventListener('change', function() { setMode(input.value); });
+      });
+    });
+
+    // [데모 전용] 클릭으로 Active 상태 확인
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.FilterOutlinedItem');
+      if (!btn) return;
+      const active = btn.classList.toggle('is-active');
+      btn.setAttribute('aria-pressed', String(active));
+    });
+
+  });
+</script>
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- SVG Inline CSS -->
+<link rel="stylesheet" href="./src/svg-inline/campaign/ic-quickfilter-campaign.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/coupon/ic-quickfilter-coupon.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/plusdelivery/ic-quickfilter-plusdelivery.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/special/ic-quickfilter-special.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/timesale/ic-quickfilter-timesale.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/star/ic-quickfilter-star.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/exclusive/ic-quickfilter-exclusive.css?v=20261023">
+<link rel="stylesheet" href="./src/svg-inline/lowestprice/ic-quickfilter-lowestprice.css?v=20261023">
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- Image Load CSS -->
+<link rel="stylesheet" href="./src/img-css/campaign/ic-quickfilter-campaign.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/coupon/ic-quickfilter-coupon.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/plusdelivery/ic-quickfilter-plusdelivery.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/special/ic-quickfilter-special.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/timesale/ic-quickfilter-timesale.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/star/ic-quickfilter-star.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/exclusive/ic-quickfilter-exclusive.css?v=20261023">
+<link rel="stylesheet" href="./src/img-css/lowestprice/ic-quickfilter-lowestprice.css?v=20261023">
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+</head>
+<body>
+
+<!-- [데모 전용] 제목, 소스 다운로드, 재생 방식 선택 -->
+<h1>퀵필터 모션 — FilterOutlinedItem</h1>
+
+<!-- index.html 과 같은 폴더에 quickfilter-motion.zip (index.html + src 폴더) 을 둔다 -->
+<a class="download-button" href="quickfilter-motion.zip" download="quickfilter-motion.zip">소스 내려받기 (zip)</a>
+
+<fieldset class="play-mode" aria-label="재생 방식">
+  <div class="play-mode-option">
+    <label><input type="radio" name="play-mode" value="all" checked> 전체 재생</label>
+  </div>
+  <div class="play-mode-option">
+    <label><input type="radio" name="play-mode" value="random" aria-describedby="play-mode-random-rules"> 랜덤 재생</label>
+    <ol class="play-mode-rules" id="play-mode-random-rules">
+      <li>2.8초마다 1개씩 모션 재생</li>
+      <li>캠페인이 있을 경우, 첫 번째 캠페인이 우선 재생</li>
+      <li>모든 아이콘이 한 번씩 재생 후, 다시 랜덤 순서로 재생</li>
+    </ol>
+  </div>
+</fieldset>
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- [적용 예시] 로티 아이콘 적용 -->
+<p class="section-label">Lottie Icon</p>
+<div class="filter-row">
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false" data-lottie="campaign">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-campaign"></span>
+    </span>
+    <span class="label">캠페인명</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-coupon"></span>
+    </span>
+    <span class="label">쿠폰</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-plusdelivery"></span>
+    </span>
+    <img src="https://image.msscdn.net/display/images/common/2026/quick_text_plusdelivery.svg" alt="무배당발" style="width: auto; height: 18px;">
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-special"></span>
+    </span>
+    <span class="label">스페셜</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-timesale"></span>
+    </span>
+    <span class="label">타임세일</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-star"></span>
+    </span>
+    <span class="label">4.5 이상</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-exclusive"></span>
+    </span>
+    <span class="label">단독</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <span class="lottie-icon ic-quickfilter-lottie-lowestprice"></span>
+    </span>
+    <span class="label">최저가</span>
+  </button>
+
+</div>
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- [적용 예시] SVG 인라인 스타일 -->
+<p class="section-label">SVG Inline</p>
+<div class="filter-row">
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false" data-lottie="campaign">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-campaign">
+        <g class="ic-quickfilter-campaign-layer" data-layer="icon 3" data-index="6" data-kind="shape">
+          <g transform="translate(30 30)">
+            <g class="ic-quickfilter-campaign-scale1" data-stage="scale" transform="scale(3 3)">
+              <g transform="translate(-8 -8)">
+                <g data-group="Group 1" transform="translate(8 8)">
+                  <path d="M-1.969 -2.331L-7.001 -0.001L-1.969 2.329L-0.001 7.25L1.969 2.329L7.001 -0.001L1.969 -2.331L-0.001 -7.25L-1.969 -2.331Z" fill="#a914ff"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-campaign-layer" data-layer="icon" data-index="5" data-kind="shape">
+          <g transform="translate(44.5 46)">
+            <g class="ic-quickfilter-campaign-rotation2" data-stage="rotation" transform="rotate(0)">
+              <g class="ic-quickfilter-campaign-scale3" data-stage="scale" transform="scale(0 0)">
+                <g transform="translate(-8 -8)">
+                  <g data-group="Group 1" transform="translate(8 8)">
+                    <path d="M-1.969 -2.331L-7.001 -0.001L-1.969 2.329L-0.001 7.25L1.969 2.329L7.001 -0.001L1.969 -2.331L-0.001 -7.25L-1.969 -2.331Z" fill="#a914ff"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-campaign-layer" data-layer="icon 2" data-index="4" data-kind="shape">
+          <g transform="translate(12.5 13)">
+            <g class="ic-quickfilter-campaign-rotation4" data-stage="rotation" transform="rotate(0)">
+              <g class="ic-quickfilter-campaign-scale5" data-stage="scale" transform="scale(0 0)">
+                <g transform="translate(-8 -8)">
+                  <g data-group="Group 1" transform="translate(8 8)">
+                    <path d="M-1.969 -2.331L-7.001 -0.001L-1.969 2.329L-0.001 7.25L1.969 2.329L7.001 -0.001L1.969 -2.331L-0.001 -7.25L-1.969 -2.331Z" fill="#a914ff"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <span class="label">캠페인명</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-coupon">
+        <g class="ic-quickfilter-coupon-layer" data-layer="coupon" data-index="4" data-kind="shape">
+            <g class="ic-quickfilter-coupon-positionX1" data-stage="positionX" transform="translate(30 0)">
+              <g transform="translate(0 30) scale(3 3) translate(-8 -8)">
+                <g data-group="Group 4" transform="translate(8 8)">
+                  <path d="M6.5 -1.5C5.672 -1.5 5 -0.828 5 0C5 0.828 5.672 1.5 6.5 1.5L6.5 5.5L-6.5 5.5L-6.5 1.5C-5.672 1.5 -5 0.828 -5 0C-5 -0.828 -5.672 -1.5 -6.5 -1.5L-6.5 -5.5L6.5 -5.5L6.5 -1.5Z" fill="rgb(36, 94, 255)" fill-rule="nonzero"/>
+                </g>
+                <g data-group="Group 3" transform="translate(6.232 6.482)">
+                  <path d="M0.531 0.531C0.238 0.824 -0.238 0.824 -0.531 0.531C-0.824 0.238 -0.824 -0.238 -0.531 -0.531C-0.238 -0.824 0.238 -0.824 0.531 -0.531C0.824 -0.238 0.824 0.238 0.531 0.531Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+                </g>
+                <g data-group="Group 2" transform="translate(9.768 10.018)">
+                  <path d="M0.531 0.531C0.238 0.824 -0.238 0.824 -0.531 0.531C-0.824 0.238 -0.824 -0.238 -0.531 -0.531C-0.238 -0.824 0.238 -0.824 0.531 -0.531C0.824 -0.238 0.824 0.238 0.531 0.531Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+                </g>
+                <g data-group="Group 1" transform="translate(8 8.25)">
+                  <path d="M1.945 -2.652L2.652 -1.945L-1.945 2.652L-2.652 1.945L1.945 -2.652Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+                </g>
+              </g>
+            </g>
+        </g>
+        <g class="ic-quickfilter-coupon-layer" data-layer="coupon" data-index="3" data-kind="shape">
+          <g class="ic-quickfilter-coupon-positionX2" data-stage="positionX" transform="translate(82 0)">
+            <g transform="translate(0 30) scale(3 3) translate(-8 -8)">
+              <g data-group="Group 4" transform="translate(8 8)">
+                <path d="M6.5 -1.5C5.672 -1.5 5 -0.828 5 0C5 0.828 5.672 1.5 6.5 1.5L6.5 5.5L-6.5 5.5L-6.5 1.5C-5.672 1.5 -5 0.828 -5 0C-5 -0.828 -5.672 -1.5 -6.5 -1.5L-6.5 -5.5L6.5 -5.5L6.5 -1.5Z" fill="rgb(36, 94, 255)" fill-rule="nonzero"/>
+              </g>
+              <g data-group="Group 3" transform="translate(6.232 6.482)">
+                <path d="M0.531 0.531C0.238 0.824 -0.238 0.824 -0.531 0.531C-0.824 0.238 -0.824 -0.238 -0.531 -0.531C-0.238 -0.824 0.238 -0.824 0.531 -0.531C0.824 -0.238 0.824 0.238 0.531 0.531Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+              </g>
+              <g data-group="Group 2" transform="translate(9.768 10.018)">
+                <path d="M0.531 0.531C0.238 0.824 -0.238 0.824 -0.531 0.531C-0.824 0.238 -0.824 -0.238 -0.531 -0.531C-0.238 -0.824 0.238 -0.824 0.531 -0.531C0.824 -0.238 0.824 0.238 0.531 0.531Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+              </g>
+              <g data-group="Group 1" transform="translate(8 8.25)">
+                <path d="M1.945 -2.652L2.652 -1.945L-1.945 2.652L-2.652 1.945L1.945 -2.652Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <span class="label">쿠폰</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-plusdelivery">
+        <g class="ic-quickfilter-plusdelivery-layer" data-layer="truck" data-index="2" data-kind="shape">
+          <g>
+            <g class="ic-quickfilter-plusdelivery-positionX1" data-stage="positionX" transform="translate(30 0)">
+              <g transform="translate(0 30) scale(3 3) translate(-8.052 -9)">
+                <g data-group="Group 9" transform="translate(6.139 7.94)">
+                  <path d="M1.281 -2.445L-0.042 0.643L-0.046 0.643L-0.74 -2.385L-0.753 -2.445L-2.346 -2.445L-2.876 2.445L-1.747 2.445L-1.426 -0.512L-0.721 2.445L0.191 2.445L1.529 -0.512L1.536 -0.512L1.215 2.445L2.346 2.445L2.876 -2.445L1.281 -2.445Z" fill="rgb(36, 94, 255)" fill-rule="nonzero"/>
+                </g>
+                <g data-group="Group 8" transform="translate(8.064 9)">
+                  <path d="M3.3 4.986C2.795 4.986 2.383 4.578 2.383 4.076C2.383 3.574 2.795 3.165 3.3 3.165C3.805 3.165 4.217 3.574 4.217 4.076C4.217 4.578 3.805 4.986 3.3 4.986Z M-4.022 4.986C-4.527 4.986 -4.939 4.578 -4.939 4.076C-4.939 3.574 -4.527 3.165 -4.022 3.165C-3.517 3.165 -3.106 3.574 -3.106 4.076C-3.106 4.578 -3.517 4.986 -4.022 4.986Z M7.838 -0.837L6.49 -3.049C6.185 -3.55 5.633 -3.861 5.049 -3.861L2.771 -3.861L2.636 -2.583L5.071 -2.583C5.201 -2.583 5.324 -2.513 5.391 -2.402L6.743 -0.182L6.754 -0.167L6.453 2.68C6.433 2.863 6.279 3.001 6.094 3.001L5.095 3.001C4.727 2.397 4.06 1.993 3.299 1.993C2.538 1.993 1.871 2.396 1.503 3.001L-2.228 3.001C-2.595 2.397 -3.262 1.993 -4.023 1.993C-4.784 1.993 -5.451 2.396 -5.819 3.001L-6.777 3.001L-6.064 -3.736C-5.995 -4.389 -5.444 -4.88 -4.782 -4.88L2.868 -4.88L3.003 -6.159L-4.803 -6.159C-6.114 -6.159 -7.206 -5.184 -7.343 -3.891L-8.056 2.846C-8.095 3.209 -7.974 3.576 -7.725 3.85C-7.476 4.124 -7.122 4.281 -6.753 4.281L-6.108 4.281C-6.003 5.333 -5.108 6.159 -4.022 6.159C-2.936 6.159 -2.04 5.333 -1.937 4.281L1.214 4.281C1.318 5.333 2.213 6.159 3.299 6.159C4.385 6.159 5.281 5.333 5.384 4.281L6.116 4.281C6.951 4.281 7.645 3.66 7.733 2.837L8.034 -0.01C8.064 -0.297 7.994 -0.59 7.837 -0.837L7.838 -0.837Z" fill="rgb(36, 94, 255)" fill-rule="nonzero"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-plusdelivery-layer" data-layer="truck" data-index="1" data-kind="shape">
+          <g class="ic-quickfilter-plusdelivery-positionX2" data-stage="positionX" transform="translate(-27 0)">
+            <g transform="translate(0 30) scale(3 3) translate(-8.052 -9)">
+              <g data-group="Group 9" transform="translate(6.139 7.94)">
+                <path d="M1.281 -2.445L-0.042 0.643L-0.046 0.643L-0.74 -2.385L-0.753 -2.445L-2.346 -2.445L-2.876 2.445L-1.747 2.445L-1.426 -0.512L-0.721 2.445L0.191 2.445L1.529 -0.512L1.536 -0.512L1.215 2.445L2.346 2.445L2.876 -2.445L1.281 -2.445Z" fill="rgb(36, 94, 255)" fill-rule="nonzero"/>
+              </g>
+              <g data-group="Group 8" transform="translate(8.064 9)">
+                <path d="M3.3 4.986C2.795 4.986 2.383 4.578 2.383 4.076C2.383 3.574 2.795 3.165 3.3 3.165C3.805 3.165 4.217 3.574 4.217 4.076C4.217 4.578 3.805 4.986 3.3 4.986Z M-4.022 4.986C-4.527 4.986 -4.939 4.578 -4.939 4.076C-4.939 3.574 -4.527 3.165 -4.022 3.165C-3.517 3.165 -3.106 3.574 -3.106 4.076C-3.106 4.578 -3.517 4.986 -4.022 4.986Z M7.838 -0.837L6.49 -3.049C6.185 -3.55 5.633 -3.861 5.049 -3.861L2.771 -3.861L2.636 -2.583L5.071 -2.583C5.201 -2.583 5.324 -2.513 5.391 -2.402L6.743 -0.182L6.754 -0.167L6.453 2.68C6.433 2.863 6.279 3.001 6.094 3.001L5.095 3.001C4.727 2.397 4.06 1.993 3.299 1.993C2.538 1.993 1.871 2.396 1.503 3.001L-2.228 3.001C-2.595 2.397 -3.262 1.993 -4.023 1.993C-4.784 1.993 -5.451 2.396 -5.819 3.001L-6.777 3.001L-6.064 -3.736C-5.995 -4.389 -5.444 -4.88 -4.782 -4.88L2.868 -4.88L3.003 -6.159L-4.803 -6.159C-6.114 -6.159 -7.206 -5.184 -7.343 -3.891L-8.056 2.846C-8.095 3.209 -7.974 3.576 -7.725 3.85C-7.476 4.124 -7.122 4.281 -6.753 4.281L-6.108 4.281C-6.003 5.333 -5.108 6.159 -4.022 6.159C-2.936 6.159 -2.04 5.333 -1.937 4.281L1.214 4.281C1.318 5.333 2.213 6.159 3.299 6.159C4.385 6.159 5.281 5.333 5.384 4.281L6.116 4.281C6.951 4.281 7.645 3.66 7.733 2.837L8.034 -0.01C8.064 -0.297 7.994 -0.59 7.837 -0.837L7.838 -0.837Z" fill="rgb(36, 94, 255)" fill-rule="nonzero"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <img src="https://image.msscdn.net/display/images/common/2026/quick_text_plusdelivery.svg" alt="무배당발" style="width: auto; height: 18px;">
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-special">
+        <g class="ic-quickfilter-special-layer" data-layer="special" data-index="3" data-kind="shape">
+          <g class="ic-quickfilter-special-position1" data-stage="position" transform="translate(30 30)">
+            <g class="ic-quickfilter-special-scale2" data-stage="scale" transform="scale(1 1)">
+              <path d="M-17.25 3.821L8.504 -21.75L4.454 -3.806L17.193 -3.795L-8.502 21.753L-4.32 3.821L-17.25 3.821Z" fill="rgb(252, 186, 30)" fill-rule="nonzero"/>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-special-layer" data-layer="special" data-index="2" data-kind="shape">
+          <g class="ic-quickfilter-special-position3" data-stage="position" transform="translate(79.152 -19.277)">
+            <g class="ic-quickfilter-special-scale4" data-stage="scale" transform="scale(2 2)">
+              <path d="M-17.25 3.821L8.504 -21.75L4.454 -3.806L17.193 -3.795L-8.502 21.753L-4.32 3.821L-17.25 3.821Z" fill="rgb(252, 186, 30)" fill-rule="nonzero"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <span class="label">스페셜</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-timesale">
+        <g class="ic-quickfilter-timesale-layer" data-layer="body" data-index="5" data-kind="shape">
+          <g transform="translate(30 30)">
+            <g class="ic-quickfilter-timesale-scale1" data-stage="scale" transform="scale(1 1)">
+              <g transform="translate(-8 -8)">
+                <g data-group="Group 2" transform="translate(8 8)">
+                  <path d="M0 -19.5C10.762 -19.5 19.5 -10.762 19.5 0C19.5 10.762 10.762 19.5 0 19.5C-10.762 19.5 -19.5 10.762 -19.5 0C-19.5 -10.762 -10.762 -19.5 0 -19.5Z" fill="rgb(243, 17, 16)" fill-rule="nonzero"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-timesale-layer" data-layer="m" data-index="4" data-kind="shape">
+          <g class="ic-quickfilter-timesale-position3" data-stage="position" transform="translate(30.153 31.02)">
+            <g class="ic-quickfilter-timesale-rotation4" data-stage="rotation" transform="rotate(0)">
+              <g class="ic-quickfilter-timesale-scale5" data-stage="scale" transform="scale(3 3)">
+                <g transform="translate(-8.051 -8.34)">
+                  <g data-group="Group 1" transform="translate(9 7.5)">
+                    <g class="ic-quickfilter-timesale-stroke-width2" stroke-width="1.1">
+                      <path d="M-1 -2.5L-1 0.614C-1 0.7 -0.963 0.783 -0.898 0.84" fill="none" stroke="rgb(255, 255, 255)" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-timesale-layer" data-layer="h" data-index="3" data-kind="shape">
+          <g transform="translate(30 30.342)">
+            <g class="ic-quickfilter-timesale-scale7" data-stage="scale" transform="scale(3 3)">
+              <g transform="translate(-8 -8.114)">
+                <g data-group="Group 1" transform="translate(9 7.5)">
+                  <g class="ic-quickfilter-timesale-stroke-width6" stroke-width="1.1">
+                    <path d="M-0.998 0.354C-0.993 0.601 -0.963 0.783 -0.898 0.84L1 2.5" fill="none" stroke="rgb(255, 255, 255)" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-timesale-layer" data-layer="center" data-index="2" data-kind="shape">
+          <g class="ic-quickfilter-timesale-opacity8" opacity="0">
+            <g transform="translate(30 30)">
+              <g class="ic-quickfilter-timesale-scale9" data-stage="scale" transform="scale(1 1)">
+                <g data-group="Ellipse 1">
+                  <path d="M0 -1.35C0.745 -1.35 1.35 -0.745 1.35 0C1.35 0.745 0.745 1.35 0 1.35C-0.745 1.35 -1.35 0.745 -1.35 0C-1.35 -0.745 -0.745 -1.35 0 -1.35Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+                  <path d="M0 -1.35C0.745 -1.35 1.35 -0.745 1.35 0C1.35 0.745 0.745 1.35 0 1.35C-0.745 1.35 -1.35 0.745 -1.35 0C-1.35 -0.745 -0.745 -1.35 0 -1.35Z" fill="none" stroke="rgb(224, 224, 224)" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <span class="label">타임세일</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-star">
+        <defs>
+          <path id="ic-quickfilter-star-shape" d="M0.27 -6.454C0.161 -6.682 -0.163 -6.682 -0.271 -6.454L-2.109 -2.606C-2.152 -2.516 -2.237 -2.453 -2.335 -2.438L-6.536 -1.812C-6.78 -1.775 -6.878 -1.477 -6.704 -1.303L-3.673 1.725C-3.604 1.794 -3.573 1.891 -3.589 1.987L-4.303 6.25C-4.344 6.496 -4.085 6.682 -3.865 6.564L-0.143 4.562C-0.054 4.514 0.053 4.514 0.141 4.562L3.865 6.564C4.084 6.682 4.344 6.496 4.303 6.25L3.587 1.987C3.571 1.891 3.603 1.794 3.671 1.725L6.704 -1.298C6.878 -1.472 6.779 -1.771 6.535 -1.807L2.335 -2.438C2.236 -2.453 2.152 -2.516 2.109 -2.606L0.27 -6.454Z" fill="rgb(250, 146, 0)" fill-rule="nonzero"/>
+        </defs>
+        <g class="ic-quickfilter-star-layer ic-quickfilter-star-star3-show" data-layer="star 3" data-index="5" data-kind="shape" opacity="0.7">
+          <g class="ic-quickfilter-star-star3-move" data-stage="position" transform="translate(27.653 9.715)">
+            <g class="ic-quickfilter-star-star3-scale" data-stage="scale" transform="scale(0 0)">
+              <g transform="translate(-10 -9.884)">
+                <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+                  <use href="#ic-quickfilter-star-shape"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-star-layer ic-quickfilter-star-star1-show" data-layer="star 1" data-index="4" data-kind="shape">
+          <g class="ic-quickfilter-star-star1-fade" opacity="1">
+            <g class="ic-quickfilter-star-star1-move" data-stage="position" transform="translate(30 30)">
+              <g class="ic-quickfilter-star-star1-scale" data-stage="scale" transform="scale(1 1)">
+                <g transform="translate(-10 -9.884)">
+                  <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+                    <use href="#ic-quickfilter-star-shape"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-star-layer ic-quickfilter-star-star4-show" data-layer="star 4" data-index="3" data-kind="shape">
+          <g class="ic-quickfilter-star-star4-move" data-stage="position" transform="translate(10.968 17.093)">
+            <g class="ic-quickfilter-star-star4-scale" data-stage="scale" transform="scale(0 0)">
+              <g transform="translate(-10 -9.884)">
+                <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+                  <use href="#ic-quickfilter-star-shape"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-star-layer ic-quickfilter-star-star5-show" data-layer="star 5" data-index="2" data-kind="shape">
+          <g class="ic-quickfilter-star-star5-fade" opacity="1">
+            <g class="ic-quickfilter-star-star5-move" data-stage="position" transform="translate(15.041 32.459)">
+              <g class="ic-quickfilter-star-star5-scale" data-stage="scale" transform="scale(0 0)">
+                <g transform="translate(-10 -9.884)">
+                  <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+                    <use href="#ic-quickfilter-star-shape"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+        <g class="ic-quickfilter-star-layer ic-quickfilter-star-star2-show" data-layer="star 2" data-index="1" data-kind="shape">
+          <g class="ic-quickfilter-star-star2-move" data-stage="position" transform="translate(12.045 8.752)">
+            <g class="ic-quickfilter-star-star2-scale" data-stage="scale" transform="scale(0 0)">
+              <g transform="translate(-10 -9.884)">
+                <g data-group="Group 1" transform="translate(10 9.896) scale(3 3)">
+                  <use href="#ic-quickfilter-star-shape"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <span class="label">4.5 이상</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-exclusive">
+        <g transform="translate(30 30) scale(3)">
+          <path class="ic-quickfilter-exclusive-stroke1" d="M-2.33 -5 L-4.56 -5 L-4.56 5 L-2.33 5Z" fill="#000"/>
+          <path class="ic-quickfilter-exclusive-stroke2" d="M0.03 -0.09 L-0.03 -0.09 L-1.35 -5 L-2.33 -5 L-3.26 -5 L-2.33 -1.42 L-2.27 -1.42 L-1.08 2.8 L1.08 2.8Z" fill="#000"/>
+          <path class="ic-quickfilter-exclusive-stroke3" d="M1.35 -5 L0.03 -0.09 L-0.03 -0.09 L-1.08 2.8 L1.08 2.8 L2.27 -1.42 L2.33 -1.42 L3.16 -5 L2.33 -5Z" fill="#000"/>
+          <path class="ic-quickfilter-exclusive-stroke4" d="M2.33 -1.42 L2.33 5 L4.56 5 L4.56 -5 L2.33 -5Z" fill="#000"/>
+        </g>
+      </svg>
+    </span>
+    <span class="label">단독</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-lowestprice">
+        <defs>
+          <linearGradient id="ic-quickfilter-lowestprice-grad" gradientUnits="userSpaceOnUse" x1="-17.76" y1="29.66" x2="18.65" y2="-25.25">
+            <stop offset="0.338" stop-color="#f31110"/>
+            <stop offset="0.669" stop-color="#f94e1b"/>
+            <stop offset="1" stop-color="#ff8b26"/>
+          </linearGradient>
+          <clipPath id="ic-quickfilter-lowestprice-clip1-rest" clipPathUnits="userSpaceOnUse"><polygon points="51.88 5.25 37.25 5.25 10 31 30.5 31.75"/></clipPath>
+          <clipPath id="ic-quickfilter-lowestprice-clip2-rest" clipPathUnits="userSpaceOnUse"><polygon points="11.75 23.25 12.25 34.75 49.88 23.88 46.38 15.87"/></clipPath>
+          <clipPath id="ic-quickfilter-lowestprice-clip3-rest" clipPathUnits="userSpaceOnUse"><polygon points="40.86 12.44 5.77 50.78 25.76 56.85 56.41 13.18"/></clipPath>
+        </defs>
+        <g class="ic-quickfilter-lowestprice-clip1" clip-path="url(#ic-quickfilter-lowestprice-clip1-rest)"><rect width="60" height="60" fill="none"/><path transform="translate(30.25 30.1)" d="M6.47 -19.88 L-13.18 -4.36 C-14.15 -3.6 -14.45 -2.28 -13.92 -1.18 C-13.4 -0.08 -12.19 0.51 -11.01 0.25 L0.92 -2.31 L1.67 -7.56 L10.5 -17.65 C11.3 -18.57 10.93 -20.01 9.78 -20.42 C9.4 -20.56 9 -20.62 8.61 -20.62 C7.85 -20.62 7.09 -20.37 6.47 -19.88Z" fill="url(#ic-quickfilter-lowestprice-grad)"/></g>
+        <g class="ic-quickfilter-lowestprice-clip2" clip-path="url(#ic-quickfilter-lowestprice-clip2-rest)"><rect width="60" height="60" fill="none"/><path transform="translate(30.25 30.1)" d="M-13.18 -4.36 C-14.15 -3.6 -14.45 -2.28 -13.92 -1.18 C-13.4 -0.08 -12.19 0.51 -11.01 0.25 L0.92 -2.31 L15.7 -8.99 C16.71 -10.42 15.29 -12.3 13.64 -11.73 L1.67 -7.56 L-13.18 -4.36Z" fill="url(#ic-quickfilter-lowestprice-grad)"/></g>
+        <g class="ic-quickfilter-lowestprice-clip3" clip-path="url(#ic-quickfilter-lowestprice-clip3-rest)"><rect width="60" height="60" fill="none"/><g transform="translate(23.5 50.92)"><g class="ic-quickfilter-lowestprice-null-scale"><path transform="translate(6.75 -20.83)" d="M0.26 -2.89 L-7.33 6.69 L-15.94 6.69 C-16.42 6.69 -16.71 7.23 -16.44 7.62 L-8.12 19.78 C-7.68 20.43 -6.8 20.62 -6.12 20.22 L14.79 7.8 C15.32 7.49 15.09 6.69 14.49 6.69 L4.67 6.69 L15.7 -8.99 C16.71 -10.42 15.29 -12.3 13.64 -11.73 L0.26 -2.89Z" fill="url(#ic-quickfilter-lowestprice-grad)"/></g></g></g>
+        <g transform="translate(23.5 50.92)">
+          <g class="ic-quickfilter-lowestprice-null-scale">
+            <g class="ic-quickfilter-lowestprice-p4-opacity">
+              <g class="ic-quickfilter-lowestprice-p4-move" transform="translate(3.5 -14.14)">
+                <g class="ic-quickfilter-lowestprice-p4-scale">
+                  <path transform="translate(3.25 -6.69)" d="M-15.94 6.69 C-16.42 6.69 -16.71 7.23 -16.44 7.62 L-8.12 19.78 C-7.68 20.43 -6.8 20.62 -6.12 20.22 L14.79 7.8 C15.32 7.49 15.09 6.69 14.49 6.69 L-15.94 6.69Z" fill="url(#ic-quickfilter-lowestprice-grad)"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
+    <span class="label">최저가</span>
+  </button>
+
+</div>
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- [적용 예시] IMG 로드하여 재생 -->
+
+<p class="section-label">Image Load</p>
+<div class="filter-row">
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false" data-lottie="campaign">
+    <span class="icon ic-quickfilter-img-campaign" aria-hidden="true">
+      <img src="./src/img-css/campaign/ic-quickfilter-campaign.svg?v=20261023" alt="">
+      <img src="./src/img-css/campaign/ic-quickfilter-campaign.svg?v=20261023" alt="">
+      <img src="./src/img-css/campaign/ic-quickfilter-campaign.svg?v=20261023" alt="">
+    </span>
+    <span class="label">캠페인명</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-coupon" aria-hidden="true">
+      <img src="./src/img-css/coupon/ic-quickfilter-coupon.svg?v=20261023" alt="">
+      <img src="./src/img-css/coupon/ic-quickfilter-coupon.svg?v=20261023" alt="">
+    </span>
+    <span class="label">쿠폰</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-plusdelivery" aria-hidden="true">
+      <img src="./src/img-css/plusdelivery/ic-quickfilter-plusdelivery.svg?v=20261023" alt="">
+      <img src="./src/img-css/plusdelivery/ic-quickfilter-plusdelivery.svg?v=20261023" alt="">
+    </span>
+    <img src="https://image.msscdn.net/display/images/common/2026/quick_text_plusdelivery.svg" alt="무배당발" style="width: auto; height: 18px;">
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-special" aria-hidden="true">
+      <img src="./src/img-css/special/ic-quickfilter-special.svg?v=20261023" alt="">
+      <img src="./src/img-css/special/ic-quickfilter-special.svg?v=20261023" alt="">
+    </span>
+    <span class="label">스페셜</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-timesale" aria-hidden="true">
+      <img src="./src/img-css/timesale/ic-quickfilter-timesale-body.svg?v=20261023" alt="">
+      <img src="./src/img-css/timesale/ic-quickfilter-timesale-m.svg?v=20261023" alt="">
+      <img src="./src/img-css/timesale/ic-quickfilter-timesale-h.svg?v=20261023" alt="">
+      <img src="./src/img-css/timesale/ic-quickfilter-timesale-center.svg?v=20261023" alt="">
+    </span>
+    <span class="label">타임세일</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-star" aria-hidden="true">
+      <img src="./src/img-css/star/ic-quickfilter-star.svg?v=20261023" alt="">
+      <img src="./src/img-css/star/ic-quickfilter-star.svg?v=20261023" alt="">
+      <img src="./src/img-css/star/ic-quickfilter-star.svg?v=20261023" alt="">
+      <img src="./src/img-css/star/ic-quickfilter-star.svg?v=20261023" alt="">
+      <img src="./src/img-css/star/ic-quickfilter-star.svg?v=20261023" alt="">
+    </span>
+    <span class="label">4.5 이상</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-exclusive" aria-hidden="true">
+      <img src="./src/img-css/exclusive/ic-quickfilter-exclusive-stroke1.svg?v=20261023" alt="">
+      <img src="./src/img-css/exclusive/ic-quickfilter-exclusive-stroke2.svg?v=20261023" alt="">
+      <img src="./src/img-css/exclusive/ic-quickfilter-exclusive-stroke3.svg?v=20261023" alt="">
+      <img src="./src/img-css/exclusive/ic-quickfilter-exclusive-stroke4.svg?v=20261023" alt="">
+    </span>
+    <span class="label">단독</span>
+  </button>
+
+  <button class="FilterOutlinedItem" type="button" aria-pressed="false">
+    <span class="icon ic-quickfilter-img-lowestprice" aria-hidden="true">
+      <img src="./src/img-css/lowestprice/ic-quickfilter-lowestprice-p1.svg?v=20261023" alt="">
+      <img src="./src/img-css/lowestprice/ic-quickfilter-lowestprice-p2.svg?v=20261023" alt="">
+      <span><img src="./src/img-css/lowestprice/ic-quickfilter-lowestprice-p3.svg?v=20261023" alt=""></span>
+      <img src="./src/img-css/lowestprice/ic-quickfilter-lowestprice-p4.svg?v=20261023" alt="">
+    </span>
+    <span class="label">최저가</span>
+  </button>
+
+</div>
+
+</body>
+</html>

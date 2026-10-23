@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-timesale">
+  <g class="ic-quickfilter-timesale-layer" data-layer="body" data-index="5" data-kind="shape">
+    <g transform="translate(30 30)">
+      <g class="ic-quickfilter-timesale-scale1" data-stage="scale" transform="scale(1 1)">
+        <g transform="translate(-8 -8)">
+          <g data-group="Group 2" transform="translate(8 8)">
+            <path d="M0 -19.5C10.762 -19.5 19.5 -10.762 19.5 0C19.5 10.762 10.762 19.5 0 19.5C-10.762 19.5 -19.5 10.762 -19.5 0C-19.5 -10.762 -10.762 -19.5 0 -19.5Z" fill="rgb(243, 17, 16)" fill-rule="nonzero"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-timesale-layer" data-layer="m" data-index="4" data-kind="shape">
+    <g class="ic-quickfilter-timesale-position3" data-stage="position" transform="translate(30.153 31.02)">
+      <g class="ic-quickfilter-timesale-rotation4" data-stage="rotation" transform="rotate(0)">
+        <g class="ic-quickfilter-timesale-scale5" data-stage="scale" transform="scale(3 3)">
+          <g transform="translate(-8.051 -8.34)">
+            <g data-group="Group 1" transform="translate(9 7.5)">
+              <g class="ic-quickfilter-timesale-stroke-width2" stroke-width="1.1">
+                <path d="M-1 -2.5L-1 0.614C-1 0.7 -0.963 0.783 -0.898 0.84" fill="none" stroke="rgb(255, 255, 255)" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-timesale-layer" data-layer="h" data-index="3" data-kind="shape">
+    <g transform="translate(30 30.342)">
+      <g class="ic-quickfilter-timesale-scale7" data-stage="scale" transform="scale(3 3)">
+        <g transform="translate(-8 -8.114)">
+          <g data-group="Group 1" transform="translate(9 7.5)">
+            <g class="ic-quickfilter-timesale-stroke-width6" stroke-width="1.1">
+              <path d="M-0.998 0.354C-0.993 0.601 -0.963 0.783 -0.898 0.84L1 2.5" fill="none" stroke="rgb(255, 255, 255)" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="ic-quickfilter-timesale-layer" data-layer="center" data-index="2" data-kind="shape">
+    <g class="ic-quickfilter-timesale-opacity8" opacity="0">
+      <g transform="translate(30 30)">
+        <g class="ic-quickfilter-timesale-scale9" data-stage="scale" transform="scale(1 1)">
+          <g data-group="Ellipse 1">
+            <path d="M0 -1.35C0.745 -1.35 1.35 -0.745 1.35 0C1.35 0.745 0.745 1.35 0 1.35C-0.745 1.35 -1.35 0.745 -1.35 0C-1.35 -0.745 -0.745 -1.35 0 -1.35Z" fill="rgb(255, 255, 255)" fill-rule="nonzero"/>
+            <path d="M0 -1.35C0.745 -1.35 1.35 -0.745 1.35 0C1.35 0.745 0.745 1.35 0 1.35C-0.745 1.35 -1.35 0.745 -1.35 0C-1.35 -0.745 -0.745 -1.35 0 -1.35Z" fill="none" stroke="rgb(224, 224, 224)" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

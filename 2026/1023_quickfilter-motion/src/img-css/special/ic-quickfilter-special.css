@@ -1,0 +1,35 @@
+.ic-quickfilter-img-special {
+    position: relative;
+    overflow: hidden;
+}
+
+.ic-quickfilter-img-special img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-img-special img:nth-child(2) { transform: translate(81.92%, -82.13%) scale(2); }
+
+.ic-quickfilter-img-special.is-play img:nth-child(1) { animation-name: ic-quickfilter-special-img-1; }
+.ic-quickfilter-img-special.is-play img:nth-child(2) { animation-name: ic-quickfilter-special-img-2; }
+
+.ic-quickfilter-img-special.is-once img { animation-iteration-count: 1; }
+
+@keyframes ic-quickfilter-special-img-1 {
+    0%, 10% { transform: translate(0, 0) scale(1); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.8); }
+    25.33% { transform: translate(-67.39%, 66.36%) scale(1); animation-timing-function: step-end; }
+    63.33% { transform: translate(81.92%, -82.13%) scale(2); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    83.33%, 100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes ic-quickfilter-special-img-2 {
+    0%, 20% { transform: translate(81.92%, -82.13%) scale(2); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    40%, 53.33% { transform: translate(0, 0) scale(1); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.8); }
+    68.66%, 100% { transform: translate(-67.39%, 66.36%) scale(1); }
+}

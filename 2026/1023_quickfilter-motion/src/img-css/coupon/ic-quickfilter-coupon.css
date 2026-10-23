@@ -1,0 +1,38 @@
+/* 이미지 너비(viewBox 60) 기준 %. 가운데 0%, 왼쪽 밖 -95%(-27), 오른쪽 밖 86.67%(82) */
+
+.ic-quickfilter-img-coupon {
+    position: relative;
+    overflow: hidden;
+}
+
+.ic-quickfilter-img-coupon img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-img-coupon img:nth-child(2) { transform: translateX(86.67%); }
+
+.ic-quickfilter-img-coupon.is-play img:nth-child(1) { animation-name: ic-quickfilter-coupon-img-positionX1; }
+.ic-quickfilter-img-coupon.is-play img:nth-child(2) { animation-name: ic-quickfilter-coupon-img-positionX2; }
+
+.ic-quickfilter-img-coupon.is-once img { animation-iteration-count: 1; }
+
+@keyframes ic-quickfilter-coupon-img-positionX1 {
+    0%, 10% { transform: translateX(0); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.8); }
+    23.33% { transform: translateX(-95%); animation-timing-function: step-end; }
+    67.33% { transform: translateX(86.67%); animation-timing-function: cubic-bezier(0.16, 0.16, 0, 1); }
+    88.66%, 100% { transform: translateX(0); }
+}
+
+@keyframes ic-quickfilter-coupon-img-positionX2 {
+    0%, 19.33% { transform: translateX(86.67%); animation-timing-function: cubic-bezier(0.16, 0.16, 0, 1); }
+    40.66% { transform: translateX(0); animation-timing-function: cubic-bezier(0.16, 0, 0.83, 1); }
+    58% { transform: translateX(0); animation-timing-function: cubic-bezier(0.7, 0, 0.83, 0.83); }
+    71.33%, 100% { transform: translateX(-95%); }
+}

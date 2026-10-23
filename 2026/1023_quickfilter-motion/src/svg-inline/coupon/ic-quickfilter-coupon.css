@@ -1,0 +1,35 @@
+svg.ic-quickfilter g, svg.ic-quickfilter path {
+    transform-box: view-box;
+    transform-origin: 0 0;
+}
+
+svg.ic-quickfilter.is-once * {
+    animation-iteration-count: 1;
+}
+
+.ic-quickfilter-coupon-positionX1,
+.ic-quickfilter-coupon-positionX2 {
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-coupon.is-play .ic-quickfilter-coupon-positionX1 { animation-name: ic-quickfilter-coupon-positionX1; }
+.ic-quickfilter-coupon.is-play .ic-quickfilter-coupon-positionX2 { animation-name: ic-quickfilter-coupon-positionX2; }
+
+@keyframes ic-quickfilter-coupon-positionX1 {
+    0% { transform: translate(30px, 0px); }
+    10% { transform: translate(30px, 0px); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.8); }
+    23.33% { transform: translate(-27px, 0px); animation-timing-function: step-end; }
+    67.33% { transform: translate(82px, 0px); animation-timing-function: cubic-bezier(0.16, 0.16, 0, 1); }
+    88.66%, 100% { transform: translate(30px, 0px); }
+}
+
+@keyframes ic-quickfilter-coupon-positionX2 {
+    0% { transform: translate(82px, 0px); }
+    19.33% { transform: translate(82px, 0px); animation-timing-function: cubic-bezier(0.16, 0.16, 0, 1); }
+    40.66% { transform: translate(30px, 0px); animation-timing-function: cubic-bezier(0.16, 0, 0.83, 1); }
+    58% { transform: translate(30px, 0px); animation-timing-function: cubic-bezier(0.7, 0, 0.83, 0.83); }
+    71.33%, 100% { transform: translate(-27px, 0px); }
+}

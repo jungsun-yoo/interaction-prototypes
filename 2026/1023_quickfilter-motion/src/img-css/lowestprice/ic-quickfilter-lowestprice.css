@@ -1,0 +1,114 @@
+/* 조각마다 이미지 1장(viewBox 20). 로티 타임리맵을 펼쳤다: 0–6f 정지, 6–76f 사이클 1, 76–150f 사이클 2.
+   트랙 매트(4점 다각형)는 꼭짓점 그대로 clip-path: polygon() 으로, Null·p4 의 크기·위치는 transform 하나로 옮겼다.
+   img 순서: p1, p2, p3, p4.
+   p3 매트는 Null 에 붙어 있지 않아서, 감싼 span 이 자르고 안쪽 img 만 Null 과 함께 작아진다 */
+
+.ic-quickfilter-img-lowestprice {
+    position: relative;
+    overflow: hidden;
+}
+
+.ic-quickfilter-img-lowestprice img,
+.ic-quickfilter-img-lowestprice > span {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: 0 0;
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+/* 재생하지 않을 때는 로티 첫 프레임의 매트로 잘라 둔다 */
+.ic-quickfilter-img-lowestprice > img:nth-child(1) { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+.ic-quickfilter-img-lowestprice > img:nth-child(2) { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+.ic-quickfilter-img-lowestprice > :nth-child(3) { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+
+.ic-quickfilter-img-lowestprice.is-play > img:nth-child(1) { animation-name: ic-quickfilter-lowestprice-img-matte1; }
+.ic-quickfilter-img-lowestprice.is-play > img:nth-child(2) { animation-name: ic-quickfilter-lowestprice-img-matte2; }
+.ic-quickfilter-img-lowestprice.is-play > :nth-child(3) { animation-name: ic-quickfilter-lowestprice-img-matte3; }
+.ic-quickfilter-img-lowestprice.is-play > :nth-child(3) img { animation-name: ic-quickfilter-lowestprice-img-null-scale; }
+.ic-quickfilter-img-lowestprice.is-play > img:nth-child(4) { animation-name: ic-quickfilter-lowestprice-img-p4-transform, ic-quickfilter-lowestprice-img-p4-opacity; }
+
+.ic-quickfilter-img-lowestprice.is-once img,
+.ic-quickfilter-img-lowestprice.is-once > span { animation-iteration-count: 1; }
+
+@keyframes ic-quickfilter-lowestprice-img-matte1 {
+    0% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+    4% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    10% { clip-path: polygon(48.75% 54.37%, 19.38% 52.29%, 13.33% 53.75%, 46.67% 55.63%); animation-timing-function: step-end; }
+    24% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 59.58% 12.29%, 85% 12.08%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    31.33% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+    50.67% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    56.67% { clip-path: polygon(48.75% 54.37%, 19.38% 52.29%, 13.33% 53.75%, 46.67% 55.63%); animation-timing-function: step-end; }
+    70.67% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 59.58% 12.29%, 85% 12.08%); animation-timing-function: cubic-bezier(0.33, 0, 0.83, 0.83); }
+    78%, 100% { clip-path: polygon(86.46% 8.75%, 62.08% 8.75%, 16.67% 51.67%, 50.83% 52.92%); }
+}
+
+@keyframes ic-quickfilter-lowestprice-img-matte2 {
+    0%, 4% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+    9.33% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    13.33% { clip-path: polygon(78.54% 26.25%, 83.54% 38.96%, 81.67% 39.58%, 77.29% 26.46%); animation-timing-function: step-end; }
+    31.33% { clip-path: polygon(19.58% 38.75%, 20.21% 56.04%, 24.17% 55.63%, 23.75% 39.79%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    36%, 50.67% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+    56% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    60% { clip-path: polygon(78.54% 26.25%, 83.54% 38.96%, 81.67% 39.58%, 77.29% 26.46%); animation-timing-function: step-end; }
+    78% { clip-path: polygon(19.58% 38.75%, 20.21% 56.04%, 24.17% 55.63%, 23.75% 39.79%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    82.67%, 100% { clip-path: polygon(19.58% 38.75%, 20.42% 57.92%, 83.13% 39.79%, 77.29% 26.46%); }
+}
+
+@keyframes ic-quickfilter-lowestprice-img-matte3 {
+    0%, 4% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+    13.33% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    20.67% { clip-path: polygon(19.49% 78.72%, 9.62% 84.64%, 42.94% 94.75%, 46.64% 93.03%); animation-timing-function: step-end; }
+    36% { clip-path: polygon(68.11% 20.73%, 62.68% 26.9%, 89.33% 29.36%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    38.67% { clip-path: polygon(68.11% 20.73%, 51.95% 49.9%, 68.88% 50.03%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    40.67% { clip-path: polygon(68.11% 20.73%, 35.67% 56.75%, 69.59% 56.43%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    44% { clip-path: polygon(68.11% 20.73%, 28.34% 65.81%, 61.36% 67.79%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.4, 1); }
+    48.67%, 50.67% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+    60% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    67.33% { clip-path: polygon(19.49% 78.72%, 9.62% 84.64%, 42.94% 94.75%, 46.64% 93.03%); animation-timing-function: step-end; }
+    82.67% { clip-path: polygon(68.11% 20.73%, 62.68% 26.9%, 89.33% 29.36%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    85.33% { clip-path: polygon(68.11% 20.73%, 51.95% 49.9%, 68.88% 50.03%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    87.33% { clip-path: polygon(68.11% 20.73%, 35.67% 56.75%, 69.59% 56.43%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    90.67% { clip-path: polygon(68.11% 20.73%, 28.34% 65.81%, 61.36% 67.79%, 94.01% 21.96%); animation-timing-function: cubic-bezier(0.17, 0.17, 0.4, 1); }
+    95.33%, 100% { clip-path: polygon(68.11% 20.73%, 9.62% 84.64%, 42.94% 94.75%, 94.01% 21.96%); }
+}
+
+@keyframes ic-quickfilter-lowestprice-img-null-scale {
+    0%, 4% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px); }
+    14% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.67, 1); }
+    20.67% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px); animation-timing-function: step-end; }
+    36%, 50.67% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px); }
+    60.67% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.67, 1); }
+    67.33% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px); animation-timing-function: step-end; }
+    82.67%, 100% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px); }
+}
+
+@keyframes ic-quickfilter-lowestprice-img-p4-transform {
+    0%, 4% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); }
+    14% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.67, 1); }
+    20.67% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); }
+    35.33% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    35.99% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(0.02) translate(-9px, -12.26px); animation-timing-function: step-end; }
+    36% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(6.33px, -6.28px) translate(9px, 12.26px) scale(0) translate(-9px, -12.26px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    46%, 50.67% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); }
+    60.67% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.67, 1); }
+    67.33% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); }
+    82% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.83, 0.83); }
+    82.66% { transform: translate(7.83px, 16.97px) scale(0) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(0.02) translate(-9px, -12.26px); animation-timing-function: step-end; }
+    82.67% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(6.33px, -6.28px) translate(9px, 12.26px) scale(0) translate(-9px, -12.26px); animation-timing-function: cubic-bezier(0.17, 0.17, 0.2, 1); }
+    92.67%, 100% { transform: translate(7.83px, 16.97px) scale(1) translate(-7.83px, -16.97px) translate(0px, 0px) translate(9px, 12.26px) scale(1) translate(-9px, -12.26px); }
+}
+
+@keyframes ic-quickfilter-lowestprice-img-p4-opacity {
+    0% { opacity: 1; }
+    4% { opacity: 1; animation-timing-function: step-end; }
+    20.67% { opacity: 0; animation-timing-function: step-end; }
+    36% { opacity: 1; }
+    50.67% { opacity: 1; animation-timing-function: step-end; }
+    67.33% { opacity: 0; animation-timing-function: step-end; }
+    82.67%, 100% { opacity: 1; }
+}

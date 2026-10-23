@@ -1,0 +1,38 @@
+svg.ic-quickfilter g, svg.ic-quickfilter path {
+    transform-box: view-box;
+    transform-origin: 0 0;
+}
+
+svg.ic-quickfilter.is-once * {
+    animation-iteration-count: 1;
+}
+
+.ic-quickfilter-plusdelivery-positionX1,
+.ic-quickfilter-plusdelivery-positionX2 {
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+
+.ic-quickfilter-plusdelivery.is-play .ic-quickfilter-plusdelivery-positionX1 { animation-name: ic-quickfilter-plusdelivery-positionX1; }
+.ic-quickfilter-plusdelivery.is-play .ic-quickfilter-plusdelivery-positionX2 { animation-name: ic-quickfilter-plusdelivery-positionX2; }
+
+
+@keyframes ic-quickfilter-plusdelivery-positionX1 {
+    0% { transform: translate(30px, 0px); }
+    6.67% { transform: translate(30px, 0px); animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    26.67% { transform: translate(87px, 0px); animation-timing-function: step-end; }
+    61.33% { transform: translate(-27px, 0px); animation-timing-function: cubic-bezier(0.167, 0.167, 0.2, 1); }
+    81.33%, 100% { transform: translate(30px, 0px); }
+}
+
+
+@keyframes ic-quickfilter-plusdelivery-positionX2 {
+    0% { transform: translate(-27px, 0px); }
+    18% { transform: translate(-27px, 0px); animation-timing-function: cubic-bezier(0.167, 0.167, 0.2, 1); }
+    38% { transform: translate(30px, 0px); animation-timing-function: cubic-bezier(0.167, 0, 0.4, 1); }
+    50% { transform: translate(30px, 0px); animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    70%, 100% { transform: translate(87px, 0px); }
+}

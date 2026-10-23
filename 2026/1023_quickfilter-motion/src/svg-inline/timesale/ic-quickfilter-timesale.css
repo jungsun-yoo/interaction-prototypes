@@ -1,0 +1,95 @@
+svg.ic-quickfilter g, svg.ic-quickfilter path {
+    transform-box: view-box;
+    transform-origin: 0 0;
+}
+
+svg.ic-quickfilter.is-once * {
+    animation-iteration-count: 1;
+}
+
+.ic-quickfilter-timesale-scale1,
+.ic-quickfilter-timesale-stroke-width2,
+.ic-quickfilter-timesale-position3,
+.ic-quickfilter-timesale-rotation4,
+.ic-quickfilter-timesale-scale5,
+.ic-quickfilter-timesale-stroke-width6,
+.ic-quickfilter-timesale-scale7,
+.ic-quickfilter-timesale-opacity8,
+.ic-quickfilter-timesale-scale9 {
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-scale1 { animation-name: ic-quickfilter-timesale-scale1; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-stroke-width2 { animation-name: ic-quickfilter-timesale-stroke-width2; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-position3 { animation-name: ic-quickfilter-timesale-position3; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-rotation4 { animation-name: ic-quickfilter-timesale-rotation4; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-scale5 { animation-name: ic-quickfilter-timesale-scale5; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-stroke-width6 { animation-name: ic-quickfilter-timesale-stroke-width6; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-scale7 { animation-name: ic-quickfilter-timesale-scale7; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-opacity8 { animation-name: ic-quickfilter-timesale-opacity8; }
+
+.ic-quickfilter-timesale.is-play .ic-quickfilter-timesale-scale9 { animation-name: ic-quickfilter-timesale-scale9; }
+
+@keyframes ic-quickfilter-timesale-scale1 {
+    0%, 10% { transform: scale(1); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    30%, 86% { transform: scale(1.2); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { transform: scale(1); }
+}
+
+@keyframes ic-quickfilter-timesale-stroke-width2 {
+    0%, 10% { stroke-width: 1.1; animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    30%, 86% { stroke-width: 0.8; animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { stroke-width: 1.1; }
+}
+
+@keyframes ic-quickfilter-timesale-position3 {
+    0%, 10% { transform: translate(30.15px, 31.02px); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    34.67% { transform: translate(30.15px, 30.23px); animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    50%, 100% { transform: translate(30.15px, 31.02px); }
+}
+
+@keyframes ic-quickfilter-timesale-rotation4 {
+    0%, 10% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    50% { transform: rotate(360deg); animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    86%, 100% { transform: rotate(720deg); }
+}
+
+@keyframes ic-quickfilter-timesale-scale5 {
+    0%, 10% { transform: scale(3); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    30%, 86% { transform: scale(5.4); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { transform: scale(3); }
+}
+
+@keyframes ic-quickfilter-timesale-stroke-width6 {
+    0%, 10% { stroke-width: 1.1; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    30%, 86% { stroke-width: 0.8; animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { stroke-width: 1.1; }
+}
+
+@keyframes ic-quickfilter-timesale-scale7 {
+    0%, 10% { transform: scale(3); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    30%, 86% { transform: scale(5.4); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { transform: scale(3); }
+}
+
+@keyframes ic-quickfilter-timesale-opacity8 {
+    0%, 10% { opacity: 0; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+    30%, 86% { opacity: 1; animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { opacity: 0.01; }
+}
+
+@keyframes ic-quickfilter-timesale-scale9 {
+    0%, 10% { transform: scale(1); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    30%, 86% { transform: scale(1.8); animation-timing-function: cubic-bezier(0.6, 0, 0.1, 1); }
+    99.33%, 100% { transform: scale(1); }
+}

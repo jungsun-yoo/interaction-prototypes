@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="100%" height="100%" class="ic-quickfilter ic-quickfilter-lowestprice">
+  <defs>
+    <linearGradient id="ic-quickfilter-lowestprice-grad" gradientUnits="userSpaceOnUse" x1="-17.76" y1="29.66" x2="18.65" y2="-25.25">
+      <stop offset="0.338" stop-color="#f31110"/>
+      <stop offset="0.669" stop-color="#f94e1b"/>
+      <stop offset="1" stop-color="#ff8b26"/>
+    </linearGradient>
+    <clipPath id="ic-quickfilter-lowestprice-clip1-rest" clipPathUnits="userSpaceOnUse"><polygon points="51.88 5.25 37.25 5.25 10 31 30.5 31.75"/></clipPath>
+    <clipPath id="ic-quickfilter-lowestprice-clip2-rest" clipPathUnits="userSpaceOnUse"><polygon points="11.75 23.25 12.25 34.75 49.88 23.88 46.38 15.87"/></clipPath>
+    <clipPath id="ic-quickfilter-lowestprice-clip3-rest" clipPathUnits="userSpaceOnUse"><polygon points="40.86 12.44 5.77 50.78 25.76 56.85 56.41 13.18"/></clipPath>
+  </defs>
+  <g class="ic-quickfilter-lowestprice-clip1" clip-path="url(#ic-quickfilter-lowestprice-clip1-rest)"><rect width="60" height="60" fill="none"/><path transform="translate(30.25 30.1)" d="M6.47 -19.88 L-13.18 -4.36 C-14.15 -3.6 -14.45 -2.28 -13.92 -1.18 C-13.4 -0.08 -12.19 0.51 -11.01 0.25 L0.92 -2.31 L1.67 -7.56 L10.5 -17.65 C11.3 -18.57 10.93 -20.01 9.78 -20.42 C9.4 -20.56 9 -20.62 8.61 -20.62 C7.85 -20.62 7.09 -20.37 6.47 -19.88Z" fill="url(#ic-quickfilter-lowestprice-grad)"/></g>
+  <g class="ic-quickfilter-lowestprice-clip2" clip-path="url(#ic-quickfilter-lowestprice-clip2-rest)"><rect width="60" height="60" fill="none"/><path transform="translate(30.25 30.1)" d="M-13.18 -4.36 C-14.15 -3.6 -14.45 -2.28 -13.92 -1.18 C-13.4 -0.08 -12.19 0.51 -11.01 0.25 L0.92 -2.31 L15.7 -8.99 C16.71 -10.42 15.29 -12.3 13.64 -11.73 L1.67 -7.56 L-13.18 -4.36Z" fill="url(#ic-quickfilter-lowestprice-grad)"/></g>
+  <g class="ic-quickfilter-lowestprice-clip3" clip-path="url(#ic-quickfilter-lowestprice-clip3-rest)"><rect width="60" height="60" fill="none"/><g transform="translate(23.5 50.92)"><g class="ic-quickfilter-lowestprice-null-scale"><path transform="translate(6.75 -20.83)" d="M0.26 -2.89 L-7.33 6.69 L-15.94 6.69 C-16.42 6.69 -16.71 7.23 -16.44 7.62 L-8.12 19.78 C-7.68 20.43 -6.8 20.62 -6.12 20.22 L14.79 7.8 C15.32 7.49 15.09 6.69 14.49 6.69 L4.67 6.69 L15.7 -8.99 C16.71 -10.42 15.29 -12.3 13.64 -11.73 L0.26 -2.89Z" fill="url(#ic-quickfilter-lowestprice-grad)"/></g></g></g>
+  <g transform="translate(23.5 50.92)">
+    <g class="ic-quickfilter-lowestprice-null-scale">
+      <g class="ic-quickfilter-lowestprice-p4-opacity">
+        <g class="ic-quickfilter-lowestprice-p4-move" transform="translate(3.5 -14.14)">
+          <g class="ic-quickfilter-lowestprice-p4-scale">
+            <path transform="translate(3.25 -6.69)" d="M-15.94 6.69 C-16.42 6.69 -16.71 7.23 -16.44 7.62 L-8.12 19.78 C-7.68 20.43 -6.8 20.62 -6.12 20.22 L14.79 7.8 C15.32 7.49 15.09 6.69 14.49 6.69 L-15.94 6.69Z" fill="url(#ic-quickfilter-lowestprice-grad)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
