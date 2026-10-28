@@ -6,9 +6,10 @@
   <meta name="theme-color" content="#1A1B1F">
   <title>EVENT FAB 1</title>
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
-  <link rel="stylesheet" href="./src/mds-motion.css?v=20261028-1">
-  <link rel="stylesheet" href="./src/style.css?v=20261028-1">
-  <link rel="stylesheet" href="./src/fab_event_1.css?v=20261028-1">
+  <link rel="stylesheet" href="./src/lib/swiper-bundle-11.1.14.min.css">
+  <link rel="stylesheet" href="./src/mds-motion.css?v=20261028-9">
+  <link rel="stylesheet" href="./src/style.css?v=20261028-9">
+  <link rel="stylesheet" href="./src/fab_event_1.css?v=20261028-9">
 </head>
 <body>
 
@@ -36,11 +37,19 @@
 
     <!-- content -->
     <div class="scroll-area">
-      <div class="big-banner">
-        <img src="src/img/BigBanner.png" alt="Big Banner" width="375" height="257">
+      <!-- 빅배너: 슬라이드는 script.js의 BIG_BANNER_IMAGES 목록으로 생성 -->
+      <div class="big-banner swiper">
+        <div class="swiper-wrapper"></div>
+      </div>
+      <!-- 퀵메뉴: 600 너비 이미지, 화면보다 넓으면 가로 스크롤 -->
+      <div class="quick-menu">
+        <img src="src/img/HighlightQuickMenu.png" alt="Highlight Quick Menu" width="600" height="72">
+      </div>
+      <div class="quick-menu">
+        <img src="src/img/MusinsaQuickMenu.png" alt="Musinsa Quick Menu" width="600" height="56">
       </div>
       <div class="content">
-        <img src="src/img/Content.png" alt="Content" width="375" height="4793">
+        <img src="src/img/Content.png?v=20261028-9" alt="Content" width="375" height="4667">
         <div class="content-lottie" aria-label="아우터 페스티벌"></div>
       </div>
     </div>
@@ -94,7 +103,8 @@
 
   <script src="./src/lib/lottie_svg-5.13.0.min.js"></script>
   <script src="./src/lib/motion-14.1.0.js"></script>
-  <script src="./src/script.js?v=20261028-1"></script>
+  <script src="./src/lib/swiper-bundle-11.1.14.min.js"></script>
+  <script src="./src/script.js?v=20261028-9"></script>
   <script>
     /* FAB 이벤트(로티): 왼쪽 밖 → 등장 → 2초 홀딩 → 1회 재생 → loopStart~loopEnd 반복. 프로토타입이라 진입할 때마다 재생 */
     (function () {

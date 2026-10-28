@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#1A1B1F">
-  <title>EVENT FAB 2</title>
+  <title>EVENT FAB 3</title>
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
-  <link rel="stylesheet" href="./src/mds-motion.css?v=20261028-1">
-  <link rel="stylesheet" href="./src/style.css?v=20261028-1">
-  <link rel="stylesheet" href="./src/fab_event_2.css?v=20261028-1">
+  <link rel="stylesheet" href="./src/lib/swiper-bundle-11.1.14.min.css">
+  <link rel="stylesheet" href="./src/mds-motion.css?v=20261028-9">
+  <link rel="stylesheet" href="./src/style.css?v=20261028-9">
+  <link rel="stylesheet" href="./src/fab_event_3.css?v=20261028-9">
 </head>
 <body>
 
@@ -36,11 +37,19 @@
 
     <!-- content -->
     <div class="scroll-area">
-      <div class="big-banner">
-        <img src="src/img/BigBanner.png" alt="Big Banner" width="375" height="257">
+      <!-- 빅배너: 슬라이드는 script.js의 BIG_BANNER_IMAGES 목록으로 생성 -->
+      <div class="big-banner swiper">
+        <div class="swiper-wrapper"></div>
+      </div>
+      <!-- 퀵메뉴: 600 너비 이미지, 화면보다 넓으면 가로 스크롤 -->
+      <div class="quick-menu">
+        <img src="src/img/HighlightQuickMenu.png" alt="Highlight Quick Menu" width="600" height="72">
+      </div>
+      <div class="quick-menu">
+        <img src="src/img/MusinsaQuickMenu.png" alt="Musinsa Quick Menu" width="600" height="56">
       </div>
       <div class="content">
-        <img src="src/img/Content.png" alt="Content" width="375" height="4793">
+        <img src="src/img/Content.png?v=20261028-9" alt="Content" width="375" height="4667">
         <div class="content-lottie" aria-label="아우터 페스티벌"></div>
       </div>
     </div>
@@ -96,13 +105,13 @@
 
   <script src="./src/lib/lottie_svg-5.13.0.min.js"></script>
   <script src="./src/lib/motion-14.1.0.js"></script>
-  <script src="./src/script.js?v=20261028-1"></script>
+  <script src="./src/lib/swiper-bundle-11.1.14.min.js"></script>
+  <script src="./src/script.js?v=20261028-9"></script>
   <script>
-    /* FAB 이벤트(Type_2): 탑버튼이 나오는 100px 이상 스크롤하면 옆으로 숨김, 그 위에서는 전체 노출.
-       숨김 중 노출 정도는 스크롤 방향별(내릴 때 / 올릴 때). 이동·회전은 Motion spring.bouncy, 수치는 fab_event_2.css 변수에서 읽음 */
+    /* FAB 이벤트(Type_3): 탑버튼이 나오는 100px 이상 스크롤하면 옆으로 숨김, 그 위에서는 전체 노출.
+       숨김 중 노출 정도는 스크롤 방향별(내릴 때 / 올릴 때). 이동·회전은 Motion spring.bouncy, 수치는 fab_event_3.css 변수에서 읽음 */
     (function () {
       var HIDE_SCROLL_TOP = 100; /* script.js fab-top 노출 기준과 같게 */
-      var scrollArea = document.querySelector('.scroll-area');
       var eventEl = document.querySelector('.fab-event');
       var state = 'full'; /* 'full' | 'down' | 'up' */
       var lastScrollTop = 0;
@@ -129,12 +138,11 @@
       function setState(next) {
         if (next === state) return;
         state = next;
-        eventEl.classList.toggle('is-peek', next !== 'full');
         Motion.animate(eventEl, next === 'full' ? { x: 0, rotate: 0 } : hideTarget(next), springOptions());
       }
 
-      scrollArea.addEventListener('scroll', function () {
-        var scrollTop = scrollArea.scrollTop;
+      pageScroll.target.addEventListener('scroll', function () { /* pageScroll: script.js */
+        var scrollTop = pageScroll.get();
         var delta = scrollTop - lastScrollTop;
         lastScrollTop = scrollTop;
 

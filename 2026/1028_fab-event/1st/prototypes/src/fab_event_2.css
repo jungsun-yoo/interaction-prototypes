@@ -1,0 +1,92 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — fab_event_2.css (Type_2)
+   이벤트 FAB 전용 스타일 (mds-motion.css, style.css 이후 로드)
+   ════════════════════════════════════════════════════ */
+
+.fab-left {
+   position: relative;
+}
+
+/* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute
+   크기는 새 타입 디자인에 맞춰 변경 */
+.fab-event {
+   --fab-event-w: 60px;
+   --fab-event-h: 68px;
+   --fab-event-radius: 8px;
+   --fab-event-color: #F2665E;
+
+   /* 등장: 화면 왼쪽 밖 → 제자리 */
+   --fab-event-edge-offset: 10px;   /* 화면 왼쪽 끝 ~ FAB 왼쪽 끝 (fab 좌측 패딩) */
+   --fab-event-enter-delay: 0.5s;   /* 페이지 로드 후 등장 시작까지 */
+   --fab-event-enter-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); 
+   --fab-event-enter-spring-damping: var(--mds-motion-spring-bouncy-damping);
+
+   /* 숨김: 기본은 왼쪽으로 숨기고 일부만 노출. 로드 등장·상단(기준 미만) 복귀 때만 잠깐 펼침 */
+   --fab-event-hide-scroll-top: 100;  /* 숨김 시작 스크롤 위치(px) — 탑버튼 노출 기준과 같게 */
+   --fab-event-hide-visible: 12px;    /* 숨김 중 화면에 보이는 폭 */
+   --fab-event-hide-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness);
+   --fab-event-hide-spring-damping: var(--mds-motion-spring-bouncy-damping);
+   --fab-event-reveal-spring-stiffness: var(--mds-motion-spring-normal-stiffness); /* 숨김 중 눌러서 꺼낼 때 815 */
+   --fab-event-reveal-spring-damping: var(--mds-motion-spring-normal-damping);     /* 54 */
+   --fab-event-auto-close: 1s;        /* 로드 등장으로 펼친 뒤 숨기까지 (펼침 모션이 끝난 뒤부터) */
+   --fab-event-peek-duration: 0.5s;   /* 상단 복귀 시 자동 펼침 시간 */
+   --fab-event-peek-ease: var(--mds-motion-power3-easeOut);
+   --fab-event-peek-hold: 0.5s;       /* 상단 복귀로 펼친 뒤 숨기까지 (펼침 모션이 끝난 뒤부터), 닫힘은 hide 스프링 */
+   --fab-event-rehide-distance: 30;   /* 숨김 중 눌러서 꺼낸 뒤, 이만큼(px) 더 스크롤하면 다시 숨김 */
+   --fab-event-hide-hit-expand: 8px;  /* 숨김 중 터치 영역: 보이는 띠에서 위·아래·오른쪽으로 넓히는 폭 */
+   --fab-event-drag-start: 4;         /* 숨김 중 이만큼(px) 이상 움직여야 드래그로 판단 (미만은 클릭) */
+   --fab-event-drag-reveal: 0.3;      /* 놓을 때 숨김→제자리 거리의 이 비율 이상 끌었으면 꺼냄, 미만이면 다시 숨김 */
+
+   position: absolute;
+   left: 0;
+   bottom: calc(100% + 12px);
+   width: var(--fab-event-w);
+   height: var(--fab-event-h);
+   border-radius: var(--fab-event-radius);
+   background: var(--fab-event-color);
+   transform: translateX(calc(-100% - var(--fab-event-edge-offset))); /* 등장 전: 화면 밖 */
+   pointer-events: auto;   /* .bottom-navigation이 none이라 직접 켬 — 숨김 중 누르거나 끌면 다시 나옴 */
+   cursor: pointer;
+   touch-action: pan-y;    /* 가로 드래그는 스크립트가, 세로는 페이지 스크롤이 처리 */
+}
+
+/* 펼친 상태 이미지 (FAB_EVENT_60.png 180×204 @3x → 60×68): 숨김 상태에서는 사라지고 빨간 띠 + 화살표만 남음 */
+.fab-event-img {
+   position: absolute;
+   inset: 0;
+   display: block;
+   width: 100%;
+   height: 100%;
+   border-radius: inherit;
+   transition: opacity var(--fab-event-img-fade, 0.2s) linear;
+}
+.fab-event.is-hidden .fab-event-img {
+   opacity: 0;
+}
+
+/* 화살표 (피그마 1020:40739): 오른쪽 끝·세로 가운데 12px, 숨김 상태에서만 노출 */
+.fab-event-arrow {
+   --fab-event-arrow-fade: 0.2s;
+   position: absolute;
+   top: 50%;
+   right: 0;
+   display: block;
+   width: 12px;
+   height: 12px;
+   transform: translateY(-50%);
+   opacity: 0;
+   transition: opacity var(--fab-event-arrow-fade) linear;
+}
+.fab-event.is-hidden .fab-event-arrow {
+   opacity: 1;
+}
+
+/* 숨김 중 터치 영역 확장: 보이는 띠에 투명 영역을 겹쳐 위·아래·오른쪽으로 hit-expand만큼 넓힘 */
+.fab-event.is-hidden::after {
+   content: '';
+   position: absolute;
+   top: calc(var(--fab-event-hide-hit-expand) * -1);
+   bottom: calc(var(--fab-event-hide-hit-expand) * -1);
+   left: calc(100% - var(--fab-event-hide-visible));
+   width: calc(var(--fab-event-hide-visible) + var(--fab-event-hide-hit-expand));
+}

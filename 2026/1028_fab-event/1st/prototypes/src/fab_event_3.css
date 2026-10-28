@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════
-   MUSINSA FAB 이벤트 — fab_event_2.css (Type_2)
+   MUSINSA FAB 이벤트 — fab_event_3.css (Type_3)
    이벤트 FAB 전용 스타일 (mds-motion.css, style.css 이후 로드)
    ════════════════════════════════════════════════════ */
 
@@ -12,10 +12,10 @@
   --fab-event-w: 60px;
   --fab-event-h: 68px;
 
-  /* 100px 이상 스크롤 시 숨김 상태 — Type_2.html에서 읽어 Motion 스프링으로 이동·회전 */
+  /* 100px 이상 스크롤 시 숨김 상태 — Type_3.html에서 읽어 Motion 스프링으로 이동·회전 */
   --fab-event-hide-rotate: 6deg;        /* 숨김 시 회전 각도 */
   --fab-event-hide-visible-down: 0.2;   /* 스크롤 내릴 때 화면에 남는 너비 비율 (20%) */
-  --fab-event-hide-visible-up: 0.35;     /* 스크롤 올릴 때 화면에 남는 너비 비율 (30%) */
+  --fab-event-hide-visible-up: 0.35;     /* 스크롤 올릴 때 화면에 남는 너비 비율 (35%) */
   --fab-event-edge-offset: 10px;        /* 화면 왼쪽 끝 ~ FAB 왼쪽 끝 (fab 좌측 패딩) */
   --fab-event-hide-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); /* 322 */
   --fab-event-hide-spring-damping: var(--mds-motion-spring-bouncy-damping);     /* 26 */

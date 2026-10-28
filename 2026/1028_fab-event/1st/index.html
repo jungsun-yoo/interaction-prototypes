@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype</title>
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
+  <style>
+    /* ════════════════════════════════════════════════════
+        프로토타입 인덱스 (재사용: 아래 script의 CONFIG만 수정)
+        PC 전용: 좌측 패널에서 항목 선택 → 가운데 iframe에 prototypes/*.html
+       ════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --panel-w: 240px;
+      --panel-bg: #1c1c1e;
+      --panel-line: rgba(255, 255, 255, 0.08);
+      --panel-text: #fff;
+      --panel-sub: rgba(255, 255, 255, 0.45);
+      --canvas-bg: #f0f0f0;
+      --frame-w: 439px;   /* 폰 375 + 그림자 여백 32×2 */
+      --frame-h: 876px;   /* 폰 812 + 그림자 여백 32×2 */
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; /* Pretendard 우선, 없으면 Apple 시스템 폰트(SF Pro·Apple SD Gothic Neo) */
+      background: var(--canvas-bg);
+    }
+    .layout { display: grid; grid-template-columns: var(--panel-w) 1fr; height: 100%;}
+
+    /* --- 좌측 패널 --- */
+    .panel {display: flex; flex-direction: column; background: var(--panel-bg); color: var(--panel-text);}
+    .panel-head {padding: 24px 20px 20px; border-bottom: 1px solid var(--panel-line);}
+    .panel-title { font-size: 18px; font-weight: 700; line-height: 24px; }
+    .panel-sub { margin-top: 4px; font-size: 12px; line-height: 16px; color: var(--panel-sub); }
+    /* 외부 링크 칩(Figma·Jira): 제목 아래 가로 배치, 선택한 항목의 주소로 이동
+       Figma는 주소가 없으면 비활성, Jira는 주소가 없으면 숨김 */
+    .panel-links {display: flex; gap: 6px; margin-top: 14px;}
+    .panel-link {display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600; line-height: 16px; text-decoration: none;}
+    .panel-link:hover {background: rgba(255, 255, 255, 0.16);}
+    .panel-link svg {flex-shrink: 0; display: block;}
+    .panel-link-arrow {color: var(--panel-sub); font-weight: 400;}
+    .panel-link.is-disabled {opacity: 0.35; pointer-events: none;}
+    .panel-link.is-hidden {display: none;}
+
+    .panel-label {padding: 20px 20px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--panel-sub);}
+    .type-list { display: flex; flex-direction: column; gap: 2px; padding: 0 8px; list-style: none; }
+    .type-button {display: block; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: transparent; color: rgba(255, 255, 255, 0.75); font: inherit; font-size: 14px; line-height: 20px; text-align: left; text-decoration: none; cursor: pointer;}
+    .type-button:hover { background: rgba(255, 255, 255, 0.05); }
+    .type-button.is-active { background: rgba(255, 255, 255, 0.12); color: #fff; font-weight: 600; }
+
+    .panel-foot {display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding: 16px; border-top: 1px solid var(--panel-line);}
+    .panel-action {padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 8px; background: transparent; color: #fff;  font: inherit; font-size: 13px; line-height: 18px; cursor: pointer;}
+    .panel-action:hover {background: rgba(255, 255, 255, 0.06); }
+    .panel-action svg {display: inline-block; margin-right: 6px; vertical-align: -2px;}
+    .panel-hint {font-size: 11px; line-height: 16px; color: var(--panel-sub); text-align: center; }
+
+    /* 가운데: 폰 프레임 iframe. 화면 높이·너비가 모자라면 비율 유지하며 축소 (script) */
+    .stage {position: relative; overflow: hidden;}
+    /* QR 카드: 가운데 바탕 좌상단. 선택한 항목 주소를 폰으로 열기 (바탕이 좁아 폰과 겹치면 숨김) */
+    .qr-card {position: absolute; top: 24px; left: 24px; z-index: 1; width: 172px; padding: 16px; border-radius: 16px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;}
+    .qr-card.is-hidden {display: none;}
+    .qr-image {width: 140px; height: 140px;}
+    .qr-image svg {display: block; width: 100%; height: 100%;}
+    .qr-title {margin-top: 12px; font-size: 13px; font-weight: 600; line-height: 18px; color: #000;}
+    .qr-url {margin-top: 2px; font-size: 11px; line-height: 15px; color: rgba(0, 0, 0, 0.45); word-break: break-all;}
+    .qr-empty {font-size: 12px; line-height: 17px; color: rgba(0, 0, 0, 0.6);}
+    .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    <aside class="panel">
+      <div class="panel-head">
+        <p class="panel-title" data-config="title"></p>
+        <p class="panel-sub" data-config="sub"></p>
+        <div class="panel-links">
+          <a class="panel-link is-disabled" id="figmaLink" target="_blank" rel="noopener">
+            <svg width="10" height="15" viewBox="0 0 38 57" aria-hidden="true"><path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/><path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/><path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/><path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/><path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/></svg>
+            <span>Figma</span>
+            <span class="panel-link-arrow">↗</span>
+          </a>
+          <a class="panel-link is-hidden" id="jiraLink" target="_blank" rel="noopener">
+            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path fill="#2684ff" d="M11.53 2c0 2.4 1.97 4.35 4.35 4.35h1.78v1.7c0 2.4 1.94 4.34 4.34 4.35V2.84a.84.84 0 0 0-.84-.84H11.53z"/><path fill="#2684ff" opacity=".8" d="M6.77 6.8a4.36 4.36 0 0 0 4.34 4.34h1.8v1.72a4.36 4.36 0 0 0 4.34 4.34V7.63a.84.84 0 0 0-.83-.83H6.77z"/><path fill="#2684ff" opacity=".65" d="M2 11.6c0 2.4 1.95 4.34 4.35 4.34h1.78v1.72c.01 2.39 1.95 4.33 4.34 4.34v-9.57a.84.84 0 0 0-.84-.84H2z"/></svg>
+            <span>Jira</span>
+            <span class="panel-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <p class="panel-label" data-config="label"></p>
+      <ul class="type-list" id="typeList"></ul>
+      <div class="panel-foot">
+        <button class="panel-action" type="button" id="replayButton">↻ 다시 재생</button>
+        <button class="panel-action" type="button" id="openButton"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>새 창으로 보기</button>
+        <p class="panel-hint" id="keyHint"></p>
+      </div>
+    </aside>
+    <main class="stage" id="stage">
+      <div class="qr-card" id="qrCard">
+        <div class="qr-image" id="qrImage"></div>
+        <p class="qr-title" id="qrTitle"></p>
+        <p class="qr-url" id="qrUrl"></p>
+      </div>
+      <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
+    </main>
+  </div>
+
+  <script src="./lib/qrcode-generator-1.4.4.min.js"></script>
+  <script>
+    // ================================================================================================= //
+    /* 프로젝트 설정
+        title·sub: 패널·브라우저 탭 제목 / label: 목록 위 작은 제목
+        version: prototypes/*.html의 ?v= 값과 같게 올리기 (iframe 캐시 방지)
+        items: 항목 추가는 한 줄 (id는 주소 #id로 쓰임)
+        figma: 프로젝트 공통 피그마 설명 링크 / 항목별로 다르면 items의 figma에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
+        jira: 프로젝트 공통 Jira 링크 / 항목별로 다르면 items의 jira에 적기 (항목 값이 우선, 둘 다 없으면 버튼 숨김)
+    */
+    var CONFIG = {
+      title: 'EVENT FAB',
+      sub: '26-1028 · Prototype',
+      label: 'TYPES',
+      version: '20261028-9',
+      qrHost: '172.18.102.82',
+      figma: 'https://www.figma.com/design/qgf78miXjE8bsy68Dspuxw/%ED%99%94%EB%A9%B4%EB%85%BC%EC%9D%98-6?node-id=3859-87736&t=cyvkFhujmdEHecLw-4',
+      jira: 'https://jira.team.musinsa.com/browse/FT-737',
+      items: [
+        { id: 'type1', title: 'Type 1', file: 'prototypes/Type_1.html' },
+        { id: 'type2', title: 'Type 2', file: 'prototypes/Type_2.html' },
+        { id: 'type3', title: 'Type 3', file: 'prototypes/Type_3.html' }
+      ]
+    };
+    // ================================================================================================= //
+    
+    (function () {
+      var TYPES = CONFIG.items;
+      var frame = document.getElementById('frame');
+      var stage = document.getElementById('stage');
+      var typeList = document.getElementById('typeList');
+      var current = null;
+
+      /* 설정 텍스트 채우기 */
+      [].forEach.call(document.querySelectorAll('[data-config]'), function (el) {
+        el.textContent = CONFIG[el.dataset.config];
+      });
+      document.title = CONFIG.title;
+      document.getElementById('keyHint').textContent =
+        '키보드 ' + TYPES.slice(0, 9).map(function (t, i) { return i + 1; }).join(' · ') + ' / ↑ ↓ 로 전환';
+
+      function fileUrl(type) {
+        return type.file + '?v=' + CONFIG.version;
+      }
+
+      function findType(id) {
+        return TYPES.filter(function (t) { return t.id === id; })[0] || TYPES[0];
+      }
+
+      /* iframe 이동: src를 바꾸면 방문 기록이 쌓여 뒤로가기가 iframe만 되돌리므로, 첫 로드 이후엔 replace */
+      function loadFrame(url) {
+        if (frame.getAttribute('src')) frame.contentWindow.location.replace(url);
+        else frame.src = url;
+      }
+
+      /* QR 주소 규칙: GitHub Pages·IP 주소면 지금 주소 그대로, localhost면 호스트만 qrHost로 바꿈 */
+      function shareUrl(type) {
+        var url = new URL(fileUrl(type), location.href);
+        if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)) {
+          if (!CONFIG.qrHost) return null;
+          url.hostname = CONFIG.qrHost;
+        }
+        return url;
+      }
+
+      /* 선택한 항목이 바뀔 때마다 QR 다시 그림 */
+      function renderQr(type) {
+        var url = shareUrl(type);
+        var image = document.getElementById('qrImage');
+        document.getElementById('qrTitle').textContent = type.title;
+        if (!url) {
+          image.innerHTML = '<p class="qr-empty">localhost에서는 CONFIG.qrHost에 내부 IP를 넣거나 IP 주소로 접속하세요</p>';
+          document.getElementById('qrUrl').textContent = '';
+          return;
+        }
+        var qr = qrcode(0, 'M');
+        qr.addData(url.href);
+        qr.make();
+        image.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+        document.getElementById('qrUrl').textContent = url.host + url.pathname;
+      }
+
+      /* 피그마 링크: 항목 figma → 공통 CONFIG.figma 순서, 없으면 비활성 */
+      function renderFigma(type) {
+        var link = document.getElementById('figmaLink');
+        var url = type.figma || CONFIG.figma;
+        if (url) link.href = url;
+        else link.removeAttribute('href');
+        link.classList.toggle('is-disabled', !url);
+        link.title = url ? type.title + ' 피그마 설명 열기' : '피그마 링크가 아직 없습니다 (CONFIG.figma)';
+      }
+
+      /* Jira 링크: 항목 jira → 공통 CONFIG.jira 순서, 없으면 숨김 */
+      function renderJira(type) {
+        var link = document.getElementById('jiraLink');
+        var url = type.jira || CONFIG.jira;
+        if (url) link.href = url;
+        else link.removeAttribute('href');
+        link.classList.toggle('is-hidden', !url);
+        link.title = url ? type.title + ' Jira 열기' : '';
+      }
+
+      function select(id) {
+        current = findType(id);
+        loadFrame(fileUrl(current));
+        renderQr(current);
+        renderFigma(current);
+        renderJira(current);
+        document.title = CONFIG.title + ' · ' + current.title;
+        [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
+          button.classList.toggle('is-active', button.dataset.id === current.id);
+        });
+        if (location.hash !== '#' + current.id) history.replaceState(null, '', '#' + current.id);
+      }
+
+      /* PC 패널 버튼 */
+      TYPES.forEach(function (type) {
+        var li = document.createElement('li');
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'type-button';
+        button.textContent = type.title;
+        button.dataset.id = type.id;
+        button.addEventListener('click', function () {
+          if (current && current.id === type.id) return;
+          history.pushState(null, '', '#' + type.id);
+          select(type.id);
+        });
+        li.appendChild(button);
+        typeList.appendChild(li);
+      });
+
+      document.getElementById('replayButton').addEventListener('click', function () {
+        loadFrame(fileUrl(current) + '&t=' + Date.now()); /* 다시 불러와 등장 모션부터 재생 */
+      });
+      document.getElementById('openButton').addEventListener('click', function () {
+        window.open(fileUrl(current), '_blank');
+      });
+
+      /* 키보드: 1~9 / ↑ ↓ 로 타입 전환 */
+      document.addEventListener('keydown', function (e) {
+        var index = TYPES.indexOf(current);
+        var next = null;
+        if (/^[1-9]$/.test(e.key)) next = TYPES[Number(e.key) - 1];
+        else if (e.key === 'ArrowDown') next = TYPES[(index + 1) % TYPES.length];
+        else if (e.key === 'ArrowUp') next = TYPES[(index - 1 + TYPES.length) % TYPES.length];
+        if (!next || next === current) return;
+        e.preventDefault();
+        history.pushState(null, '', '#' + next.id);
+        select(next.id);
+      });
+
+      /* 화면이 프레임보다 작으면 비율 유지하며 축소 */
+      function fitFrame() {
+        var style = getComputedStyle(document.documentElement);
+        var scale = Math.min(1,
+          stage.clientWidth / parseFloat(style.getPropertyValue('--frame-w')),
+          stage.clientHeight / parseFloat(style.getPropertyValue('--frame-h')));
+        frame.style.setProperty('--frame-scale', scale);
+
+        /* QR 카드가 폰과 겹치면 숨김 (프레임 안 그림자 여백 32px 제외한 실제 폰 왼쪽 기준) */
+        var card = document.getElementById('qrCard');
+        var phoneLeft = (stage.clientWidth - parseFloat(style.getPropertyValue('--frame-w')) * scale) / 2 + 32 * scale;
+        card.classList.toggle('is-hidden', card.offsetLeft + card.offsetWidth + 16 > phoneLeft);
+      }
+      new ResizeObserver(fitFrame).observe(stage); /* 창 크기·레이아웃이 바뀌면 축소·QR 숨김 다시 계산 */
+      window.addEventListener('popstate', function () { select(location.hash.slice(1)); });
+
+      fitFrame();
+      select(location.hash.slice(1));
+    })();
+  </script>
+
+</body>
+</html>
