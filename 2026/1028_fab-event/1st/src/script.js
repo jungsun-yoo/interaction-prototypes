@@ -55,6 +55,52 @@
     }, { passive: true });
 })();
 
+/* 최근 본 상품: 고정(hold) → 위로 롤링(roll) 무한 반복. 시간은 style.css .fab-recent 변수 */
+(function () {
+    var recent = document.querySelector('.fab-recent');
+    var images = recent.querySelectorAll('img');
+    if (images.length < 2) return;
+
+    var style = getComputedStyle(recent);
+    var HOLD_MS = parseFloat(style.getPropertyValue('--fab-recent-hold')) * 1000;
+    var ROLL_MS = parseFloat(style.getPropertyValue('--fab-recent-roll')) * 1000;
+    var index = 0;
+
+    function roll() {
+        var current = images[index];
+        index = (index + 1) % images.length;
+        var next = images[index];
+
+        // 이전에 위로 나간 이미지를 transition 없이 아래 대기 위치로 되돌린 뒤 진입
+        next.classList.add('is-instant');
+        next.classList.remove('is-leaving');
+        void next.offsetHeight;
+        next.classList.remove('is-instant');
+
+        current.classList.remove('is-current');
+        current.classList.add('is-leaving');
+        next.classList.add('is-current');
+
+        setTimeout(roll, ROLL_MS + HOLD_MS);
+    }
+
+    setTimeout(roll, HOLD_MS);
+})();
+
+/* 아우터 페스티벌 로티: 자동재생 + 루핑 (lottie_svg를 script.js보다 먼저 로드) */
+(function () {
+    var container = document.querySelector('.content-lottie');
+    if (!container || typeof lottie === 'undefined') return;
+
+    lottie.loadAnimation({
+        container: container,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'src/img/outerfestival.json'
+    });
+})();
+
 /* 이미지 드래그·롱프레스 메뉴 방지: CSS로 안 막히는 브라우저(Firefox, Android Chrome) 대응 */
 (function () {
     function blockOnImage(e) {
