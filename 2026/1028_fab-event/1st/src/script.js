@@ -55,6 +55,37 @@
     }, { passive: true });
 })();
 
+/* 탑버튼: 클릭 시 spring.normal로 최상단 이동 (Motion을 script.js보다 먼저 로드). 사용자가 스크롤을 잡으면 중단 */
+(function () {
+    var scrollArea = document.querySelector('.scroll-area');
+    var fabTop = document.querySelector('.fab-top');
+    var scrolling = null;
+
+    function cssNumber(name) {
+        return parseFloat(getComputedStyle(fabTop).getPropertyValue(name));
+    }
+
+    function stopScrolling() {
+        if (scrolling) {
+            scrolling.stop();
+            scrolling = null;
+        }
+    }
+
+    fabTop.addEventListener('click', function () {
+        stopScrolling();
+        scrolling = Motion.animate(scrollArea.scrollTop, 0, {
+            type: 'spring',
+            stiffness: cssNumber('--fab-top-spring-stiffness'),
+            damping: cssNumber('--fab-top-spring-damping'),
+            onUpdate: function (value) { scrollArea.scrollTop = value; }
+        });
+    });
+
+    scrollArea.addEventListener('touchstart', stopScrolling, { passive: true });
+    scrollArea.addEventListener('wheel', stopScrolling, { passive: true });
+})();
+
 /* 최근 본 상품: 고정(hold) → 위로 롤링(roll) 무한 반복. 시간은 style.css .fab-recent 변수 */
 (function () {
     var recent = document.querySelector('.fab-recent');
