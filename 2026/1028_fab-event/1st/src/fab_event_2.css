@@ -1,0 +1,37 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — fab_event_2.css (Type_2)
+   이벤트 FAB 전용 스타일 (mds-motion.css, style.css 이후 로드)
+   ════════════════════════════════════════════════════ */
+
+.fab-left {
+  position: relative;
+}
+
+/* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
+.fab-event {
+  --fab-event-w: 60px;
+  --fab-event-h: 68px;
+
+  /* 100px 이상 스크롤 시 숨김 상태 — Type_2.html에서 읽어 Motion 스프링으로 이동·회전 */
+  --fab-event-hide-rotate: 6deg;        /* 숨김 시 회전 각도 */
+  --fab-event-hide-visible-down: 0.2;   /* 스크롤 내릴 때 화면에 남는 너비 비율 (20%) */
+  --fab-event-hide-visible-up: 0.35;     /* 스크롤 올릴 때 화면에 남는 너비 비율 (30%) */
+  --fab-event-edge-offset: 10px;        /* 화면 왼쪽 끝 ~ FAB 왼쪽 끝 (fab 좌측 패딩) */
+  --fab-event-hide-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); /* 322 */
+  --fab-event-hide-spring-damping: var(--mds-motion-spring-bouncy-damping);     /* 26 */
+
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: var(--fab-event-w);
+  height: var(--fab-event-h);
+}
+
+/* FAB_EVENT_60.png: 180×204 @3x → 60×68, 비율 유지하며 박스 하단에 맞춤 */
+.fab-event-img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: block;
+  width: 100%;
+}

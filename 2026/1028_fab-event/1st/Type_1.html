@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1B1F">
+  <title>EVENT FAB 1</title>
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
+  <link rel="stylesheet" href="./src/mds-motion.css">
+  <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="./src/fab_event_1.css?v=lottie-1">
+</head>
+<body>
+
+  <div class="phone">
+
+    <!-- status-bar: 항상 고정 -->
+    <div class="status-bar">
+      <img src="src/img/StatusBar.png" alt="Status Bar" width="375" height="45">
+    </div>
+
+    <!-- header -->
+    <header class="header">
+      <div class="appbar">
+        <img class="appbar-l" src="src/img/AppbarL.png" alt="App Bar Left" width="140" height="52">
+        <img class="appbar-r" src="src/img/AppbarR.png" alt="App Bar Right" width="134" height="52">
+      </div>
+      <div class="search-bar">
+        <img class="search-bar-l" src="src/img/TextFieldSearchL.png" alt="Search Field Left" width="153" height="36">
+        <img class="search-bar-r" src="src/img/TextFieldSearchR.png" alt="Search Field Right" width="60" height="36">
+      </div>
+      <div class="musinsa-tab-wrap">
+        <img src="src/img/MusinsaTabUnderline.png" alt="Musinsa Tab" width="581" height="48">
+      </div>
+    </header>
+
+    <!-- content -->
+    <div class="scroll-area">
+      <div class="big-banner">
+        <img src="src/img/BigBanner.png" alt="Big Banner" width="375" height="257">
+      </div>
+      <div class="content">
+        <img src="src/img/Content.png" alt="Content" width="375" height="4793">
+      </div>
+    </div>
+
+    <!-- navigation -->
+    <div class="bottom-navigation">
+
+      <div class="fab">
+        <div class="fab-left">
+
+          <div class="fab-event" aria-label="뷰티 홍대 그랜드 오픈"></div>
+          <div class="fab-item-base fab-share">
+            <img src="src/img/ic_share.svg" alt="Share" width="28" height="28">
+          </div>
+        </div>
+
+        <div class="fab-gender">
+          <img src="src/img/FABGenderItem.png" alt="Gender Toggle" width="144" height="44">
+        </div>
+
+        <div class="fab-right">
+          <div class="fab-item-base fab-top">
+            <img src="src/img/ic_top.svg" alt="Top" width="28" height="28">
+          </div>
+          <div class="fab-item-base fab-recent">
+            <img src="src/img/FAB_Recent_1.png" alt="Recent Item" width="44" height="44">
+          </div>
+        </div>
+      </div>
+
+      <div class="tabbar">
+        <div class="tabbar-scrim"></div>
+        <div class="navigation">
+          <div class="navigation-glass"></div>
+          <div class="nav-selection"></div>
+          <div class="nav-items">
+            <div class="nav-item"><img src="src/img/nav_cate.png" alt="카테고리" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_snap.png" alt="스냅" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_home.png" alt="홈" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_like.png" alt="좋아요" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_my.png" alt="마이" width="64" height="54"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!-- /PHONE -->
+
+  <script src="./src/script.js"></script>
+  <script src="./src/lib/lottie_svg-5.13.0.min.js"></script>
+  <script>
+    /* FAB 이벤트(로티): 왼쪽 밖 → 등장 → 2초 홀딩 → 1회 재생 → loopStart~loopEnd 반복. 프로토타입이라 진입할 때마다 재생 */
+    (function () {
+      var ENTER_DELAY_MS = 500; /* 랜딩 후 등장 시작까지 */
+      var ENTER_MS = 500; /* 등장 시간 — fab_event_1.css transition과 같게 */
+      var HOLD_MS = 2000; /* 등장 완료 후 로티 재생까지 */
+      var eventEl = document.querySelector('.fab-event');
+
+      var anim = lottie.loadAnimation({
+        container: eventEl,
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        path: 'src/img/FAB_1.json'
+      });
+
+      function markerFrame(name) {
+        var marker = (anim.animationData.markers || []).filter(function (m) { return m.cm === name; })[0];
+        return marker ? marker.tm : null;
+      }
+
+      function loopBetweenMarkers() {
+        var start = markerFrame('loopStart');
+        var end = markerFrame('loopEnd');
+        if (start === null || end === null) return;
+        anim.loop = true;
+        anim.playSegments([start, end], true);
+      }
+
+      function runTimeline() {
+        anim.goToAndStop(0, true);
+        setTimeout(function () {
+          eventEl.classList.add('is-entered');
+          setTimeout(function () {
+            anim.addEventListener('complete', loopBetweenMarkers);
+            anim.play();
+          }, ENTER_MS + HOLD_MS);
+        }, ENTER_DELAY_MS);
+      }
+
+      var pageLoaded = document.readyState === 'complete';
+      var lottieLoaded = false;
+      function startWhenReady() {
+        if (pageLoaded && lottieLoaded) runTimeline();
+      }
+      window.addEventListener('load', function () { pageLoaded = true; startWhenReady(); });
+      anim.addEventListener('DOMLoaded', function () { lottieLoaded = true; startWhenReady(); });
+    })();
+  </script>
+
+</body>
+</html>

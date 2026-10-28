@@ -1,0 +1,60 @@
+/* MDS motion values transcribed from the supplied reference screenshots.
+   CSS: transition: transform .3s var(--mds-motion-power3-easeInOut);
+   WAAPI: resolve the property with getComputedStyle(...).getPropertyValue(...).
+   Spring tokens are platform solver parameters, NOT CSS timing functions.
+   They do not replace the authored AE sample track used by this prototype. */
+:root {
+    --mds-motion-linear: cubic-bezier(0, 0, 1, 1);
+    --mds-motion-ease: cubic-bezier(.25, .1, .25, 1);
+    --mds-motion-back-easeOut: cubic-bezier(.34, 1.56, .64, 1);
+    --mds-motion-power1-easeInOut: cubic-bezier(.33, 0, .67, 1);
+    --mds-motion-power1-easeOut: cubic-bezier(.5, 1, .89, 1);
+    --mds-motion-power1-easeIn: cubic-bezier(.11, 0, .5, 0);
+    --mds-motion-power2-easeInOut: cubic-bezier(.6, 0, .4, 1);
+    --mds-motion-power2-easeOut: cubic-bezier(.25, 1, .5, 1);
+    --mds-motion-power2-easeIn: cubic-bezier(.5, 0, .75, 0);
+    --mds-motion-power3-easeInOut: cubic-bezier(.33, 0, .2, 1);
+    --mds-motion-power3-easeOut: cubic-bezier(.22, 1, .36, 1);
+    --mds-motion-power3-easeIn: cubic-bezier(.65, 0, 1, .8);
+    --mds-motion-power4-easeInOut: cubic-bezier(.6, 0, .1, 1);
+    --mds-motion-power4-easeOut: cubic-bezier(.19, 1, .22, 1);
+    --mds-motion-power4-easeIn: cubic-bezier(.9, 0, 1, .9);
+
+    /* Web stiffness/damping; iOS duration/ratio; Android stiffness/ratio. */
+    --mds-motion-spring-fast-stiffness: 986;
+    --mds-motion-spring-fast-damping: 47;
+    --mds-motion-spring-fast-ios-duration: .3s;
+    --mds-motion-spring-fast-ios-dampingRatio: 0.75;
+    --mds-motion-spring-fast-aos-stiffness: 1200;
+    --mds-motion-spring-fast-aos-dampingRatio: 0.75;
+    --mds-motion-spring-normal-stiffness: 815;
+    --mds-motion-spring-normal-damping: 54;
+    --mds-motion-spring-normal-ios-duration: .3s;
+    --mds-motion-spring-normal-ios-dampingRatio: 1;
+    --mds-motion-spring-normal-aos-stiffness: 1200;
+    --mds-motion-spring-normal-aos-dampingRatio: 1;
+    --mds-motion-spring-slow-stiffness: 246;
+    --mds-motion-spring-slow-damping: 31;
+    --mds-motion-spring-slow-ios-duration: .6s;
+    --mds-motion-spring-slow-ios-dampingRatio: 1;
+    --mds-motion-spring-slow-aos-stiffness: 400;
+    --mds-motion-spring-slow-aos-dampingRatio: 1;
+    --mds-motion-spring-gentle-stiffness: 438;
+    --mds-motion-spring-gentle-damping: 40;
+    --mds-motion-spring-gentle-ios-duration: .45s;
+    --mds-motion-spring-gentle-ios-dampingRatio: 1;
+    --mds-motion-spring-gentle-aos-stiffness: 700;
+    --mds-motion-spring-gentle-aos-dampingRatio: 1;
+    --mds-motion-spring-bouncy-stiffness: 322;
+    --mds-motion-spring-bouncy-damping: 26;
+    --mds-motion-spring-bouncy-ios-duration: .5s;
+    --mds-motion-spring-bouncy-ios-dampingRatio: 0.75;
+    --mds-motion-spring-bouncy-aos-stiffness: 600;
+    --mds-motion-spring-bouncy-aos-dampingRatio: 0.75;
+    --mds-motion-spring-elastic-stiffness: 550;
+    --mds-motion-spring-elastic-damping: 24;
+    --mds-motion-spring-elastic-ios-duration: .6s;
+    --mds-motion-spring-elastic-ios-dampingRatio: 0.5;
+    --mds-motion-spring-elastic-aos-stiffness: 400;
+    --mds-motion-spring-elastic-aos-dampingRatio: 0.5;
+}

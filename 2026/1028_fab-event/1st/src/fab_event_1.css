@@ -1,0 +1,30 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — fab_event_1.css (Type_1)
+   이벤트 FAB 전용 스타일 (mds-motion.css, style.css 이후 로드)
+   ════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════
+   FAB Event (Lottie: FAB_1.json, 240×300 @3x → 80×100)
+   화면 왼쪽 밖에서 시작 → 기존 FAB 위치로 등장
+══════════════════════════════ */
+.fab-left {
+  position: relative;
+}
+
+/* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
+.fab-event {
+  --fab-event-w: 80px;
+  --fab-event-h: 100px;
+  --fab-event-offscreen-x: calc(-100% - 10px); /* 자기 너비 + fab 좌측 패딩(10px) → 화면 밖 */
+
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: var(--fab-event-w);
+  height: var(--fab-event-h);
+  transform: translateX(var(--fab-event-offscreen-x));
+  transition: transform 0.5s var(--mds-motion-power3-easeOut); /* Type_1.html ENTER_MS와 같게 */
+}
+.fab-event.is-entered {
+  transform: translateX(0);
+}
