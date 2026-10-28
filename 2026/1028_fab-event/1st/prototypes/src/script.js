@@ -1,5 +1,5 @@
 /* 스크롤 주체: 모바일(터치)은 문서 전체(window) → 사파리 주소창이 줄어듦, PC는 폰 프레임 안 .scroll-area
-   style.css 모바일 미디어쿼리와 같은 조건. Type_3.html 인라인 스크립트에서도 사용 */
+   style.css 모바일 미디어쿼리와 같은 조건. Type_2·Type_3 인라인 스크립트, index.html(휠 넘기기)에서도 사용 */
 var pageScroll = (function () {
     var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
     var scrollArea = document.querySelector('.scroll-area');
@@ -10,8 +10,25 @@ var pageScroll = (function () {
         set: function (value) {
             if (isTouch) window.scrollTo(0, value);
             else scrollArea.scrollTop = value;
+        },
+        /* 다른 곳(폰 바깥·index 바탕)에서 받은 휠 이벤트만큼 스크롤 (deltaMode: 0 px / 1 줄 / 2 페이지) */
+        scrollByWheel: function (e) {
+            var unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1;
+            this.set(this.get() + e.deltaY * unit);
+            window.dispatchEvent(new Event('pagescroll:wheel')); /* 탑버튼 스프링 스크롤 중단용 */
         }
     };
+})();
+
+/* PC: 폰 바깥(바탕·그림자 여백·헤더 등)에서 굴린 세로 휠도 폰 안 스크롤로 넘김. 터치 기기는 문서 스크롤이라 제외 */
+(function () {
+    if (pageScroll.isTouch) return;
+    var scrollArea = document.querySelector('.scroll-area');
+    window.addEventListener('wheel', function (e) {
+        if (!e.deltaY || scrollArea.contains(e.target)) return; /* 폰 스크롤 영역 안은 브라우저 기본 스크롤 */
+        e.preventDefault();
+        pageScroll.scrollByWheel(e);
+    }, { passive: false });
 })();
 
 (function () {
@@ -93,6 +110,7 @@ var pageScroll = (function () {
 
     pageScroll.target.addEventListener('touchstart', stopScrolling, { passive: true });
     pageScroll.target.addEventListener('wheel', stopScrolling, { passive: true });
+    window.addEventListener('pagescroll:wheel', stopScrolling); /* 폰 바깥·index에서 넘어온 휠 */
 })();
 
 /* FAB 최근 본 상품 */
