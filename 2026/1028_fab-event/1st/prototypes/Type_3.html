@@ -7,9 +7,9 @@
   <title>EVENT FAB 3</title>
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
   <link rel="stylesheet" href="./src/lib/swiper-bundle-11.1.14.min.css">
-  <link rel="stylesheet" href="./src/mds-motion.css?v=20261029-1">
-  <link rel="stylesheet" href="./src/common.css?v=20261029-1">
-  <link rel="stylesheet" href="./src/fab_event_3.css?v=20261029-1">
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261029-3">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261029-3">
+  <link rel="stylesheet" href="./src/types/type_3.css?v=20261029-3">
 </head>
 <body>
 
@@ -37,7 +37,7 @@
 
     <!-- content -->
     <div class="scroll-area">
-      <!-- 빅배너: 슬라이드는 script.js의 BIG_BANNER_IMAGES 목록으로 생성 -->
+      <!-- 빅배너: 슬라이드는 common.js의 BIG_BANNER_IMAGES 목록으로 생성 -->
       <div class="big-banner swiper">
         <div class="swiper-wrapper"></div>
       </div>
@@ -49,7 +49,7 @@
         <img src="src/img/MusinsaQuickMenu.png" alt="Musinsa Quick Menu" width="600" height="56">
       </div>
       <div class="content">
-        <img src="src/img/Content.png?v=20261029-1" alt="Content" width="375" height="4667">
+        <img src="src/img/Content.png?v=20261029-3" alt="Content" width="375" height="4667">
         <div class="content-lottie" aria-label="아우터 페스티벌"></div>
       </div>
     </div>
@@ -106,56 +106,8 @@
   <script src="./src/lib/lottie_svg-5.13.0.min.js"></script>
   <script src="./src/lib/motion-14.1.0.js"></script>
   <script src="./src/lib/swiper-bundle-11.1.14.min.js"></script>
-  <script src="./src/script.js?v=20261029-1"></script>
-  <script>
-    /* FAB 이벤트(Type_3): 탑버튼이 나오는 100px 이상 스크롤하면 옆으로 숨김, 그 위에서는 전체 노출.
-       숨김 중 노출 정도는 스크롤 방향별(내릴 때 / 올릴 때). 이동·회전은 Motion spring.bouncy, 수치는 fab_event_3.css 변수에서 읽음 */
-    (function () {
-      var HIDE_SCROLL_TOP = 100; /* script.js fab-top 노출 기준과 같게 */
-      var eventEl = document.querySelector('.fab-event');
-      var state = 'full'; /* 'full' | 'down' | 'up' */
-      var lastScrollTop = 0;
-
-      function cssNumber(name) {
-        return parseFloat(getComputedStyle(eventEl).getPropertyValue(name));
-      }
-
-      function hideTarget(direction) {
-        var width = cssNumber('--fab-event-w');
-        var visible = cssNumber('--fab-event-hide-visible-' + direction);
-        var edge = cssNumber('--fab-event-edge-offset');
-        return { x: -(width * (1 - visible) + edge), rotate: cssNumber('--fab-event-hide-rotate') };
-      }
-
-      function springOptions() {
-        return {
-          type: 'spring',
-          stiffness: cssNumber('--fab-event-hide-spring-stiffness'),
-          damping: cssNumber('--fab-event-hide-spring-damping')
-        };
-      }
-
-      function setState(next) {
-        if (next === state) return;
-        state = next;
-        Motion.animate(eventEl, next === 'full' ? { x: 0, rotate: 0 } : hideTarget(next), springOptions());
-      }
-
-      pageScroll.target.addEventListener('scroll', function () { /* pageScroll: script.js */
-        var scrollTop = pageScroll.get();
-        var delta = scrollTop - lastScrollTop;
-        lastScrollTop = scrollTop;
-
-        if (scrollTop < HIDE_SCROLL_TOP) {
-          setState('full');
-        } else if (delta > 0) {
-          setState('down');
-        } else if (delta < 0) {
-          setState('up');
-        }
-      }, { passive: true });
-    })();
-  </script>
+  <script src="./src/common/common.js?v=20261029-3"></script>
+  <script src="./src/types/type_3.js?v=20261029-3"></script>
 
 </body>
 </html>

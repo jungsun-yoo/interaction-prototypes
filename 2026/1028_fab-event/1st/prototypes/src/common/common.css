@@ -205,7 +205,7 @@ img {
 .big-banner-title {
   font-size: 20px;
   line-height: 26px;
-  white-space: pre-line; /* script.js title의 \n 줄바꿈 */
+  white-space: pre-line; /* common.js title의 \n 줄바꿈 */
 }
 .big-banner-subtitle {font-size: 13px; line-height: 18px;}
 
@@ -368,7 +368,7 @@ img {
   pointer-events: auto;
 }
 
-/* 최근 본 상품 (크기·보더·배경은 .fab-item-base): 이미지 위로 롤링 (script.js에서 변수 읽어 반복) */
+/* 최근 본 상품 (크기·보더·배경은 .fab-item-base): 이미지 위로 롤링 (common.js에서 변수 읽어 반복) */
 .fab-recent {
   --fab-recent-hold: 2.5s;   /* 이미지 고정 시간 */
   --fab-recent-roll: 0.6s;   /* 상하 전환 시간 */

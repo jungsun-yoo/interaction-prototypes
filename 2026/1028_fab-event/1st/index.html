@@ -145,7 +145,7 @@
       title: 'EVENT FAB',
       sub: '26-1028 · Prototype',
       label: 'TYPES',
-      version: '20261029-1',
+      version: '20261029-3',
       qrHost: '172.18.102.82', // wifi network ip //
       figma: 'https://www.figma.com/design/qgf78miXjE8bsy68Dspuxw/%ED%99%94%EB%A9%B4%EB%85%BC%EC%9D%98-6?node-id=3859-87736&t=cyvkFhujmdEHecLw-4',
       jira: 'https://jira.team.musinsa.com/browse/FT-737',
@@ -335,7 +335,7 @@
         qrCard.style.left = open ? tools.offsetLeft + tools.offsetWidth - qrCard.offsetWidth + 'px' : '';
         qrCard.style.top = open ? tools.offsetTop + tools.offsetHeight + 8 + 'px' : '';
       }
-      /* 바탕(폰 바깥)에서 굴린 세로 휠을 iframe 안 프로토타입 스크롤로 넘김 (pageScroll: prototypes/src/script.js) */
+      /* 바탕(폰 바깥)에서 굴린 세로 휠을 iframe 안 프로토타입 스크롤로 넘김 (pageScroll: prototypes/src/common/common.js) */
       stage.addEventListener('wheel', function (e) {
         var win = frame.contentWindow;
         if (!e.deltaY || !win || !win.pageScroll) return;
