@@ -19,8 +19,13 @@
       --panel-text: #fff;
       --panel-sub: rgba(255, 255, 255, 0.45);
       --canvas-bg: #f0f0f0;
-      --frame-w: 439px;   /* 폰 375 + 그림자 여백 32×2 */
-      --frame-h: 876px;   /* 폰 812 + 그림자 여백 32×2 */
+      /* 프레임(iframe) = 폰 + 그림자 여백×2
+         --phone-w·--phone-h는 각 프로토타입 common.css 값을 script가 읽어 덮어씀 (아래는 불러오기 전 잠깐 쓰는 기본값) */
+      --phone-w: 375px;
+      --phone-h: 812px;
+      --frame-pad: 32px;  /* 폰 그림자 여백 (한쪽) */
+      --frame-w: calc(var(--phone-w) + var(--frame-pad) * 2);
+      --frame-h: calc(var(--phone-h) + var(--frame-pad) * 2);
       --qr-card-w: 172px; /* QR 카드 (QR 140 + 여백 16×2) */
       --qr-mini-w: 112px; /* 작은 QR 카드 (QR 96 + 여백 8×2) */
     }
@@ -140,8 +145,8 @@
       title: 'EVENT FAB',
       sub: '26-1028 · Prototype',
       label: 'TYPES',
-      version: '20261028-10',
-      qrHost: '172.18.102.82',
+      version: '20261029-1',
+      qrHost: '172.18.102.82', // wifi network ip //
       figma: 'https://www.figma.com/design/qgf78miXjE8bsy68Dspuxw/%ED%99%94%EB%A9%B4%EB%85%BC%EC%9D%98-6?node-id=3859-87736&t=cyvkFhujmdEHecLw-4',
       jira: 'https://jira.team.musinsa.com/browse/FT-737',
       items: [
@@ -296,14 +301,15 @@
       /* 화면이 프레임보다 작으면 비율 유지하며 축소 */
       function fitFrame() {
         var style = getComputedStyle(document.documentElement);
-        var scale = Math.min(1,
-          stage.clientWidth / parseFloat(style.getPropertyValue('--frame-w')),
-          stage.clientHeight / parseFloat(style.getPropertyValue('--frame-h')));
+        var pad = parseFloat(style.getPropertyValue('--frame-pad'));
+        var frameW = parseFloat(style.getPropertyValue('--phone-w')) + pad * 2; /* CSS --frame-w와 같은 식 */
+        var frameH = parseFloat(style.getPropertyValue('--phone-h')) + pad * 2;
+        var scale = Math.min(1, stage.clientWidth / frameW, stage.clientHeight / frameH);
         frame.style.setProperty('--frame-scale', scale);
 
         /* QR 카드 단계: 폰 왼쪽 여백(바탕 왼쪽 24 + 폰과 간격 16 제외)에 맞춰 전체 → 작은 카드 → 툴바 버튼
-           (프레임 안 그림자 여백 32px 제외한 실제 폰 왼쪽 기준) */
-        var phoneLeft = (stage.clientWidth - parseFloat(style.getPropertyValue('--frame-w')) * scale) / 2 + 32 * scale;
+           (프레임 안 그림자 여백 --frame-pad 제외한 실제 폰 왼쪽 기준) */
+        var phoneLeft = (stage.clientWidth - frameW * scale) / 2 + pad * scale;
         var qrRoom = phoneLeft - 24 - 16;
         var folded = qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w'));
         qrCard.classList.toggle('is-mini', !folded && qrRoom < parseFloat(style.getPropertyValue('--qr-card-w')));
@@ -314,7 +320,7 @@
         /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단 */
         var tools = document.getElementById('stageTools');
         var phoneRight = stage.clientWidth - phoneLeft;
-        var phoneTop = (stage.clientHeight - parseFloat(style.getPropertyValue('--frame-h')) * scale) / 2 + 32 * scale;
+        var phoneTop = (stage.clientHeight - frameH * scale) / 2 + pad * scale;
         var attached = phoneRight + 12 + tools.offsetWidth + 16 <= stage.clientWidth;
         tools.classList.toggle('is-attached', attached);
         tools.style.left = attached ? phoneRight + 12 + 'px' : '';
@@ -337,6 +343,18 @@
         win.pageScroll.scrollByWheel(e);
       }, { passive: false });
 
+      /* 프로토타입을 불러올 때마다 그 폰 크기(common.css --phone-w·--phone-h)를 index에 옮김 → --frame-w·--frame-h는 calc로 따라감 */
+      frame.addEventListener('load', function () {
+        var doc = frame.contentDocument;
+        if (!doc) return;
+        var phone = getComputedStyle(doc.documentElement);
+        var w = parseFloat(phone.getPropertyValue('--phone-w'));
+        var h = parseFloat(phone.getPropertyValue('--phone-h'));
+        if (!w || !h) return;
+        document.documentElement.style.setProperty('--phone-w', w + 'px');
+        document.documentElement.style.setProperty('--phone-h', h + 'px');
+        fitFrame();
+      });
       new ResizeObserver(fitFrame).observe(stage); /* 창 크기·레이아웃이 바뀌면 축소·QR 단계·툴바 위치 다시 계산 */
       window.addEventListener('popstate', function () { select(location.hash.slice(1)); });
 

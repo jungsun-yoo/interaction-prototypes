@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════
-   MUSINSA FAB 이벤트 — style.css
-   반응형: 최대 600px / 헤더 스크롤 연동
+   MUSINSA FAB 이벤트 — common.css (모든 Type 공통)
+   반응형: 모바일 최대 너비(--mobile-max-w) / 헤더 스크롤 연동
    ════════════════════════════════════════════════════ */
 
 *, *::before, *::after {
@@ -10,7 +10,18 @@
 }
 
 :root {
-  /* 하단 안전영역: 실제 기기는 env() 값, 데스크탑 폰 프레임은 아래 미디어쿼리에서 iOS 값(34px)으로 강제 */
+  /* ── 기기 크기: 프로젝트마다 Figma 프레임에 맞춰 여기만 수정 ──
+     데스크탑(PC)에서 보는 폰 프레임 값. index.html은 --phone-w·--phone-h를 읽어 프레임 크기를 자동으로 맞춤 */
+  --phone-w: 375px;           /* 폰 너비 */
+  --phone-h: 812px;           /* 폰 높이 */
+  --phone-radius: 32px;       /* 폰 모서리 */
+  --status-bar-h: 45px;       /* 상태바 높이 (StatusBar 이미지 높이와 같게) */
+  --phone-safe-bottom: 34px;  /* 하단 안전영역 (홈 인디케이터 영역) */
+
+  /* 모바일(터치 기기)에서 화면 최대 너비. 넓은 화면(태블릿 등)에서는 이 너비로 가운데 정렬 */
+  --mobile-max-w: 600px;
+
+  /* 하단 안전영역: 실제 기기는 env() 값, 데스크탑 폰 프레임은 아래 미디어쿼리에서 --phone-safe-bottom으로 강제 */
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -31,12 +42,12 @@ img {
 }
 
 /* ─────────────────────────────
-    Phone  — 모바일 반응형 (max 600px)
+    Phone  — 모바일 반응형 (최대 --mobile-max-w)
 ───────────────────────────── */
 .phone {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: var(--mobile-max-w);
   height: 100vh;    /* fallback: 구형 브라우저 */
   height: 100svh;   /* iOS Safari: 주소창 포함한 최소 뷰포트 (항상 보임) */
   overflow: hidden;
@@ -44,7 +55,7 @@ img {
   margin: 0 auto;
 }
 
-/* 데스크탑(마우스 기기): 375×812 고정, 중앙 정렬. 터치 기기는 너비와 상관없이 모바일(최대 600) */
+/* 데스크탑(마우스 기기): --phone-w × --phone-h 고정, 중앙 정렬. 터치 기기는 너비와 상관없이 모바일(최대 --mobile-max-w) */
 @media (hover: hover) and (pointer: fine) {
   body {
     display: flex;
@@ -53,21 +64,21 @@ img {
   }
 
   .phone {
-    width: 375px;
-    max-width: 375px;
-    height: 812px;
-    border-radius: 32px;
+    width: var(--phone-w);
+    max-width: var(--phone-w);
+    height: var(--phone-h);
+    border-radius: var(--phone-radius);
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
   }
 
   :root {
-    --safe-area-bottom: 34px; /* iPhone 홈 인디케이터 영역 */
+    --safe-area-bottom: var(--phone-safe-bottom);
   }
 }
 
 /* StatusBar */
-.status-bar {position: absolute; top: 0; left: 0; width: 100%; height: 45px; z-index: 30; overflow: hidden;}
-.status-bar img {width: 100%; height: 45px; display: block; object-fit: cover; object-position: center;}
+.status-bar {position: absolute; top: 0; left: 0; width: 100%; height: var(--status-bar-h); z-index: 30; overflow: hidden;}
+.status-bar img {width: 100%; height: var(--status-bar-h); display: block; object-fit: cover; object-position: center;}
 
 /* ─────────────────────────────
     Header — 스크롤 시 위로 올라감
@@ -75,7 +86,7 @@ img {
 ───────────────────────────── */
 .header {
   position: absolute;
-  top: 45px;   /* status-bar 아래부터 시작 */
+  top: var(--status-bar-h);   /* status-bar 아래부터 시작 */
   left: 0;
   width: 100%;
   height: 136px; /* 181 - 45 = appbar(52) + search(36) + tab(48) */
@@ -129,7 +140,7 @@ img {
 
 /* 모바일: 위 기본 스타일(.status-bar·.header·.scroll-area)을 덮어쓰므로 그 뒤에 위치
    문서(window) 전체가 스크롤 → 사파리 주소창·툴바가 스크롤에 따라 줄어듦
-   헤더·바텀네비는 화면에 fixed (최대 600, 가운데). PC는 기존처럼 .scroll-area 안에서 스크롤 */
+   헤더·바텀네비는 화면에 fixed (최대 --mobile-max-w, 가운데). PC는 기존처럼 .scroll-area 안에서 스크롤 */
 @media (hover: none), (pointer: coarse) {
   html, body {
     height: auto;
@@ -145,7 +156,7 @@ img {
     position: fixed;
     top: 0;
     right: 0;
-    max-width: 600px;
+    max-width: var(--mobile-max-w);
     margin: 0 auto;
     padding-top: env(safe-area-inset-top, 0px);
     height: calc(136px + env(safe-area-inset-top, 0px));
@@ -261,12 +272,12 @@ img {
   z-index: 20;
   pointer-events: none;
 }
-/* 모바일: 문서 스크롤이라 화면 하단에 fixed (최대 600, 가운데) */
+/* 모바일: 문서 스크롤이라 화면 하단에 fixed (최대 --mobile-max-w, 가운데) */
 @media (hover: none), (pointer: coarse) {
   .bottom-navigation {
     position: fixed;
     right: 0;
-    max-width: 600px;
+    max-width: var(--mobile-max-w);
     margin: 0 auto;
   }
 }

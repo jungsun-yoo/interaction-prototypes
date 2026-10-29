@@ -1,8 +1,7 @@
-/* MDS motion values transcribed from the supplied reference screenshots.
-   CSS: transition: transform .3s var(--mds-motion-power3-easeInOut);
-   WAAPI: resolve the property with getComputedStyle(...).getPropertyValue(...).
-   Spring tokens are platform solver parameters, NOT CSS timing functions.
-   They do not replace the authored AE sample track used by this prototype. */
+/* MDS Motion System
+* figma : https://www.figma.com/design/oSeWgRf3JXSk6AvrceXTUN/MDS-2.0-Specimen?node-id=18455-38812&t=LOl93nbeDbKT41Wh-4
+
+*/
 :root {
     --mds-motion-linear: cubic-bezier(0, 0, 1, 1);
     --mds-motion-ease: cubic-bezier(.25, .1, .25, 1);

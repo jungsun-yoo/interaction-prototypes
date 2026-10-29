@@ -1,5 +1,5 @@
 /* 스크롤 주체: 모바일(터치)은 문서 전체(window) → 사파리 주소창이 줄어듦, PC는 폰 프레임 안 .scroll-area
-   style.css 모바일 미디어쿼리와 같은 조건. Type_2·Type_3 인라인 스크립트, index.html(휠 넘기기)에서도 사용 */
+   common.css 모바일 미디어쿼리와 같은 조건. Type_2·Type_3 인라인 스크립트, index.html(휠 넘기기)에서도 사용 */
 var pageScroll = (function () {
     var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
     var scrollArea = document.querySelector('.scroll-area');
