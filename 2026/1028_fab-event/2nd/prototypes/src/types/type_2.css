@@ -1,0 +1,64 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — type_2.css (Type_2)
+   이벤트 FAB 전용 스타일 (mds-motion.css, common.css 이후 로드)
+   ════════════════════════════════════════════════════ */
+
+.fab-left {
+  position: relative;
+}
+
+/* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
+.fab-event {
+  --fab-event-w: 60px;
+  --fab-event-h: 68px;
+
+  /* 상태 — out(화면 밖) · open(전부 보임) · hide(살짝만 보임) · peek(좀 더 나옴)
+     visible: 화면에 남는 너비 비율 / rotate: 회전 각도. type_2.js에서 읽어 Motion 스프링으로 이동·회전 */
+  --fab-event-out-visible: 0;           /* out: 페이지 진입 시 (0% = 화면 밖) */
+  --fab-event-out-rotate: 0deg;
+  --fab-event-hide-visible: 0.2;        /* hide: 인트로·상단 도착 후, 스크롤 내릴 때 (20%) */
+  --fab-event-hide-rotate: 10deg;
+  --fab-event-peek-visible: 0.35;       /* peek: 스크롤 올릴 때 (35%) */
+  --fab-event-peek-rotate: 12deg;
+  --fab-event-edge-offset: 10px;        /* 화면 왼쪽 끝 ~ FAB 왼쪽 끝 (fab 좌측 패딩) */
+
+  --fab-event-intro-delay: 0.5s;        /* 페이지 진입 후 open까지 대기 */
+  --fab-event-intro-hold: 3s;           /* open 유지 시간, 이후 hide로 */
+
+  /* 자동 이동(인트로·스크롤·상단 도착) — spring.bouncy */
+  --fab-event-auto-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); /* 322 */
+  --fab-event-auto-spring-damping: var(--mds-motion-spring-bouncy-damping);     /* 26 */
+
+  /* hide·peek에서 클릭·드래그로 open — spring.normal */
+  --fab-event-tap-spring-stiffness: var(--mds-motion-spring-normal-stiffness);  /* 815 */
+  --fab-event-tap-spring-damping: var(--mds-motion-spring-normal-damping);      /* 54 */
+
+  /* hide·peek에서 드래그로 꺼내기 (놓을 때 기준 이상이면 open, spring.normal) */
+  --fab-event-drag-slop: 4px;            /* 이만큼 움직여야 드래그로 판단 (그 전엔 클릭) */
+  --fab-event-drag-threshold: 0.3;       /* 꺼낸 정도가 30% 이상이면 open */
+  --fab-event-drag-fling-velocity: 0.4;  /* 오른쪽으로 빠르게 튕기면(px/ms) 정도와 관계없이 open */
+  --fab-event-drag-overshoot: 0.2;       /* open 위치를 넘어 끌 때 따라오는 비율 (저항) */
+  --fab-event-reveal-hold: 3s;           /* open 후 반응 없으면 숨김으로 돌아가기까지 (클릭·드래그: 마지막 숨김 상태, 상단 도착: hide) */
+  --fab-event-top-threshold: 0px;        /* 스크롤 위치가 이 값 이하면 상단 도착으로 보고 open */
+
+  pointer-events: auto; /* 부모(.bottom-navigation·.fab)가 none이라 클릭 받으려면 필요 */
+  cursor: pointer;
+  touch-action: pan-y;  /* 세로 스크롤은 그대로, 가로는 드래그로 */
+  user-select: none;
+  -webkit-user-select: none;
+
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: var(--fab-event-w);
+  height: var(--fab-event-h);
+}
+
+/* FAB_EVENT_60.png: 180×204 @3x → 60×68, 비율 유지하며 박스 하단에 맞춤 */
+.fab-event-img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: block;
+  width: 100%;
+}

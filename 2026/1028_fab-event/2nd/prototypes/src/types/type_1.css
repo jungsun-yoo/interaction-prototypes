@@ -1,0 +1,89 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — type_1.css (Type_1)
+   이벤트 FAB 전용 스타일 (mds-motion.css, common.css 이후 로드)
+   ════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════
+   FAB Event (이미지 2장 디졸브: FAB_44-1.png ↔ FAB_44-2.png, 132×132 @3x → 44×44)
+   제자리에서 시작 → 두 이미지가 번갈아 디졸브
+══════════════════════════════ */
+.fab-left {
+  position: relative;
+}
+
+/* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
+.fab-event {
+  --fab-event-size: 44px;
+  --fab-event-radius: 8px;
+  --fab-event-dissolve-hold: 1.7s;             /* 한 이미지가 머무는 시간 (랜딩 후 첫 디졸브까지도 이 시간) */
+  --fab-event-dissolve-duration: 0.3s;         /* 디졸브 전환 시간 */
+  --fab-event-dissolve-ease: var(--mds-motion-power1-easeInOut); /* 디졸브 이징 */
+
+  /* 닫기 버튼: 아이콘 16 + 패딩 4 → 24. 버튼 중앙을 FAB 우상단 꼭짓점에 둔 뒤 x·y만큼 이동 (x −: 왼쪽, y +: 아래) */
+  --fab-event-close-size: 24px;
+  --fab-event-close-icon: 16px;
+  --fab-event-close-x: -2px;
+  --fab-event-close-y: 2px;
+  --fab-event-close-fade: 0.1s;                /* 닫을 때 사라지는 시간 */
+  --fab-event-close-ease: linear;              /* 닫을 때 이징 */
+
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: var(--fab-event-size);
+  height: var(--fab-event-size);
+  transition: opacity var(--fab-event-close-fade) var(--fab-event-close-ease);
+}
+.fab-event.is-closed {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fab-event-close-fade) var(--fab-event-close-ease), visibility 0s var(--fab-event-close-fade);
+}
+
+/* 라운드는 이미지 영역에만 (닫기 버튼이 잘리지 않게) */
+.fab-event-media {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--fab-event-radius);
+  overflow: hidden;
+}
+
+.fab-event-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 두 번째 이미지를 위에 겹쳐 두고 투명도로 디졸브 (type_1.js가 .is-next 토글) */
+.fab-event-img-next {
+  opacity: 0;
+  transition: opacity var(--fab-event-dissolve-duration) var(--fab-event-dissolve-ease);
+}
+.fab-event.is-next .fab-event-img-next {
+  opacity: 1;
+}
+
+/* 닫기 버튼 (부모 .bottom-navigation·.fab이 pointer-events: none이라 auto 필요) */
+.fab-event-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--fab-event-close-size);
+  height: var(--fab-event-close-size);
+  padding: calc((var(--fab-event-close-size) - var(--fab-event-close-icon)) / 2);
+  border: 0;
+  background: none;
+  transform: translate(calc(50% + var(--fab-event-close-x)), calc(-50% + var(--fab-event-close-y))); /* 50%: 중앙을 꼭짓점에 */
+  pointer-events: auto;
+  cursor: pointer;
+}
+.fab-event-close img {
+  display: block;
+  width: var(--fab-event-close-icon);
+  height: var(--fab-event-close-icon);
+}

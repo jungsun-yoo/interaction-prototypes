@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1B1F">
+  <title>EVENT FAB 1</title>
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
+  <link rel="stylesheet" href="./src/lib/swiper-bundle-11.1.14.min.css">
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261029-19">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261029-19">
+  <link rel="stylesheet" href="./src/types/type_1.css?v=20261029-19">
+</head>
+<body>
+
+  <div class="phone">
+
+    <!-- status-bar: 항상 고정 -->
+    <div class="status-bar">
+      <img src="src/img/StatusBar.png" alt="Status Bar" width="375" height="45">
+    </div>
+
+    <!-- header -->
+    <header class="header">
+      <div class="appbar">
+        <img class="appbar-l" src="src/img/AppbarL.png" alt="App Bar Left" width="140" height="52">
+        <img class="appbar-r" src="src/img/AppbarR.png" alt="App Bar Right" width="134" height="52">
+      </div>
+      <div class="search-bar">
+        <img class="search-bar-l" src="src/img/TextFieldSearchL.png" alt="Search Field Left" width="153" height="36">
+        <img class="search-bar-r" src="src/img/TextFieldSearchR.png" alt="Search Field Right" width="60" height="36">
+      </div>
+      <div class="musinsa-tab-wrap">
+        <img src="src/img/MusinsaTabUnderline.png" alt="Musinsa Tab" width="581" height="48">
+      </div>
+    </header>
+
+    <!-- content -->
+    <div class="scroll-area">
+      <!-- 빅배너: 슬라이드는 common.js의 BIG_BANNER_IMAGES 목록으로 생성 -->
+      <div class="big-banner swiper">
+        <div class="swiper-wrapper"></div>
+      </div>
+      <!-- 퀵메뉴: 600 너비 이미지, 화면보다 넓으면 가로 스크롤 -->
+      <div class="quick-menu">
+        <img src="src/img/HighlightQuickMenu.png" alt="Highlight Quick Menu" width="600" height="72">
+      </div>
+      <div class="quick-menu">
+        <img src="src/img/MusinsaQuickMenu.png" alt="Musinsa Quick Menu" width="600" height="56">
+      </div>
+      <div class="content">
+        <img src="src/img/Content.png?v=20261029-19" alt="Content" width="375" height="4667">
+        <div class="content-lottie" aria-label="아우터 페스티벌"></div>
+      </div>
+    </div>
+
+    <!-- navigation -->
+    <div class="bottom-navigation">
+
+      <div class="fab">
+        <div class="fab-left">
+
+          <div class="fab-event" aria-label="뷰티 홍대 그랜드 오픈">
+            <div class="fab-event-media">
+              <img class="fab-event-img" src="src/img/FAB_44-1.png" alt="">
+              <img class="fab-event-img fab-event-img-next" src="src/img/FAB_44-2.png" alt="">
+            </div>
+            <button class="fab-event-close" type="button" aria-label="닫기">
+              <img src="src/img/ic_close.svg" alt="" width="16" height="16">
+            </button>
+          </div>
+          <div class="fab-item-base fab-share">
+            <img src="src/img/ic_share.svg" alt="Share" width="28" height="28">
+          </div>
+        </div>
+
+        <div class="fab-gender">
+          <img src="src/img/FABGenderItem.png" alt="Gender Toggle" width="144" height="44">
+        </div>
+
+        <div class="fab-right">
+          <div class="fab-item-base fab-top">
+            <img src="src/img/ic_top.svg" alt="Top" width="28" height="28">
+          </div>
+          <div class="fab-item-base fab-recent">
+            <img class="is-current" src="src/img/FAB_Recent_1.png" alt="Recent Item" width="44" height="44">
+            <img src="src/img/FAB_Recent_2.png" alt="Recent Item" width="44" height="44">
+          </div>
+        </div>
+      </div>
+
+      <div class="tabbar">
+        <div class="tabbar-scrim"></div>
+        <div class="navigation">
+          <div class="navigation-glass"></div>
+          <div class="nav-selection"></div>
+          <div class="nav-items">
+            <div class="nav-item"><img src="src/img/nav_cate.png" alt="카테고리" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_snap.png" alt="스냅" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_home.png" alt="홈" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_like.png" alt="좋아요" width="64" height="54"></div>
+            <div class="nav-item"><img src="src/img/nav_my.png" alt="마이" width="64" height="54"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!-- /PHONE -->
+
+  <script src="./src/lib/lottie_svg-5.13.0.min.js"></script>
+  <script src="./src/lib/motion-14.1.0.js"></script>
+  <script src="./src/lib/swiper-bundle-11.1.14.min.js"></script>
+  <script src="./src/common/common.js?v=20261029-19"></script>
+  <script src="./src/types/type_1.js?v=20261029-19"></script>
+
+</body>
+</html>
