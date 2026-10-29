@@ -21,6 +21,8 @@
       --canvas-bg: #f0f0f0;
       --frame-w: 439px;   /* 폰 375 + 그림자 여백 32×2 */
       --frame-h: 876px;   /* 폰 812 + 그림자 여백 32×2 */
+      --qr-card-w: 172px; /* QR 카드 (QR 140 + 여백 16×2) */
+      --qr-mini-w: 112px; /* 작은 QR 카드 (QR 96 + 여백 8×2) */
     }
 
     html, body {
@@ -51,22 +53,35 @@
     .type-button:hover { background: rgba(255, 255, 255, 0.05); }
     .type-button.is-active { background: rgba(255, 255, 255, 0.12); color: #fff; font-weight: 600; }
 
-    .panel-foot {display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding: 16px; border-top: 1px solid var(--panel-line);}
-    .panel-action {padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 8px; background: transparent; color: #fff;  font: inherit; font-size: 13px; line-height: 18px; cursor: pointer;}
-    .panel-action:hover {background: rgba(255, 255, 255, 0.06); }
-    .panel-action svg {display: inline-block; margin-right: 6px; vertical-align: -2px;}
+    .panel-foot {margin-top: auto; padding: 16px; border-top: 1px solid var(--panel-line);}
     .panel-hint {font-size: 11px; line-height: 16px; color: var(--panel-sub); text-align: center; }
 
     /* 가운데: 폰 프레임 iframe. 화면 높이·너비가 모자라면 비율 유지하며 축소 (script) */
     .stage {position: relative; overflow: hidden;}
-    /* QR 카드: 가운데 바탕 좌상단. 선택한 항목 주소를 폰으로 열기 (바탕이 좁아 폰과 겹치면 숨김) */
-    .qr-card {position: absolute; top: 24px; left: 24px; z-index: 1; width: 172px; padding: 16px; border-radius: 16px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;}
-    .qr-card.is-hidden {display: none;}
-    .qr-image {width: 140px; height: 140px;}
+    /* QR 카드: 가운데 바탕 좌상단. 선택한 항목 주소를 폰으로 열기
+       폰 왼쪽 여백이 줄면 단계적으로: 전체 카드 → .is-mini (QR만) → .is-folded (툴바 QR 버튼, 누르면 툴바 옆 팝오버 .is-open) */
+    .qr-card {position: absolute; top: 24px; left: 24px; z-index: 1; width: var(--qr-card-w); padding: 16px; border-radius: 16px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;}
+    .qr-card.is-mini {width: var(--qr-mini-w); padding: 8px; border-radius: 12px;}
+    .qr-card.is-mini .qr-title, .qr-card.is-mini .qr-url {display: none;}
+    .qr-card.is-folded {display: none; z-index: 2;}
+    .qr-card.is-folded.is-open {display: block;}
+    .qr-image {width: 100%; aspect-ratio: 1;}
     .qr-image svg {display: block; width: 100%; height: 100%;}
     .qr-title {margin-top: 12px; font-size: 13px; font-weight: 600; line-height: 18px; color: #000;}
     .qr-url {margin-top: 2px; font-size: 11px; line-height: 15px; color: rgba(0, 0, 0, 0.45); word-break: break-all;}
     .qr-empty {font-size: 12px; line-height: 17px; color: rgba(0, 0, 0, 0.6);}
+    /* 제어 툴바: 폰 오른쪽에 붙음 (위치는 script fitFrame). 폰 오른쪽 여백이 모자라면 바탕 우상단(.is-corner) */
+    .stage-tools {position: absolute; top: 24px; right: 24px; z-index: 1; display: flex; flex-direction: column; gap: 4px; padding: 4px; border-radius: 12px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;}
+    .stage-tools.is-attached {right: auto;}
+    .tool-button {position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 0; border-radius: 8px; background: transparent; color: #000; cursor: pointer;}
+    .tool-button:hover {background: rgba(0, 0, 0, 0.06);}
+    .tool-button svg {display: block;}
+    .tool-button[hidden] {display: none;}
+    .qr-card.is-open ~ .stage-tools #qrButton {background: rgba(0, 0, 0, 0.06);}
+    /* 툴팁: 붙어 있을 땐 오른쪽, 우상단일 땐 왼쪽(폰 쪽)으로 */
+    .tool-button::after {content: attr(data-tip); position: absolute; top: 50%; left: calc(100% + 10px); padding: 6px 8px; border-radius: 6px; background: #1c1c1e; color: #fff; font-size: 12px; line-height: 16px; white-space: nowrap; opacity: 0; pointer-events: none; transform: translateY(-50%); transition: opacity 0.15s;}
+    .stage-tools:not(.is-attached) .tool-button::after {left: auto; right: calc(100% + 10px);}
+    .tool-button:hover::after {opacity: 1;}
     .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
   </style>
 </head>
@@ -93,8 +108,6 @@
       <p class="panel-label" data-config="label"></p>
       <ul class="type-list" id="typeList"></ul>
       <div class="panel-foot">
-        <button class="panel-action" type="button" id="replayButton">↻ 다시 재생</button>
-        <button class="panel-action" type="button" id="openButton"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>새 창으로 보기</button>
         <p class="panel-hint" id="keyHint"></p>
       </div>
     </aside>
@@ -103,6 +116,11 @@
         <div class="qr-image" id="qrImage"></div>
         <p class="qr-title" id="qrTitle"></p>
         <p class="qr-url" id="qrUrl"></p>
+      </div>
+      <div class="stage-tools" id="stageTools">
+        <button class="tool-button" type="button" id="replayButton" data-tip="다시 재생 (R)" aria-label="다시 재생"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+        <button class="tool-button" type="button" id="openButton" data-tip="새 창으로 보기" aria-label="새 창으로 보기"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></button>
+        <button class="tool-button" type="button" id="qrButton" data-tip="QR 코드" aria-label="QR 코드" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M21 21h-4v-4"/></svg></button>
       </div>
       <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
     </main>
@@ -139,6 +157,8 @@
       var frame = document.getElementById('frame');
       var stage = document.getElementById('stage');
       var typeList = document.getElementById('typeList');
+      var qrCard = document.getElementById('qrCard');
+      var qrButton = document.getElementById('qrButton');
       var current = null;
 
       /* 설정 텍스트 채우기 */
@@ -147,7 +167,7 @@
       });
       document.title = CONFIG.title;
       document.getElementById('keyHint').textContent =
-        '키보드 ' + TYPES.slice(0, 9).map(function (t, i) { return i + 1; }).join(' · ') + ' / ↑ ↓ 로 전환';
+        '키보드 ' + TYPES.slice(0, 9).map(function (t, i) { return i + 1; }).join(' · ') + ' / ↑ ↓ 로 전환 · R 다시 재생';
 
       function fileUrl(type) {
         return type.file + '?v=' + CONFIG.version;
@@ -240,15 +260,28 @@
         typeList.appendChild(li);
       });
 
-      document.getElementById('replayButton').addEventListener('click', function () {
+      function replay() {
         loadFrame(fileUrl(current) + '&t=' + Date.now()); /* 다시 불러와 등장 모션부터 재생 */
-      });
+      }
+      document.getElementById('replayButton').addEventListener('click', replay);
       document.getElementById('openButton').addEventListener('click', function () {
         window.open(fileUrl(current), '_blank');
       });
+      /* 접힌 QR: 툴바 버튼으로 열고 닫기, 바깥을 누르면 닫힘 */
+      qrButton.addEventListener('click', function () {
+        qrCard.classList.toggle('is-open');
+        placeQrPopover();
+      });
+      document.addEventListener('click', function (e) {
+        if (!qrCard.classList.contains('is-open') || qrCard.contains(e.target) || qrButton.contains(e.target)) return;
+        qrCard.classList.remove('is-open');
+        placeQrPopover();
+      });
 
-      /* 키보드: 1~9 / ↑ ↓ 로 타입 전환 */
+      /* 키보드: 1~9 / ↑ ↓ 로 타입 전환, R 다시 재생 (Cmd·Ctrl+R 새로고침은 그대로) */
       document.addEventListener('keydown', function (e) {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.key === 'r' || e.key === 'R') { replay(); return; }
         var index = TYPES.indexOf(current);
         var next = null;
         if (/^[1-9]$/.test(e.key)) next = TYPES[Number(e.key) - 1];
@@ -268,10 +301,33 @@
           stage.clientHeight / parseFloat(style.getPropertyValue('--frame-h')));
         frame.style.setProperty('--frame-scale', scale);
 
-        /* QR 카드가 폰과 겹치면 숨김 (프레임 안 그림자 여백 32px 제외한 실제 폰 왼쪽 기준) */
-        var card = document.getElementById('qrCard');
+        /* QR 카드 단계: 폰 왼쪽 여백(바탕 왼쪽 24 + 폰과 간격 16 제외)에 맞춰 전체 → 작은 카드 → 툴바 버튼
+           (프레임 안 그림자 여백 32px 제외한 실제 폰 왼쪽 기준) */
         var phoneLeft = (stage.clientWidth - parseFloat(style.getPropertyValue('--frame-w')) * scale) / 2 + 32 * scale;
-        card.classList.toggle('is-hidden', card.offsetLeft + card.offsetWidth + 16 > phoneLeft);
+        var qrRoom = phoneLeft - 24 - 16;
+        var folded = qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w'));
+        qrCard.classList.toggle('is-mini', !folded && qrRoom < parseFloat(style.getPropertyValue('--qr-card-w')));
+        qrCard.classList.toggle('is-folded', folded);
+        qrButton.hidden = !folded;
+        if (!folded) qrCard.classList.remove('is-open');
+
+        /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단 */
+        var tools = document.getElementById('stageTools');
+        var phoneRight = stage.clientWidth - phoneLeft;
+        var phoneTop = (stage.clientHeight - parseFloat(style.getPropertyValue('--frame-h')) * scale) / 2 + 32 * scale;
+        var attached = phoneRight + 12 + tools.offsetWidth + 16 <= stage.clientWidth;
+        tools.classList.toggle('is-attached', attached);
+        tools.style.left = attached ? phoneRight + 12 + 'px' : '';
+        tools.style.top = attached ? phoneTop + 'px' : '';
+        placeQrPopover();
+      }
+
+      /* 접힌 QR 팝오버: 툴바 아래 8px, 툴바 오른쪽 끝에 맞춤 (폰 위에 겹쳐 뜸) */
+      function placeQrPopover() {
+        var open = qrCard.classList.contains('is-open');
+        var tools = document.getElementById('stageTools');
+        qrCard.style.left = open ? tools.offsetLeft + tools.offsetWidth - qrCard.offsetWidth + 'px' : '';
+        qrCard.style.top = open ? tools.offsetTop + tools.offsetHeight + 8 + 'px' : '';
       }
       /* 바탕(폰 바깥)에서 굴린 세로 휠을 iframe 안 프로토타입 스크롤로 넘김 (pageScroll: prototypes/src/script.js) */
       stage.addEventListener('wheel', function (e) {
@@ -281,7 +337,7 @@
         win.pageScroll.scrollByWheel(e);
       }, { passive: false });
 
-      new ResizeObserver(fitFrame).observe(stage); /* 창 크기·레이아웃이 바뀌면 축소·QR 숨김 다시 계산 */
+      new ResizeObserver(fitFrame).observe(stage); /* 창 크기·레이아웃이 바뀌면 축소·QR 단계·툴바 위치 다시 계산 */
       window.addEventListener('popstate', function () { select(location.hash.slice(1)); });
 
       fitFrame();
