@@ -135,13 +135,6 @@
   eventEl.addEventListener('pointerup', endDrag);
   eventEl.addEventListener('pointercancel', endDrag);
 
-  /* index 조절 창에서 변수를 바꾸면 'tune' 이벤트 → 지금 숨김 상태 위치를 바로 다시 맞춤 */
-  eventEl.addEventListener('tune', function () {
-    if (drag || state === 'open') return;
-    if (anim) anim.stop();
-    Motion.animate(eventEl, stateTarget(state), { duration: 0 });
-  });
-
   pageScroll.target.addEventListener('scroll', function () { /* pageScroll: common.js */
     var scrollTop = pageScroll.get();
     var delta = scrollTop - lastScrollTop;

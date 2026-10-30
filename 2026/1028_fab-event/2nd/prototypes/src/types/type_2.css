@@ -10,7 +10,7 @@
 /* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
 .fab-event {
   --fab-event-w: 60px;
-  --fab-event-h: calc(var(--fab-event-w) * 68 / 60); /* FAB_EVENT_60.png 비율(180×204) 유지 → 60일 때 68 */
+  --fab-event-h: 68px;
 
   /* 상태 — out(화면 밖) · open(전부 보임) · hide(살짝만 보임) · peek(좀 더 나옴)
      visible: 화면에 남는 너비 비율 / rotate: 회전 각도. type_2.js에서 읽어 Motion 스프링으로 이동·회전 */
