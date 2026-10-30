@@ -87,6 +87,25 @@
     .tool-button::after {content: attr(data-tip); position: absolute; top: 50%; left: calc(100% + 10px); padding: 6px 8px; border-radius: 6px; background: #1c1c1e; color: #fff; font-size: 12px; line-height: 16px; white-space: nowrap; opacity: 0; pointer-events: none; transform: translateY(-50%); transition: opacity 0.15s;}
     .stage-tools:not(.is-attached) .tool-button::after {left: auto; right: calc(100% + 10px);}
     .tool-button:hover::after {opacity: 1;}
+    /* 조절 창: 폰 오른쪽 12px·폰 아랫선에 붙음 (위치는 script fitFrame). 여백이 모자라면 바탕 우하단
+       CONFIG.items의 tune이 있는 항목에서만 보임. 값은 iframe 안 대상 요소의 CSS 변수로 바로 넣음 */
+    .tune-panel {position: absolute; right: 24px; bottom: 24px; z-index: 1; width: 260px; padding: 12px 14px 10px; border-radius: 12px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px; color: #000; font-size: 12px; line-height: 16px;}
+    .tune-panel[hidden] {display: none;}
+    .tune-panel.is-attached {right: auto; bottom: auto;}
+    .tune-head {display: flex; align-items: center; justify-content: space-between;}
+    .tune-title {font-size: 13px; font-weight: 700; line-height: 18px;}
+    .tune-reset {height: 24px; padding: 0 8px; border: 0; border-radius: 6px; background: rgba(0, 0, 0, 0.06); color: #000; font: inherit; font-size: 11px; cursor: pointer;}
+    .tune-reset:hover {background: rgba(0, 0, 0, 0.1);}
+    .tune-group {margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: rgba(0, 0, 0, 0.45);}
+    .tune-row {display: grid; grid-template-columns: 40px 1fr 64px; align-items: center; gap: 8px; height: 28px;}
+    .tune-row input[type="range"] {width: 100%; accent-color: #000; cursor: pointer;}
+    .tune-number {display: flex; align-items: center; height: 24px; padding: 0 6px; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 6px;}
+    .tune-number:focus-within {border-color: #000;}
+    .tune-number input {width: 100%; min-width: 0; border: 0; background: none; font: inherit; text-align: right; outline: none; -moz-appearance: textfield;}
+    .tune-number input::-webkit-inner-spin-button, .tune-number input::-webkit-outer-spin-button {-webkit-appearance: none; margin: 0;}
+    .tune-unit {margin-left: 2px; color: rgba(0, 0, 0, 0.45);}
+    .tune-preset {display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; font-weight: 600; cursor: pointer;}
+    .tune-preset input {width: 14px; height: 14px; margin: 0; accent-color: #000; cursor: pointer;}
     .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
   </style>
 </head>
@@ -127,6 +146,13 @@
         <button class="tool-button" type="button" id="openButton" data-tip="새 창으로 보기" aria-label="새 창으로 보기"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></button>
         <button class="tool-button" type="button" id="qrButton" data-tip="QR 코드" aria-label="QR 코드" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M21 21h-4v-4"/></svg></button>
       </div>
+      <div class="tune-panel" id="tunePanel" hidden>
+        <div class="tune-head">
+          <p class="tune-title" id="tuneTitle"></p>
+          <button class="tune-reset" type="button" id="tuneReset">초기화</button>
+        </div>
+        <div id="tuneBody"></div>
+      </div>
       <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
     </main>
   </div>
@@ -140,18 +166,51 @@
         items: 항목 추가는 한 줄 (id는 주소 #id로 쓰임)
         figma: 프로젝트 공통 피그마 설명 링크 / 항목별로 다르면 items의 figma에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
         jira: 프로젝트 공통 Jira 링크 / 항목별로 다르면 items의 jira에 적기 (항목 값이 우선, 둘 다 없으면 버튼 숨김)
+        tune: 항목별 조절 창 (없으면 창 숨김). target 요소의 CSS 변수를 슬라이더·입력창으로 바꿈
+              controls 한 줄 = { var: CSS 변수, label, min, max, step, unit: 'px' | 'deg' | '%'(0~100 → 0~1로 넣음) }
+              presets 한 줄 = { label, values: { CSS 변수: 값 } } → 체크박스. 체크하면 값 한 번에 적용, 슬라이더·입력창을 건드리면 체크 해제
     */
     var CONFIG = {
       title: 'EVENT FAB',
       sub: '26-1028 · Prototype · 2nd',
       label: 'TYPES',
-      version: '20261029-19',
+      version: '20261030-9',
       qrHost: '172.18.102.82', // wifi network ip //
       figma: 'https://www.figma.com/design/qgf78miXjE8bsy68Dspuxw/%ED%99%94%EB%A9%B4%EB%85%BC%EC%9D%98-6?node-id=3883-95789&t=cyvkFhujmdEHecLw-4',
       jira: 'https://jira.team.musinsa.com/browse/FT-737',
       items: [
-        { id: 'type1', title: 'Type 1', file: 'prototypes/Type_1.html' },
-        { id: 'type2', title: 'Type 2', file: 'prototypes/Type_2.html' }
+        { id: 'type1', title: 'Type 1', file: 'prototypes/Type_1.html',
+          tune: {
+            title: 'FAB 조절',
+            target: '.fab-event',
+            presets: [
+              { label: 'AS-IS 크기', values: { '--fab-event-w': 60, '--fab-event-h': 68, '--fab-event-radius': 8 } }
+            ],
+            groups: [
+              { title: 'FAB 크기', controls: [
+                { var: '--fab-event-w', label: '너비', min: 24, max: 120, step: 1, unit: 'px' },
+                { var: '--fab-event-h', label: '높이', min: 24, max: 120, step: 1, unit: 'px' },
+                { var: '--fab-event-radius', label: '라운드', min: 0, max: 60, step: 1, unit: 'px' }
+              ] }
+            ]
+          }
+        },
+        { id: 'type2', title: 'Type 2', file: 'prototypes/Type_2.html',
+          tune: {
+            title: 'FAB 조절',
+            target: '.fab-event',
+            groups: [
+              { title: 'hide · 살짝만 보임', controls: [
+                { var: '--fab-event-hide-visible', label: '노출', min: 0, max: 100, step: 1, unit: '%' },
+                { var: '--fab-event-hide-rotate', label: '각도', min: -30, max: 30, step: 0.5, unit: 'deg' }
+              ] },
+              { title: 'peek · 좀 더 나옴', controls: [
+                { var: '--fab-event-peek-visible', label: '노출', min: 0, max: 100, step: 1, unit: '%' },
+                { var: '--fab-event-peek-rotate', label: '각도', min: -30, max: 30, step: 0.5, unit: 'deg' }
+              ] }
+            ]
+          }
+        }
       ]
     };
     // ================================================================================================= //
@@ -234,12 +293,174 @@
         link.title = url ? type.title + ' Jira 열기' : '';
       }
 
+      /* ── 조절 창 ──
+         tuneValues[항목 id][변수] = 사용자가 바꾼 값 (다시 재생·항목 전환 후에도 유지, 초기화 전까지)
+         tuneDefaults: 불러온 프로토타입 CSS에 적힌 기본값
+         tuneChecked[항목 id] = 체크된 프리셋 번호 / tuneBeforePreset: 체크 직전 값 (체크를 직접 풀면 되돌림) */
+      var tunePanel = document.getElementById('tunePanel');
+      var tuneValues = {};
+      var tuneDefaults = {};
+      var tuneInputs = {};
+      var tuneChecked = {};
+      var tuneBeforePreset = {};
+      var tuneChecks = [];
+
+      function tuneControls(type) {
+        return type.tune.groups.reduce(function (all, group) { return all.concat(group.controls); }, []);
+      }
+
+      function toCssValue(control, value) {
+        return control.unit === '%' ? String(value / 100) : value + control.unit;
+      }
+
+      function fromCssValue(control, text) {
+        var number = parseFloat(text);
+        return control.unit === '%' ? Math.round(number * 1000) / 10 : number;
+      }
+
+      function tuneTarget() {
+        var doc = frame.contentDocument;
+        return doc && current.tune ? doc.querySelector(current.tune.target) : null;
+      }
+
+      function showTuneValue(control, value) {
+        var inputs = tuneInputs[control.var];
+        if (!inputs || isNaN(value)) return;
+        inputs.range.value = value;
+        if (document.activeElement !== inputs.number) inputs.number.value = value;
+      }
+
+      function applyTune(control, value) {
+        var target = tuneTarget();
+        if (!target) return;
+        target.style.setProperty(control.var, toCssValue(control, value));
+        target.dispatchEvent(new CustomEvent('tune')); /* 프로토타입이 지금 상태 위치를 다시 맞춤 */
+      }
+
+      function setTune(control, value) {
+        if (isNaN(value)) return;
+        tuneValues[current.id] = tuneValues[current.id] || {};
+        tuneValues[current.id][control.var] = value;
+        showTuneValue(control, value);
+        applyTune(control, value);
+      }
+
+      function buildTuneRow(control) {
+        var row = document.createElement('label');
+        row.className = 'tune-row';
+        row.innerHTML = '<span></span><input type="range"><span class="tune-number"><input type="number"><span class="tune-unit"></span></span>';
+        row.children[0].textContent = control.label;
+        var range = row.querySelector('input[type="range"]');
+        var number = row.querySelector('input[type="number"]');
+        [range, number].forEach(function (input) {
+          input.min = control.min;
+          input.max = control.max;
+          input.step = control.step;
+        });
+        row.querySelector('.tune-unit').textContent = control.unit === 'deg' ? '°' : control.unit;
+        range.addEventListener('input', function () { setTune(control, parseFloat(range.value)); uncheckPresets(); });
+        number.addEventListener('input', function () { setTune(control, parseFloat(number.value)); uncheckPresets(); });
+        tuneInputs[control.var] = { range: range, number: number };
+        return row;
+      }
+
+      function controlByVar(name) {
+        return tuneControls(current).filter(function (control) { return control.var === name; })[0];
+      }
+
+      function currentTuneValue(control) {
+        var saved = tuneValues[current.id] || {};
+        return control.var in saved ? saved[control.var] : (tuneDefaults[current.id] || {})[control.var];
+      }
+
+      /* 슬라이더·입력창을 직접 움직이면 체크만 풀고 값은 그대로 */
+      function uncheckPresets() {
+        delete tuneChecked[current.id];
+        delete tuneBeforePreset[current.id];
+        tuneChecks.forEach(function (check) { check.checked = false; });
+      }
+
+      function buildPreset(preset, index) {
+        var label = document.createElement('label');
+        label.className = 'tune-preset';
+        label.innerHTML = '<input type="checkbox"><span></span>';
+        label.children[1].textContent = preset.label;
+        var check = label.children[0];
+        check.checked = tuneChecked[current.id] === index;
+        check.addEventListener('change', function () {
+          if (check.checked) {
+            var before = {};
+            Object.keys(preset.values).forEach(function (name) { before[name] = currentTuneValue(controlByVar(name)); });
+            tuneBeforePreset[current.id] = tuneBeforePreset[current.id] || before;
+            tuneChecks.forEach(function (other) { if (other !== check) other.checked = false; });
+            tuneChecked[current.id] = index;
+            Object.keys(preset.values).forEach(function (name) { setTune(controlByVar(name), preset.values[name]); });
+          } else {
+            var saved = tuneBeforePreset[current.id] || {};
+            Object.keys(saved).forEach(function (name) { setTune(controlByVar(name), saved[name]); }); /* 체크 직전 값으로 */
+            delete tuneChecked[current.id];
+            delete tuneBeforePreset[current.id];
+          }
+        });
+        tuneChecks.push(check);
+        return label;
+      }
+
+      /* 항목을 고를 때: 조절 창 내용 다시 만들기 (tune 없으면 숨김) */
+      function renderTune(type) {
+        var body = document.getElementById('tuneBody');
+        body.innerHTML = '';
+        tuneInputs = {};
+        tunePanel.hidden = !type.tune;
+        if (!type.tune) return;
+        document.getElementById('tuneTitle').textContent = type.tune.title;
+        tuneChecks = [];
+        (type.tune.presets || []).forEach(function (preset, index) { body.appendChild(buildPreset(preset, index)); });
+        type.tune.groups.forEach(function (group) {
+          var heading = document.createElement('p');
+          heading.className = 'tune-group';
+          heading.textContent = group.title;
+          body.appendChild(heading);
+          group.controls.forEach(function (control) { body.appendChild(buildTuneRow(control)); });
+        });
+        fitFrame();
+      }
+
+      /* 프로토타입을 불러올 때마다: 기본값 읽고, 바꿔 둔 값이 있으면 다시 넣음 */
+      function syncTune() {
+        var target = tuneTarget();
+        if (!target) return;
+        var style = getComputedStyle(target);
+        var saved = tuneValues[current.id] || {};
+        tuneDefaults[current.id] = {};
+        tuneControls(current).forEach(function (control) {
+          var base = fromCssValue(control, style.getPropertyValue(control.var));
+          tuneDefaults[current.id][control.var] = base;
+          var value = control.var in saved ? saved[control.var] : base;
+          showTuneValue(control, value);
+          if (control.var in saved) applyTune(control, value);
+        });
+      }
+
+      document.getElementById('tuneReset').addEventListener('click', function () {
+        var target = tuneTarget();
+        var defaults = tuneDefaults[current.id] || {};
+        delete tuneValues[current.id];
+        uncheckPresets();
+        tuneControls(current).forEach(function (control) {
+          if (target) target.style.removeProperty(control.var);
+          showTuneValue(control, defaults[control.var]);
+        });
+        if (target) target.dispatchEvent(new CustomEvent('tune'));
+      });
+
       function select(id) {
         current = findType(id);
         loadFrame(fileUrl(current));
         renderQr(current);
         renderFigma(current);
         renderJira(current);
+        renderTune(current);
         document.title = CONFIG.title + ' · ' + current.title;
         [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
           button.classList.toggle('is-active', button.dataset.id === current.id);
@@ -285,6 +506,7 @@
       /* 키보드: 1~9 / ↑ ↓ 로 타입 전환, R 다시 재생 (Cmd·Ctrl+R 새로고침은 그대로) */
       document.addEventListener('keydown', function (e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.target.closest && e.target.closest('input')) return; /* 조절 창 입력 중에는 단축키 무시 */
         if (e.key === 'r' || e.key === 'R') { replay(); return; }
         var index = TYPES.indexOf(current);
         var next = null;
@@ -324,6 +546,17 @@
         tools.classList.toggle('is-attached', attached);
         tools.style.left = attached ? phoneRight + 12 + 'px' : '';
         tools.style.top = attached ? phoneTop + 'px' : '';
+
+        /* 조절 창을 폰 오른쪽 12px·폰 아랫선에 붙임 (툴바와 겹치지 않게 툴바 아래 12px까지만 올라감). 여백이 모자라면 바탕 우하단 */
+        var tune = document.getElementById('tunePanel');
+        if (!tune.hidden) {
+          var phoneBottom = phoneTop + (frameH - pad * 2) * scale;
+          var tuneAttached = phoneRight + 12 + tune.offsetWidth + 16 <= stage.clientWidth;
+          var tuneTop = Math.max(phoneBottom - tune.offsetHeight, attached ? tools.offsetTop + tools.offsetHeight + 12 : 0);
+          tune.classList.toggle('is-attached', tuneAttached);
+          tune.style.left = tuneAttached ? phoneRight + 12 + 'px' : '';
+          tune.style.top = tuneAttached ? tuneTop + 'px' : '';
+        }
         placeQrPopover();
       }
 
@@ -336,6 +569,7 @@
       }
       /* 바탕(폰 바깥)에서 굴린 세로 휠을 iframe 안 프로토타입 스크롤로 넘김 (pageScroll: prototypes/src/common/common.js) */
       stage.addEventListener('wheel', function (e) {
+        if (e.target.closest('#tunePanel')) return; /* 조절 창 위에서는 넘기지 않음 */
         var win = frame.contentWindow;
         if (!e.deltaY || !win || !win.pageScroll) return;
         e.preventDefault();
@@ -353,6 +587,7 @@
         document.documentElement.style.setProperty('--phone-w', w + 'px');
         document.documentElement.style.setProperty('--phone-h', h + 'px');
         fitFrame();
+        syncTune();
       });
       new ResizeObserver(fitFrame).observe(stage); /* 창 크기·레이아웃이 바뀌면 축소·QR 단계·툴바 위치 다시 계산 */
       window.addEventListener('popstate', function () { select(location.hash.slice(1)); });

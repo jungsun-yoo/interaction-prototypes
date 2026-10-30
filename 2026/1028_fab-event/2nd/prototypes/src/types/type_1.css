@@ -4,7 +4,7 @@
    ════════════════════════════════════════════════════ */
 
 /* ══════════════════════════════
-   FAB Event (이미지 2장 디졸브: FAB_44-1.png ↔ FAB_44-2.png, 132×132 @3x → 44×44)
+   FAB Event (이미지 2장 디졸브: FAB_roll_1.png ↔ FAB_roll_2.png, 150×180 @3x → 48×54 박스에 cover)
    제자리에서 시작 → 두 이미지가 번갈아 디졸브
 ══════════════════════════════ */
 .fab-left {
@@ -13,8 +13,9 @@
 
 /* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
 .fab-event {
-  --fab-event-size: 44px;
-  --fab-event-radius: 8px;
+  --fab-event-w: 48px;
+  --fab-event-h: 54px;
+  --fab-event-radius: 6px;
   --fab-event-dissolve-hold: 1.7s;             /* 한 이미지가 머무는 시간 (랜딩 후 첫 디졸브까지도 이 시간) */
   --fab-event-dissolve-duration: 0.3s;         /* 디졸브 전환 시간 */
   --fab-event-dissolve-ease: var(--mds-motion-power1-easeInOut); /* 디졸브 이징 */
@@ -30,8 +31,8 @@
   position: absolute;
   left: 0;
   bottom: calc(100% + 12px);
-  width: var(--fab-event-size);
-  height: var(--fab-event-size);
+  width: var(--fab-event-w);
+  height: var(--fab-event-h);
   transition: opacity var(--fab-event-close-fade) var(--fab-event-close-ease);
 }
 .fab-event.is-closed {
@@ -54,6 +55,7 @@
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover; /* 너비·높이가 달라져도 이미지 비율 유지 (넘치는 부분은 잘림) */
 }
 
 /* 두 번째 이미지를 위에 겹쳐 두고 투명도로 디졸브 (type_1.js가 .is-next 토글) */

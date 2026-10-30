@@ -10,15 +10,15 @@
 /* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute */
 .fab-event {
   --fab-event-w: 60px;
-  --fab-event-h: 68px;
+  --fab-event-h: calc(var(--fab-event-w) * 68 / 60); /* FAB_EVENT_60.png 비율(180×204) 유지 → 60일 때 68 */
 
   /* 상태 — out(화면 밖) · open(전부 보임) · hide(살짝만 보임) · peek(좀 더 나옴)
      visible: 화면에 남는 너비 비율 / rotate: 회전 각도. type_2.js에서 읽어 Motion 스프링으로 이동·회전 */
   --fab-event-out-visible: 0;           /* out: 페이지 진입 시 (0% = 화면 밖) */
   --fab-event-out-rotate: 0deg;
-  --fab-event-hide-visible: 0.2;        /* hide: 인트로·상단 도착 후, 스크롤 내릴 때 (20%) */
+  --fab-event-hide-visible: 0.25;       /* hide: 인트로·상단 도착 후, 스크롤 내릴 때 (25%) */
   --fab-event-hide-rotate: 10deg;
-  --fab-event-peek-visible: 0.35;       /* peek: 스크롤 올릴 때 (35%) */
+  --fab-event-peek-visible: 0.4;        /* peek: 스크롤 올릴 때 (40%) */
   --fab-event-peek-rotate: 12deg;
   --fab-event-edge-offset: 10px;        /* 화면 왼쪽 끝 ~ FAB 왼쪽 끝 (fab 좌측 패딩) */
 
