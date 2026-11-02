@@ -17,9 +17,9 @@
      visible: 화면에 남는 너비 비율 / rotate: 회전 각도. type_1.js에서 읽어 Motion 스프링으로 이동·회전 */
   --fab-event-out-visible: 0;           /* out: 페이지 진입 시 (0% = 화면 밖) */
   --fab-event-out-rotate: 0deg;
-  --fab-event-hide-visible: 0.3;        /* hide: 인트로·상단 도착 후, 스크롤 내릴 때 (30%) */
+  --fab-event-hide-visible: 0.3;        /* hide: 인트로·상단 도착 후, 스크롤 내릴 때  */
   --fab-event-hide-rotate: 10deg;
-  --fab-event-peek-visible: 0.4;        /* peek: 스크롤 올릴 때 (40%) */
+  --fab-event-peek-visible: 0.45;        /* peek: 스크롤 올릴 때  */
   --fab-event-peek-rotate: 12deg;
   --fab-event-edge-offset: 10px;        /* 화면 왼쪽 끝 ~ FAB 왼쪽 끝 (fab 좌측 패딩) */
 
