@@ -30,16 +30,16 @@
   --fab-event-hide-1-x: -60px;          /* hide: 인트로·상단 도착 후, 스크롤 내릴 때 */
   --fab-event-hide-1-y: -30px;          /* 카드1이 카드2보다 30px 위에 겹침 */
   --fab-event-hide-1-rotate: 14deg;
-  --fab-event-hide-2-x: -60px;
+  --fab-event-hide-2-x: -64px;
   --fab-event-hide-2-y: 0px;
   --fab-event-hide-2-rotate: 34deg;
 
-  --fab-event-peek-1-x: -55px;          /* peek: 스크롤 올릴 때 */
+  --fab-event-peek-1-x: -57px;          /* peek: 스크롤 올릴 때 */
   --fab-event-peek-1-y: -30px;
-  --fab-event-peek-1-rotate: 16deg;
+  --fab-event-peek-1-rotate: 20deg;
   --fab-event-peek-2-x: -50px;
   --fab-event-peek-2-y: 0px;
-  --fab-event-peek-2-rotate: 36deg;
+  --fab-event-peek-2-rotate: 40deg;
 
   --fab-event-intro-delay: 0.5s;        /* 페이지 진입 후 open까지 대기 */
   --fab-event-intro-hold: 3s;           /* open 유지 시간, 이후 hide로 */
