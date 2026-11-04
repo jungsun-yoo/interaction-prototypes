@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>무신사 게이트웨이</title>
+  <style>
+    * { margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+      background-color: #fff;
+      color: #000;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { background: none; border: 0; color: inherit; font-family: inherit; cursor: pointer; }
+    img { display: block; max-width: 100%; }
+
+    /* 딤 (원본: ._dim) */
+    .dim {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      min-width: 320px;
+      /* 실서비스: max-width: var(--max-width). 모웹은 600px 까지만 대응 (가이드 페이지가 MW 일 때 전달) */
+      max-width: var(--max-width, none);
+      margin: 0 auto;
+      background-color: #000;
+      opacity: 0.4;
+      z-index: 210;
+      overscroll-behavior: none;
+    }
+
+    /* 게이트웨이 (원본: section._gateway_1yn2i_1) */
+    .gateway {
+      /* 게이트웨이는 스크롤하지 않음 (실서비스: overflow: auto) */
+      overflow: hidden;
+      overscroll-behavior: contain;
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      width: 100%;
+      min-width: 320px;
+      max-height: 100%;
+      /* 상태바 영역(--safe-top)까지 덮고, 그 아래에 원래 여백 12px */
+      padding-top: calc(12px + var(--safe-top, env(safe-area-inset-top, 0px)));
+      margin: 0 auto;
+      background-color: #f5f5f5;
+      box-sizing: border-box;
+      z-index: 220;
+    }
+    @media (min-width: 441px) {
+      .gateway { width: 320px; }
+    }
+    /* TO-BE: 높이 최대 비율(기본 88%)을 넘으면 스크립트가 너비를 줄임 (320px 미만 허용) */
+    .tobe .gateway { min-width: 0; }
+    /* TO-BE: 하단 줄이 좁아져도(약 295px 미만) 버튼 이미지 비율 유지 */
+    .tobe .gateway__offline-img {
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .gateway-title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      clip: rect(0 0 0 0);
+      overflow: hidden;
+    }
+
+    .gateway-store {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      padding: 0 16px;
+    }
+    .gateway__anchor {
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+    .gateway__anchor--column { grid-column: span 2; }
+    .gateway__img {
+      width: 100%;
+      object-fit: contain;
+    }
+
+    /* 1단 띠배너 (Figma: 스토어 그리드 아래 4px, 343×56) */
+    .gateway-strip { padding: 4px 16px 0; }
+    .gateway-strip__anchor {
+      display: block;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+    .gateway-strip__img { width: 100%; }
+
+    .gateway-brand-ad { padding: 4px 16px 0; }
+
+    /* 구좌 노출 제어 (가이드 페이지의 체크박스가 루트에 클래스 부여) */
+    .hide-strip .gateway-strip,
+    .hide-ad .gateway-brand-ad { display: none; }
+    .brand-ad {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      border-radius: 4px;
+      aspect-ratio: 343 / 193;
+    }
+    .brand-ad__video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .brand-ad__label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 22px;
+      height: 15px;
+      border-radius: 2px;
+      background-color: #fff9;
+      color: #000;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 500;
+    }
+
+    .gateway-additional {
+      display: flex;
+      gap: 8px;
+      padding: 0 8px 0 16px;
+    }
+    .gateway__offline { padding-bottom: 6px; }
+    .gateway__offline-img { height: 40px; width: auto; }
+    .gateway__close {
+      flex: none;
+      height: 46px;
+      padding: 12px 8px 16px;
+      margin-left: auto;
+      box-sizing: border-box;
+      line-height: 18px;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="dim" aria-hidden="true"></div>
+
+  <section class="gateway" data-page-id="/gateway">
+    <div>
+      <h1 class="gateway-title">Gateway Menu</h1>
+
+      <div class="gateway-store">
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/musinsa.png" alt="musinsa" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/beauty.png" alt="beauty" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/kicks.png" alt="sneaker" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/sports.png" alt="player" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/boutique.png" alt="boutique" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/kids.png" alt="kids" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/outlet.png" alt="outlet" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/used.png" alt="used" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/standard.png" alt="musinsastandard" /></a>
+        <a class="gateway__anchor"><img class="gateway__img" src="src/img/snap.png" alt="snap" /></a>
+      </div>
+
+      <div class="gateway-strip">
+        <a class="gateway__anchor gateway-strip__anchor"><img class="gateway-strip__img" src="src/img/banner.png" alt="띠배너" /></a>
+      </div>
+
+      <div class="gateway-brand-ad">
+        <a class="brand-ad">
+          <video class="brand-ad__video" src="src/img/brand_ad.mp4" poster="src/img/brand_ad.png" muted loop playsinline autoplay preload="auto" aria-label="20261103_룰루레몬"></video>
+          <span class="brand-ad__label">광고</span>
+        </a>
+      </div>
+
+      <div class="gateway-additional">
+        <a class="gateway__offline"><img class="gateway__offline-img" src="src/img/btn_offlinestore.png" alt="offline" /></a>
+        <a class="gateway__offline"><img class="gateway__offline-img" src="src/img/btn_service.png" alt="menu-service" /></a>
+        <button type="button" class="gateway__close">닫기</button>
+      </div>
+    </div>
+  </section>
+  <script>
+    // TO-BE 게이트웨이 높이 대응
+    // - 사용 가능한 높이 = 뷰포트 높이 - 상단 상태바(--safe-top)
+    //   (브라우저 영역·하단 시스템 영역은 이미 뷰포트 밖)
+    // - 게이트웨이 높이(상태바 덮는 여백 제외)가 사용 가능한 높이의 최대 비율(기본 88%)을 넘으면
+    //   높이 기준으로 너비를 역산해 정수로 내림
+    // - 높이는 너비에 대한 1차식이라 두 너비에서 재서 기울기를 구함
+    // - 최대 비율은 가이드 페이지가 루트의 --max-height-ratio 로 바꿀 수 있음
+    const DEFAULT_HEIGHT_RATIO = 0.88;
+    const heightRatio = () => {
+      const value = parseFloat(getComputedStyle(root).getPropertyValue('--max-height-ratio'));
+      return Number.isFinite(value) && value > 0 ? value : DEFAULT_HEIGHT_RATIO;
+    };
+    const SAMPLE_GAP = 100;
+    const root = document.documentElement;
+    const gateway = document.querySelector('.gateway');
+    const BASE_PADDING_TOP = 12;
+
+    const safeTop = () => parseFloat(getComputedStyle(gateway).paddingTop) - BASE_PADDING_TOP;
+    const contentHeightAt = (width) => {
+      gateway.style.width = `${width}px`;
+      return gateway.scrollHeight - safeTop();
+    };
+
+    const fitGateway = () => {
+      gateway.style.width = '';
+      const baseWidth = gateway.getBoundingClientRect().width;
+      const usable = window.innerHeight - safeTop();
+      const limit = usable * heightRatio();
+      let width = baseWidth;
+      let height = gateway.scrollHeight - safeTop();
+
+      if (root.classList.contains('tobe') && height > limit) {
+        const sampleHeight = contentHeightAt(baseWidth - SAMPLE_GAP);
+        const slope = (height - sampleHeight) / SAMPLE_GAP;
+        const intercept = height - slope * baseWidth;
+        width = Math.max(1, Math.floor((limit - intercept) / slope));
+        height = contentHeightAt(width);
+        // 렌더링 반올림으로 계산값과 실측이 미세하게 다를 수 있어, 실측이 최대 비율 이내가 될 때까지 1px 씩 줄임
+        while (height > limit && width > 1) {
+          width -= 1;
+          height = contentHeightAt(width);
+        }
+      } else {
+        gateway.style.width = '';
+      }
+
+      // 가이드 페이지(부모)에 결과 전달
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'gateway-fit', width, height, usable }, '*');
+      }
+    };
+
+    let fitFrame = 0;
+    const scheduleFit = () => {
+      cancelAnimationFrame(fitFrame);
+      fitFrame = requestAnimationFrame(fitGateway);
+    };
+
+    window.addEventListener('resize', scheduleFit);
+    window.addEventListener('load', scheduleFit);
+    document.querySelectorAll('.gateway img').forEach((img) => img.addEventListener('load', scheduleFit));
+    // 가이드 페이지가 루트의 클래스(tobe, hide-*)·스타일(--safe-top 등)을 바꾸면 다시 계산
+    new MutationObserver(scheduleFit).observe(root, { attributes: true, attributeFilter: ['class', 'style'] });
+    scheduleFit();
+  </script>
+</body>
+</html>
