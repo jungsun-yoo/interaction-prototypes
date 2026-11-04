@@ -1,0 +1,124 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — type_2.css (Type_2)
+   이벤트 FAB 전용 스타일 (mds-motion.css, common.css 이후 로드)
+   카드 2장: 1(fab_trans_1) · 2(fab_trans_2). open이면 한 자리에 합쳐져 한 장처럼 보이고 두 이미지가 페이드 인·아웃 롤링,
+   hide·peek이면 Type_1처럼 두 장이 겹쳐서 화면 왼쪽에 숨음
+   ════════════════════════════════════════════════════ */
+
+.fab-left {
+  position: relative;
+}
+
+/* share 버튼 위 12px, 좌하단 기준. 레이아웃 폭에 영향 없도록 absolute.
+   박스 = 카드 1장 크기 (open이면 두 카드가 이 자리에 겹침) */
+.fab-event {
+  --fab-event-w: 68px;
+  --fab-event-h: 76px;
+  --fab-event-radius: 8px;
+  --fab-event-card-1-shadow: 0 4px 8px rgba(142, 18, 11, 0.5); /* 카드1 그림자: 겹친 정도만큼 보임 (겹침 1 → open 0) */
+
+  /* 상태 — out(화면 밖) · open(전부 보임) · hide(겹쳐서 살짝) · peek(겹쳐서 좀 더)
+     카드별 x: 가로 이동(−면 왼쪽) / y: 세로 이동(−면 위) / rotate: 회전(+면 시계 방향). 모두 open 위치(한 자리) 기준.
+     type_2.js에서 읽어 Motion 스프링으로 이동·회전. 겹침 모양은 Type_1과 같음 (피그마 3969-19442·3969-19573) */
+  --fab-event-out-1-x: -78px;           /* out: 페이지 진입 시 (화면 밖) */
+  --fab-event-out-1-y: 0px;
+  --fab-event-out-1-rotate: 0deg;
+  --fab-event-out-2-x: -78px;
+  --fab-event-out-2-y: 0px;
+  --fab-event-out-2-rotate: 0deg;
+
+  --fab-event-hide-1-x: -60px;          /* hide: 인트로·상단 도착 후, 스크롤 내릴 때 */
+  --fab-event-hide-1-y: -30px;          /* 카드1이 카드2보다 30px 위에 겹침 */
+  --fab-event-hide-1-rotate: 14deg;
+  --fab-event-hide-2-x: -60px;
+  --fab-event-hide-2-y: 0px;
+  --fab-event-hide-2-rotate: 34deg;
+
+  --fab-event-peek-1-x: -55px;          /* peek: 스크롤 올릴 때 */
+  --fab-event-peek-1-y: -30px;
+  --fab-event-peek-1-rotate: 16deg;
+  --fab-event-peek-2-x: -50px;
+  --fab-event-peek-2-y: 0px;
+  --fab-event-peek-2-rotate: 36deg;
+
+  --fab-event-intro-delay: 0.5s;        /* 페이지 진입 후 open까지 대기 */
+  --fab-event-intro-hold: 3s;           /* open 유지 시간, 이후 hide로 */
+
+  /* 자동 이동(인트로·스크롤) — spring.bouncy */
+  --fab-event-auto-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); /* 322 */
+  --fab-event-auto-spring-damping: var(--mds-motion-spring-bouncy-damping);     /* 26 */
+
+  /* hide·peek에서 클릭·드래그로 open, 상단 도착으로 open — spring.normal */
+  --fab-event-tap-spring-stiffness: var(--mds-motion-spring-normal-stiffness);  /* 815 */
+  --fab-event-tap-spring-damping: var(--mds-motion-spring-normal-damping);      /* 54 */
+
+  /* hide·peek에서 드래그로 꺼내기 (놓을 때 기준 이상이면 open, spring.normal) */
+  --fab-event-drag-slop: 4px;            /* 이만큼 움직여야 드래그로 판단 (그 전엔 클릭) */
+  --fab-event-drag-threshold: 0.3;       /* 꺼낸 정도가 30% 이상이면 open */
+  --fab-event-drag-fling-velocity: 0.4;  /* 오른쪽으로 빠르게 튕기면(px/ms) 정도와 관계없이 open */
+  --fab-event-drag-overshoot: 0.2;       /* open 위치를 넘어 끌 때 따라오는 비율 (저항) */
+  --fab-event-reveal-hold: 3s;           /* 상단 도착으로 open 후 hide로 돌아가기까지 (클릭·드래그로 꺼낸 경우는 스크롤 전까지 유지) */
+  --fab-event-top-threshold: 0px;        /* 스크롤 위치가 이 값 이하면 상단 도착으로 보고 open */
+
+  /* open 롤링 — 카드1(fab_trans_1)을 페이드 아웃·인해서 아래 카드2(fab_trans_2)와 번갈아 보임 (type_2.js가 .is-next 토글) */
+  --fab-event-dissolve-hold: 1.0s;             /* 한 이미지가 머무는 시간 (open 후 첫 전환까지도 이 시간) */
+  --fab-event-dissolve-duration: 0.3s;         /* 페이드 전환 시간 */
+  --fab-event-dissolve-ease: var(--mds-motion-power1-easeInOut); /* 페이드 이징 */
+
+  pointer-events: none; /* 빈 박스 영역은 통과, 카드만 클릭 받음 */
+  user-select: none;
+  -webkit-user-select: none;
+
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: var(--fab-event-w);
+  height: var(--fab-event-h);
+}
+
+.fab-event-card {
+  pointer-events: auto; /* 부모(.bottom-navigation·.fab·.fab-event)가 none이라 클릭 받으려면 필요 */
+  cursor: pointer;
+  touch-action: pan-y;  /* 세로 스크롤은 그대로, 가로는 드래그로 */
+
+  position: absolute;
+  left: 0;
+  width: var(--fab-event-w);
+  height: var(--fab-event-h);
+  border-radius: var(--fab-event-radius);
+}
+
+.fab-event-card-1 {
+  bottom: 0;
+  z-index: 1; /* 겹칠 때 카드1이 위 */
+  transition: opacity var(--fab-event-dissolve-duration) var(--fab-event-dissolve-ease);
+}
+
+/* open 롤링: 카드1이 사라지면 아래 카드2 이미지가 보임. 숨김으로 가면 .is-next가 빠져 카드1이 다시 나타남 */
+.fab-event.is-next .fab-event-card-1 {
+  opacity: 0;
+}
+
+/* 카드1 그림자: 투명도 = 겹친 정도 (type_2.js가 --fab-event-shadow-amount를 카드 움직임·드래그에 맞춰 매 프레임 갱신) */
+.fab-event-card-1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1; /* 이미지 뒤 */
+  border-radius: var(--fab-event-radius);
+  box-shadow: var(--fab-event-card-1-shadow);
+  opacity: var(--fab-event-shadow-amount, 0);
+  pointer-events: none;
+}
+
+.fab-event-card-2 {
+  bottom: 0;
+}
+
+/* fab_trans_1·2.png: 204×228 @3x → 68×76 */
+.fab-event-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--fab-event-radius);
+}
