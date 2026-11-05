@@ -928,7 +928,8 @@
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (saved && saved.w && saved.h) return { s: 50, sys: '', env: '', ...saved };
       } catch (e) { /* 저장소 사용 불가 시 기본값 */ }
-      return { w: 375, h: 812, s: 50, sys: '', env: '' };
+      // 첫 실행: AS-IS 문제 화면인 iPhone Duo 전면 MW (게이트웨이 하단 잘림)
+      return { w: 382, h: 580, s: 0, sys: 'duo-front-mw', env: 'mw' };
     };
 
     const saveSize = (size) => {
