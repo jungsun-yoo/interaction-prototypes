@@ -5,7 +5,7 @@
    이후 스크롤 내리면 hide, 올리면 peek. 인트로(진입~hide) 동안은 스크롤·클릭에 반응하지 않음.
    hide·peek에서 카드를 클릭하거나 오른쪽으로 드래그하면 open(spring.normal).
    스크롤로 페이지 상단에 도착하면 open(spring.normal, 꺼낸 것처럼), 3초 뒤 hide.
-   사용자가 꺼내면(클릭·드래그) 자동으로 숨지 않고, 스크롤할 때까지 open·롤링 유지 → 스크롤 방향대로 숨김.
+   사용자가 꺼내면(클릭·드래그) 자동으로 숨지 않고, 스크롤할 때까지 open·롤링 유지 → 스크롤 방향대로 숨김. 이때 이미지가 머무는 시간은 --fab-event-dissolve-hold-pulled.
    수치는 type_2.css 변수(--fab-event-[상태]-[카드]-x / -y / -rotate)에서 읽음 */
 (function () {
   var eventEl = document.querySelector('.fab-event');
@@ -71,17 +71,18 @@
 
   /* open 롤링: open에 들어오면 hold 뒤부터 카드1 페이드 토글 반복, open을 벗어나면 멈추고 카드1을 다시 보이게 (겹친 모양) */
   var rollTimer = null;
+  var rollHold = '--fab-event-dissolve-hold'; /* 지금 쓰는 머무는 시간 변수 (사용자가 꺼내면 -pulled) */
 
   function rollAfter(delay) {
     rollTimer = setTimeout(function () {
       eventEl.classList.toggle('is-next');
-      rollAfter(cssMs('--fab-event-dissolve-duration') + cssMs('--fab-event-dissolve-hold'));
+      rollAfter(cssMs('--fab-event-dissolve-duration') + cssMs(rollHold));
     }, delay);
   }
 
   function setRolling(on) {
     clearTimeout(rollTimer);
-    if (on) rollAfter(cssMs('--fab-event-dissolve-hold'));
+    if (on) rollAfter(cssMs(rollHold));
     else eventEl.classList.remove('is-next');
   }
 
@@ -107,6 +108,7 @@
 
   function reveal(kind, after) { /* kind: 'tap'(클릭·드래그·상단 도착, normal) | 'auto'(bouncy) / after: 돌아갈 숨김 상태 */
     revealAfter = after || null;
+    rollHold = after ? '--fab-event-dissolve-hold' : '--fab-event-dissolve-hold-pulled';
     setState('open', kind);
     if (after) {
       startRevealTimer(); /* 상단 도착: 3초 뒤 hide */
@@ -126,13 +128,14 @@
     setState('hide');
   }, introDelay + cssMs('--fab-event-intro-hold'));
 
-  /* 클릭: open(펼친 상태)이면 링크를 새 창으로 (한 장으로 합쳐지므로 .fab-event의 data-href 하나, Type_2.html),
+  /* 클릭: open(펼친 상태)이면 지금 보이는 이미지의 링크를 새 창으로 (카드의 data-href, Type_2.html),
      hide·peek이면 open (spring.normal), 스크롤할 때까지 유지 */
   var dragged = false;
   eventEl.addEventListener('click', function (event) {
     if (dragged) return; /* 드래그 끝의 클릭은 무시 */
     if (state === 'open') {
-      if (eventEl.dataset.href) window.open(eventEl.dataset.href, '_blank', 'noopener');
+      var shown = cards[eventEl.classList.contains('is-next') ? 1 : 0]; /* 두 카드가 같은 자리라 누른 요소가 아니라 롤링 상태로 판단 */
+      if (shown.dataset.href) window.open(shown.dataset.href, '_blank', 'noopener');
       return;
     }
     if (introActive) return; /* 인트로 중 클릭은 무시 */
