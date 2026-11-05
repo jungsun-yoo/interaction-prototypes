@@ -1,0 +1,593 @@
+:root {
+  --bg: #f1f3f4;
+  --toolbar: #ffffff;
+  --line: #dadce0;
+  --text: #3c4043;
+  --muted: #80868b;
+  --handle: #c4c7c5;
+  --handle-active: #1a73e8;
+  --accent: #1a73e8;
+  --warn-orange: #ff9500;
+  --warn-red: #ff2d2d;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+  font-size: 12px;
+  color: var(--text);
+  background-color: var(--bg);
+  overflow: hidden;
+}
+body.is-dragging { user-select: none; }
+body.is-dragging-x { cursor: ew-resize; }
+body.is-dragging-y { cursor: ns-resize; }
+body.is-dragging-xy { cursor: nwse-resize; }
+
+/* 툴바 (크롬 디바이스 툴바 형태) */
+.toolbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 16px;
+  background-color: var(--toolbar);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+/* 크기 입력 (좌측 패널 맨 위) */
+.sizes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.size {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.size__label {
+  width: 40px;
+  color: var(--muted);
+}
+.size input {
+  width: 64px;
+  height: 26px;
+  padding: 0 6px;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background-color: #fff;
+}
+.size input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.size__x { color: var(--muted); }
+
+
+/* 본문: 좌측 기기 목록 + 작업 영역 */
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.devices {
+  flex: none;
+  width: 240px;
+  overflow-y: auto;
+  padding: 12px 8px;
+  background-color: #fff;
+  border-right: 1px solid var(--line);
+}
+.devices__title {
+  padding: 0 8px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.devices__group + .devices__group { margin-top: 16px; }
+.devices__group-title {
+  padding: 0 8px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+.devices__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+}
+.screen {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+.screen.is-active { background-color: #e8f0fe; }
+/* MW/App 분기가 없는 항목은 줄 전체가 버튼 */
+button.screen {
+  position: relative;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+button.screen:hover:not(.is-active) { background-color: #f1f3f4; }
+.screen__info {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+.screen__name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.screen.is-active .screen__name { color: var(--accent); font-weight: 600; }
+.screen__size {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.screen__envs {
+  flex: none;
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.env-btn:first-child { border-radius: 3px 0 0 3px; }
+.env-btn:last-child { border-radius: 0 3px 3px 0; }
+/* 목록 버튼 경고 점. 주황: TO-BE 하단 이미지 축소 / 빨강: AS-IS 하단 잘림, TO-BE 좌우 딤 노출 */
+body.is-tobe .env-btn.is-shrink::before,
+body.is-tobe .env-btn.is-dim::before,
+body.is-asis .env-btn.is-warn::before {
+  content: "!";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background-color: var(--warn-orange);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+}
+body.is-tobe .env-btn.is-dim::before,
+body.is-asis .env-btn.is-warn::before { background-color: var(--warn-red); }
+/* 줄 전체가 버튼인 기종(아이폰 4종): 경고 아이콘을 기기 이름 오른쪽에 */
+body.is-tobe button.screen.is-dim .screen__name::after,
+body.is-tobe button.screen.is-shrink .screen__name::after {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background-color: var(--warn-orange);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: 1px;
+}
+body.is-tobe button.screen.is-dim .screen__name::after { background-color: var(--warn-red); }
+.env-btn {
+  position: relative;
+  min-width: 34px;
+  height: 24px;
+  padding: 0 6px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 0;
+  background-color: #fff;
+  cursor: pointer;
+}
+.env-btn + .env-btn { border-left: 1px solid var(--line); }
+.env-btn:hover { background-color: #f1f3f4; color: var(--text); }
+.env-btn.is-active { background-color: var(--accent); color: #fff; }
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.badge {
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  background-color: #e8f0fe;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.badge.is-over { background-color: #fce8e6; color: #c5221f; }
+
+/* AS-IS / TO-BE 전환 (툴바 왼쪽) */
+.toolbar__left {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(-50%);
+}
+.mode {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.guide-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.guide-toggle input { accent-color: var(--accent); cursor: pointer; }
+.max-height {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.max-height input {
+  width: 48px;
+  height: 26px;
+  padding: 0 6px;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background-color: #fff;
+}
+.max-height input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+/* AS-IS 에서는 TO-BE 전용 설정(가이드라인·최대높이) 비활성 */
+.guide-toggle.is-disabled,
+.max-height.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.guide-toggle.is-disabled input,
+.max-height.is-disabled input { cursor: not-allowed; }
+.mode-btn {
+  height: 28px;
+  padding: 0 12px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--muted);
+  border: 0;
+  background-color: #fff;
+  cursor: pointer;
+}
+.mode-btn + .mode-btn { border-left: 1px solid var(--line); }
+.mode-btn:hover:not(.is-active) { background-color: #f1f3f4; color: var(--text); }
+.mode-btn.is-active { background-color: var(--accent); color: #fff; }
+
+/* 구좌 노출 체크박스 (좌측 패널, Screen 위) */
+.slots {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.slots label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.slots label:hover { background-color: #f1f3f4; }
+.slots input { accent-color: var(--accent); cursor: pointer; }
+
+/* 너비 눈금 */
+.ruler {
+  flex: none;
+  position: relative;
+  height: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid var(--line);
+}
+.ruler__bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  background-color: #e8f0fe;
+  transform: translateX(-50%);
+}
+
+/* 작업 영역 */
+.stage {
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 24px 48px;
+}
+
+/* 작업 영역 좌측 서랍 메모: TO-BE 규칙 요약
+   - 기본(열림): 왼쪽 끝에 붙어 펼쳐짐
+   - is-closed: 본문만 왼쪽으로 들어가고 '가이드' 탭만 남음
+   - is-hidden(AS-IS): 탭까지 모두 왼쪽으로 들어감 */
+.memo {
+  --memo-width: 300px;
+  position: absolute;
+  top: 16px;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.memo.is-closed { transform: translateX(calc(var(--memo-width) * -1)); }
+.memo.is-hidden {
+  transform: translateX(calc(-100% - 8px));
+  pointer-events: none;
+}
+.memo__body {
+  position: relative;
+  width: var(--memo-width);
+  padding: 12px 32px 12px 14px;
+  cursor: pointer;
+  border: 1px solid #f0e2a8;
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+  background-color: #fff9db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #4a4a3a;
+}
+.memo__tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 10px 6px;
+  writing-mode: vertical-rl;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3c3a2a;
+  border: 1px solid #f0e2a8;
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+  background-color: #fff9db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  /* 펼친 상태에서는 탭을 숨기고, 접었을 때만 탭으로 다시 꺼냄 */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s;
+}
+.memo__tab:hover,
+.memo__body:hover { background-color: #fff3bf; }
+.memo__body:focus-visible,
+.memo__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.memo.is-closed .memo__tab {
+  opacity: 1;
+  visibility: visible;
+}
+.memo__arrow {
+  display: inline-block;
+  writing-mode: horizontal-tb;
+}
+/* 펼친 상태의 접기 화살표: 박스 우측 가운데 */
+.memo__close {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: #7a7660;
+  transform: translateY(-50%);
+}
+.memo__title {
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #3c3a2a;
+}
+.memo__heading {
+  margin-top: 10px;
+  font-weight: 700;
+  color: #3c3a2a;
+}
+.memo__body ul {
+  padding-left: 16px;
+}
+.memo__body li + li { margin-top: 2px; }
+
+/* 폰 + 핸들 */
+.device {
+  position: relative;
+  flex: none;
+  display: grid;
+  grid-template-columns: auto 14px;
+  grid-template-rows: auto 14px;
+  margin-left: 14px; /* 오른쪽 핸들만큼 보정해 폰을 화면 정중앙에 */
+}
+.phone {
+  position: relative;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.phone iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+body.is-dragging .phone iframe { pointer-events: none; }
+
+/* 기기 시스템 영역 (뷰포트 밖, 예: 듀오 전면 우측·하단 브라우저). 위치·크기는 JS 에서 지정 */
+.system-area {
+  position: absolute;
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+/* 상태바 영역 (뷰포트 상단, 게이트웨이 위에 겹쳐 표시, 레드 20%) */
+.statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+.handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e8eaed;
+  touch-action: none;
+}
+.handle::after {
+  content: "";
+  border-radius: 2px;
+  background-color: var(--handle);
+}
+.handle:hover::after,
+.handle.is-active::after { background-color: var(--handle-active); }
+.handle--x { cursor: ew-resize; }
+.handle--x::after { width: 4px; height: 24px; }
+.handle--y { cursor: ns-resize; }
+.handle--y::after { width: 24px; height: 4px; }
+.handle--xy { cursor: nwse-resize; background-color: #dadce0; }
+.handle--xy::after { width: 6px; height: 6px; }
+
+/* TO-BE 가이드라인: 콘텐츠 영역(사용 가능한 높이) + 최대높이 지점 */
+.guide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+/* 위·아래 짧은 가로선 + 그 가운데를 잇는 세로선 (I 자 모양) */
+.guide__range {
+  position: absolute;
+  left: -20px; /* 화면과 8px 간격 */
+  width: 12px;
+  border-top: 2px solid var(--warn-orange);
+  border-bottom: 2px solid var(--warn-orange);
+  box-sizing: border-box;
+}
+.guide__range::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: var(--warn-orange);
+  transform: translateX(-50%);
+}
+.guide__line {
+  position: absolute;
+  left: -14px; /* 콘텐츠 영역 세로선에서 시작 */
+  right: -14px;
+  border-top: 2px dashed var(--warn-red);
+}
+.guide__label {
+  position: absolute;
+  right: calc(100% + 6px);
+  top: 50%;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+.guide__range .guide__label { background-color: var(--warn-orange); }
+.guide__line .guide__label { top: 0; background-color: var(--warn-red); }
+
+/* 선택한 화면의 경고 이유 (폰 아래) */
+.warn-note {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.warn-note[hidden] { display: none; }
+.warn-note__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+.warn-note.is-asis { color: #d93025; }
+.warn-note.is-asis .warn-note__icon { background-color: var(--warn-red); }
+.warn-note.is-tobe { color: #c76a00; }
+.warn-note.is-tobe .warn-note__icon { background-color: var(--warn-orange); }
+
+/* 드래그 중 크기 표시 */
+.tooltip {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: rgba(32, 33, 36, 0.85);
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 1;
+}
+body.is-dragging .tooltip { opacity: 1; }

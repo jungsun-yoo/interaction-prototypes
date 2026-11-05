@@ -81,7 +81,6 @@
       overflow: hidden;
       border-radius: 4px;
     }
-    .gateway__anchor--column { grid-column: span 2; }
     .gateway__img {
       width: 100%;
       object-fit: contain;
@@ -198,15 +197,15 @@
     // - 높이는 너비에 대한 1차식이라 두 너비에서 재서 기울기를 구함
     // - 최대 비율은 가이드 페이지가 루트의 --max-height-ratio 로 바꿀 수 있음
     const DEFAULT_HEIGHT_RATIO = 0.88;
+    const SAMPLE_GAP = 100;
+    const BASE_PADDING_TOP = 12;
+    const root = document.documentElement;
+    const gateway = document.querySelector('.gateway');
+
     const heightRatio = () => {
       const value = parseFloat(getComputedStyle(root).getPropertyValue('--max-height-ratio'));
       return Number.isFinite(value) && value > 0 ? value : DEFAULT_HEIGHT_RATIO;
     };
-    const SAMPLE_GAP = 100;
-    const root = document.documentElement;
-    const gateway = document.querySelector('.gateway');
-    const BASE_PADDING_TOP = 12;
-
     const safeTop = () => parseFloat(getComputedStyle(gateway).paddingTop) - BASE_PADDING_TOP;
     const contentHeightAt = (width) => {
       gateway.style.width = `${width}px`;
@@ -232,8 +231,6 @@
           width -= 1;
           height = contentHeightAt(width);
         }
-      } else {
-        gateway.style.width = '';
       }
 
       // 가이드 페이지(부모)에 결과 전달
