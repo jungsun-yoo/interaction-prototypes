@@ -6,9 +6,7 @@ const LIMIT = { minW: 280, maxW: 1400, minH: 300, maxH: 1600 };
 const MW_MAX_WIDTH = 600;
 const DEFAULT_MAX_HEIGHT = 88;
 const BOTTOM_IMAGE_HEIGHT = 40;
-const SIZE_KEY = 'gateway-phone-size';
-const MODE_KEY = 'gateway-mode';
-// 첫 실행: AS-IS 문제 화면인 iPhone Duo 전면 MW (게이트웨이 하단 잘림)
+// 접속하면 항상 TO-BE 의 iPhone Duo 전면 MW 에서 시작
 const FIRST_SIZE = { w: 382, h: 580, s: 0, sys: 'duo-front-mw', env: 'mw' };
 
 const $ = (id) => document.getElementById(id);
@@ -24,33 +22,17 @@ const tooltip = $('tooltip');
 const rulerBar = $('rulerBar');
 const memo = $('memo');
 const memoTab = $('memoTab');
-const memoBody = $('memoBody');
+const memoClose = $('memoClose');
 const slotInputs = [...document.querySelectorAll('[data-slot]')];
 const modeButtons = [...document.querySelectorAll('.mode-btn')];
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, Math.round(v)));
 const frameRoot = () => iframe.contentDocument?.documentElement;
 
-// ─── 저장된 상태 ───────────────────────────────────────────
+// ─── 상태 ──────────────────────────────────────────────────
 
-const loadSize = () => {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SIZE_KEY));
-    if (saved && saved.w && saved.h) return { s: 0, sys: '', env: '', ...saved };
-  } catch (e) { /* 저장소 사용 불가 시 기본값 */ }
-  return FIRST_SIZE;
-};
-
-const saveItem = (key, value) => {
-  try { localStorage.setItem(key, value); } catch (e) { /* 무시 */ }
-};
-
-const loadMode = () => {
-  try { return localStorage.getItem(MODE_KEY) === 'tobe' ? 'tobe' : 'asis'; } catch (e) { return 'asis'; }
-};
-
-let size = loadSize();
-let mode = loadMode();
+let size = FIRST_SIZE;
+let mode = 'tobe';
 
 // ─── Screen 목록 ───────────────────────────────────────────
 
@@ -309,7 +291,6 @@ const setSize = (next) => {
     env: next.env || '',
   };
   render();
-  saveItem(SIZE_KEY, JSON.stringify(size));
 };
 
 // 구좌 노출: 체크 해제 시 게이트웨이 iframe 루트에 hide-{slot} 클래스 부여
@@ -348,9 +329,9 @@ const applyMode = () => {
 const setMemoOpen = (open) => {
   memo.classList.toggle('is-closed', !open);
   memoTab.setAttribute('aria-expanded', String(open));
-  memoBody.setAttribute('aria-expanded', String(open));
-  // 펼침: 박스로 접기 / 접힘: 탭으로 펼치기 (키보드 포커스도 보이는 쪽만)
-  memoBody.tabIndex = open ? 0 : -1;
+  memoClose.setAttribute('aria-expanded', String(open));
+  // 펼침: 접기 버튼 / 접힘: 탭 (키보드 포커스도 보이는 쪽만)
+  memoClose.tabIndex = open ? 0 : -1;
   memoTab.tabIndex = open ? -1 : 0;
 };
 
@@ -438,7 +419,6 @@ const onModeClick = (event) => {
   const next = event.currentTarget.dataset.mode;
   const changed = mode !== next;
   mode = next;
-  saveItem(MODE_KEY, mode);
   applyMode();
   if (changed) syncMemoWithMode();
 };
@@ -465,12 +445,7 @@ $('maxHeight').addEventListener('change', () => {
   applyMode();
 });
 memoTab.addEventListener('click', () => setMemoOpen(true));
-memoBody.addEventListener('click', () => setMemoOpen(false));
-memoBody.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  e.preventDefault();
-  setMemoOpen(false);
-});
+memoClose.addEventListener('click', () => setMemoOpen(false));
 window.addEventListener('resize', renderRulerMark);
 window.addEventListener('message', onGatewayFit);
 iframe.addEventListener('load', () => {

@@ -362,8 +362,7 @@ body.is-tobe button.screen.is-dim .screen__name::after { background-color: var(-
 .memo__body {
   position: relative;
   width: var(--memo-width);
-  padding: 12px 32px 12px 14px;
-  cursor: pointer;
+  padding: 12px 36px 12px 14px;
   border: 1px solid #f0e2a8;
   border-left: 0;
   border-radius: 0 6px 6px 0;
@@ -397,8 +396,8 @@ body.is-tobe button.screen.is-dim .screen__name::after { background-color: var(-
   transition: opacity 0.2s ease, visibility 0.2s;
 }
 .memo__tab:hover,
-.memo__body:hover { background-color: #fff3bf; }
-.memo__body:focus-visible,
+.memo__close:hover { background-color: #fff3bf; }
+.memo__close:focus-visible,
 .memo__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .memo.is-closed .memo__tab {
   opacity: 1;
@@ -408,16 +407,28 @@ body.is-tobe button.screen.is-dim .screen__name::after { background-color: var(-
   display: inline-block;
   writing-mode: horizontal-tb;
 }
-/* 펼친 상태의 접기 화살표: 박스 우측 가운데 */
+/* 접기 버튼: 박스 우측 세로 전체. 본문은 클릭해도 닫히지 않아 글자를 긁어 복사할 수 있음 */
 .memo__close {
   position: absolute;
-  top: 50%;
-  right: 6px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  padding: 0;
+  color: #7a7660;
+  border: 0;
+  border-left: 1px solid #f0e2a8;
+  border-radius: 0 5px 5px 0;
+  background: none;
+  cursor: pointer;
+}
+.memo__close svg {
   display: block;
   width: 16px;
   height: 16px;
-  color: #7a7660;
-  transform: translateY(-50%);
 }
 .memo__title {
   margin-bottom: 6px;

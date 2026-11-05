@@ -52,11 +52,13 @@
 
   <main class="stage">
     <aside id="memo" class="memo is-hidden" aria-label="게이트웨이 규칙 메모">
-      <div id="memoBody" class="memo__body" role="button" tabindex="0" aria-expanded="true" aria-label="가이드 접기">
+      <div id="memoBody" class="memo__body">
         <div id="memoContent"></div>
-        <svg class="memo__close" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+        <button id="memoClose" class="memo__close" type="button" aria-expanded="true" aria-controls="memoBody" aria-label="가이드 접기">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
       </div>
       <button id="memoTab" class="memo__tab" type="button" aria-expanded="true" aria-controls="memoBody" tabindex="-1">가이드<span class="memo__arrow" aria-hidden="true">▸</span></button>
     </aside>
