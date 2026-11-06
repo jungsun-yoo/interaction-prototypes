@@ -1,0 +1,484 @@
+/* ════════════════════════════════════════════════════
+   MUSINSA FAB 이벤트 — common.css (모든 Type 공통)
+   반응형: 모바일 최대 너비(--mobile-max-w) / 헤더 스크롤 연동
+   ════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* ── 기기 크기: 프로젝트마다 Figma 프레임에 맞춰 여기만 수정 ──
+     데스크탑(PC)에서 보는 폰 프레임 값. index.html은 --phone-w·--phone-h를 읽어 프레임 크기를 자동으로 맞춤 */
+  --phone-w: 375px;           /* 폰 너비 */
+  --phone-h: 812px;           /* 폰 높이 */
+  --phone-radius: 32px;       /* 폰 모서리 */
+  --status-bar-h: 45px;       /* 상태바 높이 (StatusBar 이미지 높이와 같게) */
+  --phone-safe-bottom: 34px;  /* 하단 안전영역 (홈 인디케이터 영역) */
+
+  /* 모바일(터치 기기)에서 화면 최대 너비. 넓은 화면(태블릿 등)에서는 이 너비로 가운데 정렬 */
+  --mobile-max-w: 600px;
+
+  /* 하단 안전영역: 실제 기기는 env() 값, 데스크탑 폰 프레임은 아래 미디어쿼리에서 --phone-safe-bottom으로 강제 */
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f0f0f0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; /* Pretendard 우선, 없으면 Apple 시스템 폰트(SF Pro·Apple SD Gothic Neo) */
+}
+
+/* 프로토타입 이미지: 드래그·롱프레스 메뉴·선택 방지 (iOS Safari / Chrome) */
+img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ─────────────────────────────
+    Phone  — 모바일 반응형 (최대 --mobile-max-w)
+───────────────────────────── */
+.phone {
+  position: relative;
+  width: 100%;
+  max-width: var(--mobile-max-w);
+  height: 100vh;    /* fallback: 구형 브라우저 */
+  height: 100svh;   /* iOS Safari: 주소창 포함한 최소 뷰포트 (항상 보임) */
+  overflow: hidden;
+  background: #f5f5f5;
+  margin: 0 auto;
+}
+
+/* 데스크탑(마우스 기기): --phone-w × --phone-h 고정, 중앙 정렬. 터치 기기는 너비와 상관없이 모바일(최대 --mobile-max-w) */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .phone {
+    width: var(--phone-w);
+    max-width: var(--phone-w);
+    height: var(--phone-h);
+    border-radius: var(--phone-radius);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+  }
+
+  :root {
+    --safe-area-bottom: var(--phone-safe-bottom);
+  }
+}
+
+/* StatusBar */
+.status-bar {position: absolute; top: 0; left: 0; width: 100%; height: var(--status-bar-h); z-index: 30; overflow: hidden;}
+.status-bar img {width: 100%; height: var(--status-bar-h); display: block; object-fit: cover; object-position: center;}
+
+/* ─────────────────────────────
+    Header — 스크롤 시 위로 올라감
+    will-change: transform 으로 GPU 가속
+───────────────────────────── */
+.header {
+  position: absolute;
+  top: var(--status-bar-h);   /* status-bar 아래부터 시작 */
+  left: 0;
+  width: 100%;
+  height: 136px; /* 181 - 45 = appbar(52) + search(36) + tab(48) */
+  z-index: 20;
+  background: #1A1B1F;
+  will-change: transform;
+}
+
+/* Appbar */
+.appbar {position: relative; width: 100%; height: 52px;}
+.appbar-l {position: absolute; top: 0; left: 0; height: 52px; display: block;}
+.appbar-r {position: absolute; top: 0; right: 0; height: 52px; display: block;}
+
+/* Search */
+.search-bar {position: relative; width: 100%; height: 36px; background: #fff;}
+.search-bar-l {position: absolute; top: 0; left: 0; height: 100%; display: block;}
+.search-bar-r {position: absolute; top: 0; right: 0; height: 100%; display: block;}
+
+/* MusinsaTab: 48px height, 가로 스크롤 */
+.musinsa-tab-wrap {
+  width: 100%;
+  height: 48px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.musinsa-tab-wrap::-webkit-scrollbar { display: none; }
+.musinsa-tab-wrap img {
+  display: block;
+  height: 100%;
+}
+
+/* ─────────────────────────────
+    Scroll Area
+    top: 0 으로 올리고 padding-top: 181px
+    → 헤더가 올라가면 콘텐츠가 자연스럽게 채워짐
+───────────────────────────── */
+.scroll-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* 바텀네비 뒤까지 확장 → backdrop-filter 작동 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding-top: 181px;    /* 헤더 높이만큼 밀어냄 */
+  padding-bottom: 207px; /* 바텀네비 뒤로 콘텐츠 안 숨도록 */
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* 모바일: 위 기본 스타일(.status-bar·.header·.scroll-area)을 덮어쓰므로 그 뒤에 위치
+   문서(window) 전체가 스크롤 → 사파리 주소창·툴바가 스크롤에 따라 줄어듦
+   헤더·바텀네비는 화면에 fixed (최대 --mobile-max-w, 가운데). PC는 기존처럼 .scroll-area 안에서 스크롤 */
+@media (hover: none), (pointer: coarse) {
+  html, body {
+    height: auto;
+    overflow: visible;
+    background: #f5f5f5;
+  }
+  .phone {
+    height: auto;
+    overflow: visible;
+  }
+  .status-bar { display: none; }
+  .header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    max-width: var(--mobile-max-w);
+    margin: 0 auto;
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(136px + env(safe-area-inset-top, 0px));
+  }
+  .scroll-area {
+    position: static;
+    height: auto;
+    overflow-x: clip;     /* 화면보다 넓은 로티 등이 문서를 좌우로 밀지 않게 자름 (스크롤 컨테이너는 안 됨) */
+    overflow-y: visible;
+    padding-top: calc(136px + env(safe-area-inset-top, 0px));
+  }
+}
+
+/* BigBanner */
+.big-banner {
+  --big-banner-side: 16px;  /* 좌우 여백 = 양옆 슬라이드 노출 폭 */
+  --big-banner-delay: 3s;   /* 정지 시간 */
+  --big-banner-speed: 0.5s; /* 전환 시간 */
+  --big-banner-text-x: 20px;      /* 텍스트 왼쪽 여백 (슬라이드 기준) */
+  --big-banner-text-bottom: 20px; /* 텍스트 아래 여백 — 아래 정렬이라 줄 수가 달라도 바닥 기준 */
+  --big-banner-text-w: 236px;     /* 텍스트 최대 너비 */
+  --swiper-wrapper-transition-timing-function: ease;
+  --big-banner-pagination-right: 16px;
+  --big-banner-pagination-bottom: 20px;
+}
+.big-banner .swiper-slide {
+  position: relative;
+  width: calc(100% - var(--big-banner-side) * 2);
+}
+/* 배너 타이틀 20/26, 서브타이틀 13/18, SemiBold, gray100 */
+.big-banner-text {
+  position: absolute;
+  left: var(--big-banner-text-x);
+  bottom: var(--big-banner-text-bottom);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: var(--big-banner-text-w);
+  max-width: calc(100% - var(--big-banner-text-x) * 2);
+  color: #f5f5f5;
+  font-weight: 600;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  pointer-events: none;
+}
+.big-banner-title {
+  font-size: 20px;
+  line-height: 26px;
+  white-space: pre-line; /* common.js title의 \n 줄바꿈 */
+}
+.big-banner-subtitle {font-size: 13px; line-height: 18px;}
+
+.big-banner-pagination {
+  position: absolute;
+  right: calc(var(--big-banner-side) + var(--big-banner-pagination-right));
+  bottom: var(--big-banner-pagination-bottom);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.big-banner-pagination img {display: block; width: 12px; height: 12px;}
+.big-banner .swiper-slide > img { display: block; width: 100%; aspect-ratio: 343 / 257; object-fit: cover;}
+
+/* 퀵메뉴 */
+.quick-menu {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.quick-menu::-webkit-scrollbar { display: none; }
+.quick-menu img { display: block; width: 600px; max-width: none; height: auto; }
+
+/* Content: width 100%, 매우 긴 이미지 */
+.content {
+  position: relative;
+  container-type: inline-size;   /* 내부 요소가 content 너비(cqw) 기준으로 비례 */
+}
+.content img { display: block; width: 100%; height: auto;}
+
+/* 캠페인 섹션 헤더 로티 
+   375 기준 수치 → 화면 너비(최대 600)에 비례 */
+.content-lottie {
+  --content-lottie-base: 375;   /* 기준 화면 너비 */
+  --content-lottie-top: 0;      /* 375 기준 top(px) — 퀵메뉴가 빠진 새 Content.png 기준 */
+  --content-lottie-w: 600;      /* 375 기준 너비(px) */
+  position: absolute;
+  top: calc(var(--content-lottie-top) / var(--content-lottie-base) * 100cqw);
+  left: 50%;
+  width: calc(var(--content-lottie-w) / var(--content-lottie-base) * 100cqw);
+  aspect-ratio: 1800 / 342;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.content-lottie svg { display: block; }   /* inline svg 하단 여백 제거 */
+
+/* ─────────────────────────────
+    BottomNavigation (207px)
+───────────────────────────── */
+.bottom-navigation {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 207px; /* fab(112) + tabbar(95) */
+  z-index: 20;
+  pointer-events: none;
+}
+/* 모바일: 문서 스크롤이라 화면 하단에 fixed (최대 --mobile-max-w, 가운데) */
+@media (hover: none), (pointer: coarse) {
+  .bottom-navigation {
+    position: fixed;
+    right: 0;
+    max-width: var(--mobile-max-w);
+    margin: 0 auto;
+  }
+}
+
+/* ══════════════════════════════
+    FAB (56px)
+══════════════════════════════ */
+.fab {
+  position: relative;
+  width: 100%;
+  padding: 12px 10px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  transition: transform 0.4s cubic-bezier(0.22, 1.00, 0.36, 1.00);
+  z-index: 1;
+}
+
+/* 스크롤 다운 시 FAB 숨김: safe-area + 12px 위치까지 내려감 */
+.fab.is-hidden {
+  transform: translateY(calc(95px - var(--safe-area-bottom) - 12px));
+}
+
+/* FAB 공통  */
+.fab-item-base {
+  --fab-item-size: 44px;
+  --fab-item-border: #ebebeb;              /* gray200 */
+  --fab-item-bg: rgba(255, 255, 255, 0.92);
+  --fab-item-icon-size: 28px;
+  width: var(--fab-item-size);
+  height: var(--fab-item-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fab-item-bg);
+  border: 1px solid var(--fab-item-border);
+  border-radius: 100px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fab-item-base > img {
+  width: var(--fab-item-icon-size);
+  height: var(--fab-item-icon-size);
+  display: block;
+}
+
+.fab-share { cursor: pointer;}
+
+/* 젠더 토글: 144×44 */
+.fab-gender {
+  width: 144px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s linear;
+}
+.fab-gender img {
+  height: 100%;
+  display: block;
+}
+
+.fab.is-hidden .fab-gender {
+  opacity: 0;
+}
+
+/* 우측 컬럼: top + recent 세로 배치 */
+.fab-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 탑버튼  */
+.fab-top {
+  /* 상단이동 spring.normal */
+  --fab-top-spring-stiffness: var(--mds-motion-spring-normal-stiffness); 
+  --fab-top-spring-damping: var(--mds-motion-spring-normal-damping);
+  pointer-events: none;   /* 숨김 중에는 클릭 안 됨 */
+  opacity: 0;
+  transition: opacity 0.1s linear;
+  cursor: pointer;
+}
+.fab-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 최근 본 상품 (크기·보더·배경은 .fab-item-base): 이미지 위로 롤링 (common.js에서 변수 읽어 반복) */
+.fab-recent {
+  --fab-recent-hold: 2.5s;   /* 이미지 고정 시간 */
+  --fab-recent-roll: 0.6s;   /* 상하 전환 시간 */
+  position: relative;
+}
+.fab-recent img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translateY(100%);   /* 대기: 아래 */
+  transition: transform var(--fab-recent-roll) var(--mds-motion-power3-easeInOut);
+}
+.fab-recent img.is-current { transform: translateY(0); }
+.fab-recent img.is-leaving { transform: translateY(-100%); }   /* 위로 나감 */
+.fab-recent img.is-instant { transition: none; }   /* 다음 진입 전 아래로 즉시 복귀 */
+
+/* ══════════════════════════════
+    바텀네비게이션 (95px)
+══════════════════════════════ */
+.tabbar {
+  position: relative;
+  width: 100%;
+  height: 95px;
+  padding-top: 12px;
+  padding-bottom: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 하단 그라디언트 스크림 */
+.tabbar-scrim {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Navigation Pill ─────────────────────────
+    max 333px, 반응형: calc(100% - 42px)
+    Glass Effect: backdrop-filter 직접 적용
+─────────────────────────────────────────── */
+.navigation {
+  position: relative;
+  width: calc(100% - 42px);
+  height: 62px;
+  border-radius: 1000px;
+  overflow: hidden;
+  z-index: 1;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.5);
+  transition: opacity 0.2s ease;
+}
+
+/* 좌우 테두리 하이라이트 */
+.navigation-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 1000px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+/* 선택 pill: 홈 기준 (x=130, y=4, 73×54, #000 10%) */
+.nav-selection {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 73px;
+  height: 54px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.nav-items {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  right: 8px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  z-index: 4;
+}
+
+.nav-item {
+  flex: 1;
+  height: 54px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item img {
+  width: 63.4px;
+  height: 54px;
+  display: block;
+}
+
