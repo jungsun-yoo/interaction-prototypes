@@ -4,6 +4,7 @@
    이후 스크롤 내리면 hide, 올리면 peek. 인트로(진입~hide) 동안은 스크롤에 반응하지 않고, 클릭은 펼쳐진 동안 링크만 엶.
    open에서 클릭하면 링크를 새 창으로.
    hide·peek에서 클릭하거나 오른쪽으로 드래그하면 open(spring.normal).
+   open에서 왼쪽으로 드래그하면 다시 숨김(spring.normal), 인트로 중에는 드래그 없음.
    스크롤로 페이지 상단에 도착하면 open(spring.bouncy), 2초 뒤 hide.
    꺼낸 뒤 3초간 스크롤·반응이 없으면 마지막 숨김 상태로, 그 전에 스크롤하면 스크롤 방향대로 숨김.
    수치는 type_1.css 변수(--fab-event-[상태]-visible / -rotate)에서 읽음 */
@@ -92,15 +93,25 @@
     reveal('tap');
   });
 
-  /* hide·peek에서 오른쪽으로 드래그: 손가락을 따라 나오고, 놓으면 기준 이상이면 open, 아니면 원래 숨김으로 복귀 */
+  /* hide·peek에서 오른쪽으로 드래그해 꺼내고, open에서 왼쪽으로 드래그해 집어넣음.
+     손가락을 따라 움직이고, 놓으면 기준 이상이면 목표 상태로, 아니면 원래 상태로 복귀 */
   var drag = null;
+  var OPEN_TARGET = { x: 0, rotate: 0 };
   eventEl.addEventListener('dragstart', function (event) { event.preventDefault(); });
+
+  function dragProgress() { /* 0: 시작 상태 → 1: 목표 상태 */
+    var progress = (drag.x - drag.from.x) / (drag.to.x - drag.from.x);
+    return Math.max(0, Math.min(progress, 1));
+  }
 
   eventEl.addEventListener('pointerdown', function (event) {
     if (state === 'open' && revealTimer) startRevealTimer(); /* 꺼낸 상태에서 누르면 대기 시간 다시 */
-    if (state === 'open' || state === 'out') return;
-    var from = stateTarget(state);
-    drag = { id: event.pointerId, startX: event.clientX, from: from, x: from.x, lastX: event.clientX, lastT: event.timeStamp, velocity: 0 };
+    if (state === 'out' || introActive) return; /* 인트로 중에는 드래그 없음 */
+    var closing = state === 'open';
+    var closeState = revealAfter || lastHidden; /* 집어넣으면 돌아갈 숨김 상태 */
+    var from = closing ? OPEN_TARGET : stateTarget(state);
+    var to = closing ? stateTarget(closeState) : OPEN_TARGET;
+    drag = { id: event.pointerId, startX: event.clientX, closing: closing, closeState: closeState, from: from, to: to, x: from.x, lastX: event.clientX, lastT: event.timeStamp, velocity: 0 };
     dragged = false;
     eventEl.setPointerCapture(event.pointerId); /* 보이는 부분이 좁아 손가락이 벗어나도 계속 받음 */
   });
@@ -112,29 +123,40 @@
       if (Math.abs(dx) < cssNumber('--fab-event-drag-slop')) return;
       dragged = true;
       if (anim) anim.stop();
+      clearTimeout(revealTimer); /* 끄는 동안은 자동으로 숨지 않음 */
     }
     var x = drag.from.x + dx;
     if (x > 0) x *= cssNumber('--fab-event-drag-overshoot'); /* 끝을 넘으면 저항 */
-    x = Math.max(x, drag.from.x);
-    var progress = 1 - Math.min(x, 0) / drag.from.x; /* 0: 숨김 → 1: open */
+    x = Math.max(x, Math.min(drag.from.x, drag.to.x)); /* 숨김 위치보다 더 들어가지 않음 */
     var dt = event.timeStamp - drag.lastT;
     if (dt > 0) drag.velocity = (event.clientX - drag.lastX) / dt;
     drag.lastX = event.clientX;
     drag.lastT = event.timeStamp;
     drag.x = x;
-    Motion.animate(eventEl, { x: x, rotate: drag.from.rotate * (1 - progress) }, { duration: 0 });
+    Motion.animate(eventEl, { x: x, rotate: drag.from.rotate + (drag.to.rotate - drag.from.rotate) * dragProgress() }, { duration: 0 });
   });
 
   function endDrag(event) {
     if (!drag || event.pointerId !== drag.id) return;
     var wasDragged = dragged;
-    var progress = 1 - Math.min(drag.x, 0) / drag.from.x;
+    var finished = drag; /* 놓는 시점의 드래그 정보 */
+    var progress = dragProgress();
     var movedRecently = event.timeStamp - drag.lastT <= cssMs('--fab-event-drag-fling-window'); /* 멈췄다 놓으면 튕김이 아님 */
-    var flung = movedRecently && drag.velocity > cssNumber('--fab-event-drag-fling-velocity');
+    var towardTarget = finished.closing ? -drag.velocity : drag.velocity; /* 목표 방향 속도 */
+    var flung = movedRecently && towardTarget > cssNumber('--fab-event-drag-fling-velocity');
+    var threshold = cssNumber(finished.closing ? '--fab-event-drag-close-threshold' : '--fab-event-drag-threshold');
     drag = null;
     if (!wasDragged) return;
     setTimeout(function () { dragged = false; }, 0); /* 이어지는 click 무시한 뒤 해제 */
-    if (progress >= cssNumber('--fab-event-drag-threshold') || flung) {
+    var passed = progress >= threshold || flung;
+    if (finished.closing) {
+      if (passed) {
+        setState(finished.closeState, 'tap');
+      } else {
+        moveTo(OPEN_TARGET, 'tap');
+        startRevealTimer();
+      }
+    } else if (passed) {
       reveal('tap');
     } else {
       moveTo(stateTarget(state), 'tap');
@@ -147,7 +169,7 @@
     var scrollTop = pageScroll.get();
     var delta = scrollTop - lastScrollTop;
     lastScrollTop = scrollTop;
-    if (introActive) return;
+    if (introActive || dragged) return; /* 끄는 동안은 스크롤로 움직이지 않음 */
 
     if (scrollTop <= cssNumber('--fab-event-top-threshold')) {
       /* 페이지 상단 도착: open, 2초 뒤 hide (iOS 바운스로 생기는 아래 방향 이벤트도 여기서 무시) */
