@@ -1,0 +1,136 @@
+/* ════════════════════════════════════════════════════
+   type_1.css — 체크인 아이콘 뱃지
+   배경 page.png(1125×2436 @3x)에 상태바까지 그려져 있어 상태바 요소 없이 375×812로 고정
+   ════════════════════════════════════════════════════ */
+
+:root {
+  --appbar-top: 45px;     /* 앱바 시작 y (배경 이미지의 상태바 아래) */
+  --appbar-h: 52px;
+  --store-bg: #1A1B1F;    /* 무신사 스토어 헤더색 */
+  --store-icon: #fff;
+
+  /* 이벤트 배지 등장 모션 (index 모션 컨트롤 패널이 이 값을 바꿈) */
+  --checkin-badge-fade: 0.15;                                                   /* 페이드인 (초, linear) */
+  --checkin-badge-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness);  /* mds.spring.bouncy 322 */
+  --checkin-badge-spring-damping: var(--mds-motion-spring-bouncy-damping);      /* mds.spring.bouncy 26 */
+  --checkin-badge-delay: 1;    /* 최초 등장 전 딜레이 (초) */
+  --checkin-badge-hold: 3;     /* 등장 완료 후 노출 유지 (초) */
+  --checkin-badge-rest: 6;     /* 사라짐 완료 후 다시 등장까지 (초) */
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 375×812 고정: 배경 이미지 비율을 지키려고 실제 폰에서도 늘리지 않음 */
+.phone {
+  width: var(--phone-w);
+  min-width: 0;
+  max-width: var(--phone-w);
+  height: var(--phone-h);
+}
+
+.phone-bg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────────
+    AppBar — 무신사 스토어 (y 45, 375 × 52)
+    출처: 26-1105 앱테크진입점모션 prototypes/Type_1.html
+───────────────────────────── */
+.appbar {
+  position: absolute;
+  top: var(--appbar-top);
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px; /* 로고 묶음과 아이콘 사이 최소 간격 */
+  width: 100%;
+  height: var(--appbar-h);
+  padding: 0 16px;
+  background: var(--store-bg);
+}
+
+.appbar-brand {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.appbar-logo {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.appbar-logo img {
+  display: block;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* 게이트웨이 버튼 로티: 로고 오른쪽에 갭 없이 */
+.appbar-gateway {
+  flex: none;
+  width: 28px;
+  height: 24px;
+}
+
+.appbar-gateway svg {
+  display: block;
+}
+
+.appbar-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  color: var(--store-icon);
+}
+
+.appbar-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.appbar-icon svg {
+  display: block;
+}
+
+/* 체크인 아이콘 (Figma 221:72905)
+   핀: 28 박스 안 22×24 프레임(3, 2) 기준 inset 4.95% / 12.86% → (5.83, 3.19) */
+.appbar-checkin-pin {
+  position: absolute;
+  top: 3.19px;
+  left: 5.83px;
+  display: block;
+}
+
+/* "이벤트" 배지: 아이콘 기준 (15, -2), 27 × 13 */
+.appbar-checkin-badge {
+  position: absolute;
+  top: -2px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 13px;
+  padding: 1.5px 3px;
+  border-radius: 18px;
+  background: var(--mds-color-blue);
+  color: var(--mds-color-white);
+  font-size: 8px;
+  font-weight: 500; /* Pretendard Medium */
+  line-height: normal;
+  white-space: nowrap;
+  transform-origin: left bottom; /* 스케일 중심점: 좌하단 */
+  opacity: 0;                    /* 등장 전 상태 (모션 시작 전 깜빡임 방지) */
+  transform: scale(0);
+}

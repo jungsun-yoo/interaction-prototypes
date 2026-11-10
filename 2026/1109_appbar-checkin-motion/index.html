@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype</title>
+  <!-- 파비콘: 무신사 (CDN) -->
+  <link rel="icon" type="image/svg+xml" href="https://image.msscdn.net/static/assets/bi/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-180x180.png">
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css">
   <style>
     /* ════════════════════════════════════════════════════
         프로토타입 인덱스 (재사용: 아래 script의 CONFIG만 수정)
-        PC 전용: 가운데 iframe에 prototypes/*.html
+        PC 전용: 좌측 패널에서 항목 선택 → 가운데 iframe에 prototype(s)/*.html
        ════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -42,19 +46,35 @@
     .panel-head {padding: 24px 20px 20px; border-bottom: 1px solid var(--panel-line);}
     .panel-title { font-size: 18px; font-weight: 700; line-height: 24px; }
     .panel-sub { margin-top: 4px; font-size: 12px; line-height: 16px; color: var(--panel-sub); }
-    /* 링크 칩(Figma·Jira·다운로드): 제목 아래 가로 배치, 폭이 모자라면 다음 줄로
-       Figma는 주소가 없으면 비활성, Jira·다운로드는 주소가 없으면 숨김 */
+    /* 외부 링크 칩(Figma·Jira): 제목 아래 가로 배치, 선택한 항목의 주소로 이동
+       Figma·Jira 모두 주소가 없으면 비활성(딤드) */
     .panel-links {display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px;}
-    .panel-link {flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600; line-height: 16px; text-decoration: none;}
+    .panel-link {display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600; line-height: 16px; text-decoration: none;}
     .panel-link:hover {background: rgba(255, 255, 255, 0.16);}
     .panel-link svg {flex-shrink: 0; display: block;}
     .panel-link-arrow {color: var(--panel-sub); font-weight: 400;}
     .panel-link.is-disabled {opacity: 0.35; pointer-events: none;}
-    .panel-link.is-hidden {display: none;}
-    /* 다운로드: 한 줄을 다 쓰는 강조 버튼 */
-    .panel-download {flex: 1 0 100%; justify-content: center; height: 36px; margin-top: 4px; background: #fff; color: #000; font-size: 13px; font-weight: 700;}
+    /* 다운로드 버튼: 패널 머리 아래, TYPES 제목 위 한 줄 전체. 파일이 없으면 숨김 */
+    .panel-download-wrap {padding: 16px 20px 0;}
+    .panel-download {display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 36px; border-radius: 6px; background: #fff; color: #000; font-size: 13px; font-weight: 700; line-height: 16px; text-decoration: none;}
+    .panel-download svg {flex-shrink: 0; display: block;}
     .panel-download:hover {background: rgba(255, 255, 255, 0.85);}
+    .panel-download + .panel-download {margin-top: 6px;}
+    /* md(명세) 버튼: zip보다 약한 보조 버튼 (링크 칩과 같은 어두운 바탕) */
+    .panel-download--sub {height: 32px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600;}
+    .panel-download--sub:hover {background: rgba(255, 255, 255, 0.16);}
+    /* 숨김: 버튼 각각, 둘 다 숨으면 묶음(위 여백)까지 */
+    .panel-download.is-hidden, .panel-download-wrap:not(:has(.panel-download:not(.is-hidden))) {display: none;}
 
+    .panel [hidden] {display: none;} /* 타입 1개일 때 목록 숨김 (display: flex보다 우선) */
+    .panel-label {padding: 20px 20px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--panel-sub);}
+    .type-list { display: flex; flex-direction: column; gap: 2px; padding: 0 8px; list-style: none; }
+    .type-button {display: block; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: transparent; color: rgba(255, 255, 255, 0.75); font: inherit; font-size: 14px; line-height: 20px; text-align: left; text-decoration: none; cursor: pointer;}
+    .type-button:hover { background: rgba(255, 255, 255, 0.05); }
+    .type-button.is-active { background: rgba(255, 255, 255, 0.12); color: #fff; font-weight: 600; }
+
+    .panel-foot {margin-top: auto; padding: 16px; border-top: 1px solid var(--panel-line);}
+    .panel-hint {font-size: 11px; line-height: 16px; color: var(--panel-sub); text-align: center; }
 
     /* 가운데: 폰 프레임 iframe. 화면 높이·너비가 모자라면 비율 유지하며 축소 (script) */
     .stage {position: relative; overflow: hidden;}
@@ -121,16 +141,30 @@
             <span>Figma</span>
             <span class="panel-link-arrow">↗</span>
           </a>
-          <a class="panel-link is-hidden" id="jiraLink" target="_blank" rel="noopener">
+          <a class="panel-link is-disabled" id="jiraLink" target="_blank" rel="noopener">
             <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path fill="#2684ff" d="M11.53 2c0 2.4 1.97 4.35 4.35 4.35h1.78v1.7c0 2.4 1.94 4.34 4.34 4.35V2.84a.84.84 0 0 0-.84-.84H11.53z"/><path fill="#2684ff" opacity=".8" d="M6.77 6.8a4.36 4.36 0 0 0 4.34 4.34h1.8v1.72a4.36 4.36 0 0 0 4.34 4.34V7.63a.84.84 0 0 0-.83-.83H6.77z"/><path fill="#2684ff" opacity=".65" d="M2 11.6c0 2.4 1.95 4.34 4.35 4.34h1.78v1.72c.01 2.39 1.95 4.33 4.34 4.34v-9.57a.84.84 0 0 0-.84-.84H2z"/></svg>
             <span>Jira</span>
             <span class="panel-link-arrow">↗</span>
           </a>
-          <a class="panel-link panel-download is-hidden" id="downloadLink" download>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-            <span>Prototype Download</span>
-          </a>
         </div>
+      </div>
+      <!-- 다운로드: TYPES 제목 위
+           md: 인터랙션 명세 (CONFIG.spec, 비우면 숨김) / zip: download/ 폴더 (최종 결정된 프로토타입만, 비우면 숨김) -->
+      <div class="panel-download-wrap">
+        <a class="panel-download panel-download--sub is-hidden" id="specLink" download>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Interaction (.md)</span>
+        </a>
+        <a class="panel-download is-hidden" id="downloadLink" download>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Download (.zip)</span>
+        </a>
+      </div>
+      <!-- 타입 목록·키보드 안내: 타입이 2개 이상일 때만 보임 (script) -->
+      <p class="panel-label" id="typeLabel" data-config="label"></p>
+      <ul class="type-list" id="typeList"></ul>
+      <div class="panel-foot" id="panelFoot">
+        <p class="panel-hint" id="keyHint"></p>
       </div>
     </aside>
     <main class="stage" id="stage">
@@ -157,27 +191,34 @@
     </main>
   </div>
 
-  <script src="./lib/qrcode-generator-1.4.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   <script>
     // ================================================================================================= //
     /* 프로젝트 설정
-        title·sub: 패널·브라우저 탭 제목
-        version: prototypes/*.html의 ?v= 값과 같게 올리기 (iframe 캐시 방지)
+        title·sub: 패널·브라우저 탭 제목 / label: 목록 위 작은 제목
+        version: prototype(s)/*.html의 ?v= 값과 같게 올리기 (iframe 캐시 방지)
         items: 항목 추가는 한 줄 (id는 주소 #id로 쓰임)
         figma: 프로젝트 공통 피그마 설명 링크 / 항목별로 다르면 items의 figma에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
-        jira: 프로젝트 공통 Jira 링크 / 항목별로 다르면 items의 jira에 적기 (항목 값이 우선, 둘 다 없으면 버튼 숨김)
-        download: 내려받을 파일 경로 (없으면 버튼 숨김). 파일을 바꾸면 version도 올리기
+        jira: 프로젝트 공통 Jira 링크 / 항목별로 다르면 items의 jira에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
+        spec: 인터랙션 명세 md (Type_N.html 옆 interaction.md를 그대로 연결, 복사본 만들지 않음). 비우면 버튼 숨김
+        download: 내려받을 zip. 최종 결정된 프로토타입만 마지막에 넣음 (비우면 버튼 숨김)
+                  download/ 폴더에 prototype(s) 폴더를 통째로 압축. 항목별로 다르면 items의 download
+                  zip을 넣은 뒤 prototype(s) 안 파일을 고치면 zip도 다시 만들고 version 올리기
+        items가 1개면 타입 목록·TYPES 제목·키보드 안내를 숨김
     */
     var CONFIG = {
-      title: '앱바 체크인 진입 모션',
-      sub: '26-1106 · Prototype',
-      version: '20261109-1',
-      qrHost: '192.168.0.79', // localhost에서 QR을 쓸 때만 내 PC 내부 IP 입력
+      title: '[앱바] 체크인 진입 모션',
+      sub: '26-1109 · Prototype',
+      label: 'TYPES',
+      version: '20261110-4',
+      qrHost: '172.30.1.42', // localhost에서 QR을 쓸 때만 내 PC 내부 IP 입력
       figma: 'https://www.figma.com/design/cIgBZWB46ht7WvX5kbPkgx/%EC%95%B1%ED%85%8C%ED%81%AC-2.0?node-id=94581-190492&t=bMzi9SwUtEkRnqF0-4',
       jira: '',
-      download: '',
+      spec: '', // 예: 'prototype/interaction.md' (보여줄 때만)
+      download: 'download/prototype.zip',
+      /* 화면 1개면 prototype/, 여러 개면 prototypes/ 폴더 */
       items: [
-        { id: 'type1', title: '체크인 아이콘 뱃지', file: 'prototypes/Type_1.html' }
+        { id: 'type1', title: '체크인 아이콘 뱃지', file: 'prototype/Type_1.html' }
       ]
     };
     // ================================================================================================= //
@@ -286,6 +327,7 @@
       var TYPES = CONFIG.items;
       var frame = document.getElementById('frame');
       var stage = document.getElementById('stage');
+      var typeList = document.getElementById('typeList');
       var qrCard = document.getElementById('qrCard');
       var qrButton = document.getElementById('qrButton');
       var current = null;
@@ -295,6 +337,13 @@
         el.textContent = CONFIG[el.dataset.config];
       });
       document.title = CONFIG.title;
+      document.getElementById('keyHint').textContent =
+        '키보드 ' + TYPES.slice(0, 9).map(function (t, i) { return i + 1; }).join(' · ') + ' / ↑ ↓ 로 전환 · R 다시 재생';
+      /* 타입이 1개면 목록·TYPES 제목·키보드 안내 숨김 (전환할 게 없으므로) */
+      var multiType = TYPES.length > 1;
+      ['typeLabel', 'typeList', 'panelFoot'].forEach(function (id) {
+        document.getElementById(id).hidden = !multiType;
+      });
 
       function fileUrl(type) {
         return type.file + '?v=' + CONFIG.version;
@@ -320,7 +369,7 @@
         return url;
       }
 
-      /* 선택한 항목이 바뀔 때마다 QR 다시 그림 · QR 클릭 시 같은 주소 새 창 */
+      /* 선택한 항목이 바뀔 때마다 QR 다시 그림 */
       function renderQr(type) {
         var url = shareUrl(type);
         var image = document.getElementById('qrImage');
@@ -349,21 +398,28 @@
         link.title = url ? type.title + ' 피그마 설명 열기' : '피그마 링크가 아직 없습니다 (CONFIG.figma)';
       }
 
-      /* Jira 링크: 항목 jira → 공통 CONFIG.jira 순서, 없으면 숨김 */
+      /* Jira 링크: 항목 jira → 공통 CONFIG.jira 순서, 없으면 비활성 */
       function renderJira(type) {
         var link = document.getElementById('jiraLink');
         var url = type.jira || CONFIG.jira;
         if (url) link.href = url;
         else link.removeAttribute('href');
-        link.classList.toggle('is-hidden', !url);
-        link.title = url ? type.title + ' Jira 열기' : '';
+        link.classList.toggle('is-disabled', !url);
+        link.title = url ? type.title + ' Jira 열기' : 'Jira 링크가 아직 없습니다 (CONFIG.jira)';
       }
 
-      /* 다운로드 버튼: CONFIG.download 파일, 없으면 숨김 */
-      function renderDownload() {
-        var link = document.getElementById('downloadLink');
-        if (CONFIG.download) link.href = CONFIG.download + '?v=' + CONFIG.version;
-        link.classList.toggle('is-hidden', !CONFIG.download);
+      /* 다운로드 버튼(md·zip): 항목 값 → 공통 CONFIG 값 순서, 없으면 숨김. 받는 파일 이름은 원래 이름 그대로 */
+      function renderDownload(type) {
+        renderFile(document.getElementById('specLink'), type.spec || CONFIG.spec);
+        renderFile(document.getElementById('downloadLink'), type.download || CONFIG.download);
+      }
+      function renderFile(link, file) {
+        if (file) {
+          link.href = file + '?v=' + CONFIG.version;
+          link.setAttribute('download', file.split('/').pop());
+        } else link.removeAttribute('href');
+        link.classList.toggle('is-hidden', !file);
+        link.title = file ? file.split('/').pop() + ' 내려받기' : '';
       }
 
       function select(id) {
@@ -372,9 +428,30 @@
         renderQr(current);
         renderFigma(current);
         renderJira(current);
+        renderDownload(current);
         document.title = CONFIG.title + ' · ' + current.title;
+        [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
+          button.classList.toggle('is-active', button.dataset.id === current.id);
+        });
         if (location.hash !== '#' + current.id) history.replaceState(null, '', '#' + current.id);
       }
+
+      /* PC 패널 버튼 */
+      TYPES.forEach(function (type) {
+        var li = document.createElement('li');
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'type-button';
+        button.textContent = type.title;
+        button.dataset.id = type.id;
+        button.addEventListener('click', function () {
+          if (current && current.id === type.id) return;
+          history.pushState(null, '', '#' + type.id);
+          select(type.id);
+        });
+        li.appendChild(button);
+        typeList.appendChild(li);
+      });
 
       function replay() {
         loadFrame(fileUrl(current) + '&t=' + Date.now()); /* 다시 불러와 등장 모션부터 재생 */
@@ -394,11 +471,24 @@
         placeQrPopover();
       });
 
-      /* 키보드: R 다시 재생 (Cmd·Ctrl+R 새로고침은 그대로) */
-      document.addEventListener('keydown', function (e) {
+      /* 키보드: 1~9 / ↑ ↓ 로 타입 전환, R 다시 재생 (Cmd·Ctrl+R 새로고침은 그대로)
+         폰(iframe)을 눌러 포커스가 안으로 들어가도 동작하도록 iframe 문서에도 같은 함수를 붙임 (아래 load)
+         프로토타입 안 입력창에서 글자를 칠 때는 무시 */
+      function onKey(e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
         if (e.key === 'r' || e.key === 'R') { replay(); return; }
-      });
+        var index = TYPES.indexOf(current);
+        var next = null;
+        if (/^[1-9]$/.test(e.key)) next = TYPES[Number(e.key) - 1];
+        else if (e.key === 'ArrowDown') next = TYPES[(index + 1) % TYPES.length];
+        else if (e.key === 'ArrowUp') next = TYPES[(index - 1 + TYPES.length) % TYPES.length];
+        if (!next || next === current) return;
+        e.preventDefault();
+        history.pushState(null, '', '#' + next.id);
+        select(next.id);
+      }
+      document.addEventListener('keydown', onKey);
 
       /* 화면이 프레임보다 작으면 비율 유지하며 축소 */
       function fitFrame() {
@@ -448,7 +538,7 @@
         qrCard.style.left = open ? tools.offsetLeft + tools.offsetWidth - qrCard.offsetWidth + 'px' : '';
         qrCard.style.top = open ? tools.offsetTop + tools.offsetHeight + 8 + 'px' : '';
       }
-      /* 바탕(폰 바깥)에서 굴린 세로 휠을 iframe 안 프로토타입 스크롤로 넘김 (pageScroll: prototypes/src/common/common.js) */
+      /* 바탕(폰 바깥)에서 굴린 세로 휠을 iframe 안 프로토타입 스크롤로 넘김 (pageScroll: prototype(s)/src/common/common.js) */
       stage.addEventListener('wheel', function (e) {
         var win = frame.contentWindow;
         if (!e.deltaY || !win || !win.pageScroll) return;
@@ -460,6 +550,7 @@
       frame.addEventListener('load', function () {
         var doc = frame.contentDocument;
         if (!doc) return;
+        doc.addEventListener('keydown', onKey); /* 폰 안에 포커스가 있어도 단축키 동작 */
         var phone = getComputedStyle(doc.documentElement);
         var w = parseFloat(phone.getPropertyValue('--phone-w'));
         var h = parseFloat(phone.getPropertyValue('--phone-h'));
@@ -467,13 +558,12 @@
         document.documentElement.style.setProperty('--phone-w', w + 'px');
         document.documentElement.style.setProperty('--phone-h', h + 'px');
         fitFrame();
-        controls.connect(frame.contentWindow);
+        controls.connect(frame.contentWindow); /* 모션 컨트롤 패널 연결 */
       });
       new ResizeObserver(fitFrame).observe(stage); /* 창 크기·레이아웃이 바뀌면 축소·QR 단계·툴바 위치 다시 계산 */
       window.addEventListener('popstate', function () { select(location.hash.slice(1)); });
 
       fitFrame();
-      renderDownload();
       select(location.hash.slice(1));
     })();
   </script>
