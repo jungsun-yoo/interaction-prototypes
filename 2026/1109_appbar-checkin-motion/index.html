@@ -55,8 +55,6 @@
     .panel-download {flex: 1 0 100%; justify-content: center; height: 36px; margin-top: 4px; background: #fff; color: #000; font-size: 13px; font-weight: 700;}
     .panel-download:hover {background: rgba(255, 255, 255, 0.85);}
 
-    .panel-foot {margin-top: auto; padding: 16px; border-top: 1px solid var(--panel-line);}
-    .panel-hint {font-size: 11px; line-height: 16px; color: var(--panel-sub); text-align: center; }
 
     /* 가운데: 폰 프레임 iframe. 화면 높이·너비가 모자라면 비율 유지하며 축소 (script) */
     .stage {position: relative; overflow: hidden;}
@@ -67,7 +65,9 @@
     .qr-card.is-mini .qr-title, .qr-card.is-mini .qr-url {display: none;}
     .qr-card.is-folded {display: none; z-index: 2;}
     .qr-card.is-folded.is-open {display: block;}
-    .qr-image {width: 100%; aspect-ratio: 1;}
+    .qr-image {display: block; width: 100%; aspect-ratio: 1;}
+    .qr-image[href] {cursor: pointer; transition: opacity 0.15s linear;}
+    .qr-image[href]:hover {opacity: 0.7;}
     .qr-image svg {display: block; width: 100%; height: 100%;}
     .qr-title {margin-top: 12px; font-size: 13px; font-weight: 600; line-height: 18px; color: #000;}
     .qr-url {margin-top: 2px; font-size: 11px; line-height: 15px; color: rgba(0, 0, 0, 0.45); word-break: break-all;}
@@ -132,13 +132,10 @@
           </a>
         </div>
       </div>
-      <div class="panel-foot">
-        <p class="panel-hint" id="keyHint"></p>
-      </div>
     </aside>
     <main class="stage" id="stage">
       <div class="qr-card" id="qrCard">
-        <div class="qr-image" id="qrImage"></div>
+        <a class="qr-image" id="qrImage" target="_blank" rel="noopener" title="새 창으로 열기"></a>
         <p class="qr-title" id="qrTitle"></p>
         <p class="qr-url" id="qrUrl"></p>
       </div>
@@ -298,7 +295,6 @@
         el.textContent = CONFIG[el.dataset.config];
       });
       document.title = CONFIG.title;
-      document.getElementById('keyHint').textContent = '키보드 R 다시 재생';
 
       function fileUrl(type) {
         return type.file + '?v=' + CONFIG.version;
@@ -324,13 +320,14 @@
         return url;
       }
 
-      /* 선택한 항목이 바뀔 때마다 QR 다시 그림 */
+      /* 선택한 항목이 바뀔 때마다 QR 다시 그림 · QR 클릭 시 같은 주소 새 창 */
       function renderQr(type) {
         var url = shareUrl(type);
         var image = document.getElementById('qrImage');
         document.getElementById('qrTitle').textContent = type.title;
         if (!url) {
           image.innerHTML = '<p class="qr-empty">localhost에서는 CONFIG.qrHost에 내부 IP를 넣거나 IP 주소로 접속하세요</p>';
+          image.removeAttribute('href');
           document.getElementById('qrUrl').textContent = '';
           return;
         }
@@ -338,6 +335,7 @@
         qr.addData(url.href);
         qr.make();
         image.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+        image.href = url.href; /* QR을 누르면 QR과 같은 주소를 새 창으로 */
         document.getElementById('qrUrl').textContent = url.host + url.pathname;
       }
 
