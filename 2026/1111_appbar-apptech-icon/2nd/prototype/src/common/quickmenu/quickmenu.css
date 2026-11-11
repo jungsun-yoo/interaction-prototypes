@@ -1,0 +1,47 @@
+/* ════════════════════════════════════════════════════
+   quickmenu.css — 퀵메뉴 영역: 퀵메뉴 · 하이라이트 퀵메뉴 · 유즈드 버튼 (빅배너 아래)
+   ════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════
+   퀵메뉴 (줄별 전체 길이 캡처 이미지, 가로 스크롤)
+   줄 이미지는 3배수 캡처를 실제 크기(width · height 속성)로 표시
+   간격 · 여백은 무신사 웹 측정값: 위 16, 좌우 16, 아래 12, 줄 사이 4
+   HTML: .quick-menu[data-quick="전문관"] > .quick-menu-rows > img × 줄 수
+   .phone[data-store]와 같은 data-quick만 보임 / 2줄 스크롤 보간은 quickmenu.js
+   무신사 하이라이트 · 1줄 퀵메뉴 여백은 아래 하이라이트 구간
+   ════════════════════════════════════════════════════ */
+.quick-menu { display: none; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; }
+.quick-menu::-webkit-scrollbar { display: none; }
+/* 2줄 퀵메뉴: 스크롤 길이는 짧은 줄 기준(폭은 quickmenu.js에서 지정), 긴 줄은 넘치는 부분을 잘라 스크롤 길이에 영향 없게 함 */
+.quick-menu-rows { display: flex; flex-direction: column; gap: 4px; width: max-content; padding: 16px 16px 12px; overflow: hidden; }
+.quick-menu-rows img { display: block; flex: none; max-width: none; }
+.quick-menu[data-quick="sports"] .quick-menu-rows { gap: 6px; padding-bottom: 20px; }
+.phone[data-store="musinsa"] .quick-menu[data-quick="musinsa"],
+.phone[data-store="beauty"] .quick-menu[data-quick="beauty"],
+.phone[data-store="sports"] .quick-menu[data-quick="sports"],
+.phone[data-store="outlet"] .quick-menu[data-quick="outlet"],
+.phone[data-store="kids"] .quick-menu[data-quick="kids"],
+.phone[data-store="boutique"] .quick-menu[data-quick="boutique"],
+.phone[data-store="kicks"] .quick-menu[data-quick="kicks"],
+.phone[data-store="used"] .quick-menu[data-quick="used"] { display: block; }
+
+/* ════════════════════════════════════════════════════
+   하이라이트 퀵메뉴 — 무신사 하이라이트 퀵메뉴 + 그 아래 1줄 퀵메뉴
+   두 줄이 각각 따로 스크롤 (보간 없음)
+   HTML: .quick-menu.quick-menu--highlight / .quick-menu.quick-menu--onerow (data-quick="musinsa")
+   스크롤 · 보임 규칙은 위 퀵메뉴 구간
+   ════════════════════════════════════════════════════ */
+.quick-menu--highlight .quick-menu-rows { padding: 12px 16px 0; }
+.quick-menu--onerow .quick-menu-rows { padding: 6px 16px 12px; }
+
+/* ════════════════════════════════════════════════════
+   유즈드 버튼 2개 (무신사 웹 UIBannerGroup 기준, 눌리지 않음)
+   위 16 · 좌우 16, 간격 4, 두 버튼이 폭을 반씩 차지. 좁아지면 문구가 말줄임되고 화살표 16은 고정
+   HTML: .used-banner-group > .used-banner-item(.used-banner-label + svg.used-banner-icon) × 2
+   유즈드 전문관(.phone[data-store="used"])에서만 보임
+   ════════════════════════════════════════════════════ */
+.used-banner-group {display: none; gap: 4px; padding: 16px 16px 0;}
+.phone[data-store="used"] .used-banner-group {display: flex;}
+.used-banner-item {display: flex; flex: 1 1 0; align-items: center; justify-content: space-between; min-width: 0; padding: 12px; border-radius: 4px; background: #F7E74B; color: #000;}
+.used-banner-label {flex: 0 1 auto; min-width: 0; overflow: hidden; font-size: 13px; font-weight: 600; line-height: 18px; text-overflow: ellipsis; white-space: nowrap;}
+.used-banner-icon {display: block; flex: none;}

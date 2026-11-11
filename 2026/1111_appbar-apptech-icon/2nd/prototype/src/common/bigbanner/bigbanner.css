@@ -1,0 +1,68 @@
+/* ════════════════════════════════════════════════════
+   bigbanner.css — 빅배너 (Swiper 무한 롤링, 양옆 슬라이드 노출)
+   HTML: .big-banner.swiper > .swiper-wrapper (슬라이드 · 인디케이터는 bigbanner.js가 생성)
+   필요: Swiper 11 CSS·JS (CDN) / 키즈 전용 모양은 .phone[data-store="kids"]
+   ════════════════════════════════════════════════════ */
+.big-banner {
+  --big-banner-side: 16px;  /* 좌우 여백 = 양옆 슬라이드 노출 폭 */
+  --big-banner-delay: 3s;   /* 정지 시간 */
+  --big-banner-speed: 0.5s; /* 전환 시간 */
+  --big-banner-text-x: 20px;      /* 텍스트 왼쪽 여백 (슬라이드 기준) */
+  --big-banner-text-bottom: 20px; /* 텍스트 아래 여백 — 아래 정렬이라 줄 수가 달라도 바닥 기준 */
+  --big-banner-text-w: 236px;     /* 텍스트 최대 너비 */
+  --swiper-wrapper-transition-timing-function: ease;
+  --big-banner-pagination-right: 16px;
+  --big-banner-pagination-bottom: 20px;
+}
+.big-banner .swiper-slide {
+  position: relative;
+  width: calc(100% - var(--big-banner-side) * 2);
+}
+/* 배너 타이틀 20/26, 서브타이틀 13/18, SemiBold, gray100 */
+.big-banner-text {
+  position: absolute;
+  left: var(--big-banner-text-x);
+  bottom: var(--big-banner-text-bottom);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: var(--big-banner-text-w);
+  max-width: calc(100% - var(--big-banner-text-x) * 2);
+  color: #f5f5f5;
+  font-weight: 600;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  pointer-events: none;
+}
+.big-banner-title {
+  font-size: 20px;
+  line-height: 26px;
+  white-space: pre-line; /* bigbanner.js title의 \n 줄바꿈 */
+}
+.big-banner-subtitle {font-size: 13px; line-height: 18px;}
+
+.big-banner-pagination {
+  position: absolute;
+  right: calc(var(--big-banner-side) + var(--big-banner-pagination-right));
+  bottom: var(--big-banner-pagination-bottom);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.big-banner-pagination img {display: block; width: 12px; height: 12px;}
+.big-banner-plus {display: none;}
+/* 키즈 topBg (Figma KidsBanner): 슬라이드 뒤 상단 16 남색 띠. 슬라이드가 없는 자리로만 보임 */
+.phone[data-store="kids"] .big-banner::before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 16px; background: #3734B8;}
+/* 키즈 페이지네이션 (Figma KidsBanner): 배너 우하단에 붙은 번호(주황) + 플러스(남색) 블록 */
+.phone[data-store="kids"] .big-banner-pagination {right: var(--big-banner-side); bottom: 0; gap: 0; color: #000;}
+.phone[data-store="kids"] .big-banner-pagination span {padding: 3px 8px; background: #FF5F00;}
+.phone[data-store="kids"] .big-banner-pagination img {display: none;}
+.phone[data-store="kids"] .big-banner-plus {display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #3734B8;}
+.big-banner .swiper-slide > img { display: block; width: 100%; aspect-ratio: 343 / 257; object-fit: cover;}

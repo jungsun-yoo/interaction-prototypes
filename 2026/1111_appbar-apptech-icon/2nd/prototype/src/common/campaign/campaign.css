@@ -1,0 +1,61 @@
+/* ════════════════════════════════════════════════════
+   campaign.css — 캠페인 섹션: 긴 이미지 + 상단 헤더 로티 + 플로팅 문구
+   내용은 HTML에서 지정해 여러 번 재사용 (이미지 · data-lottie · --campaign-bg · 문구만 교체)
+   HTML: section.campaign-section[style="--campaign-bg: #색"] > img.campaign-section-image
+         + .campaign-section-header(.campaign-section-lottie[data-lottie] + .campaign-section-promo > .campaign-section-promo-item × N)
+   동작: campaign.js (로티 · 문구 교차)
+   ════════════════════════════════════════════════════ */
+.campaign-section {
+  position: relative;
+  container-type: inline-size;   /* 내부 요소가 섹션 너비(cqw) 기준으로 비례 */
+}
+.campaign-section-image { display: block; width: 100%; height: auto; }
+
+/* 섹션 헤더: 이미지 위에 겹침. 높이 100(375 기준)이고 화면 너비(최대 600)에 비례. 로티 양옆은 잘림 */
+.campaign-section-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 375 / 100;
+  overflow: hidden;
+  background: var(--campaign-bg);
+}
+
+/* 헤더 로티: 원본 1800×300을 375 기준 너비 600으로 가운데 정렬 */
+.campaign-section-lottie {
+  --campaign-lottie-base: 375;   /* 기준 화면 너비 */
+  --campaign-lottie-w: 600;      /* 375 기준 너비(px) */
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(var(--campaign-lottie-w) / var(--campaign-lottie-base) * 100cqw);
+  aspect-ratio: 1800 / 300;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.campaign-section-lottie svg { display: block; }   /* inline svg 하단 여백 제거 */
+
+/* 플로팅 문구: 무신사 웹 UIPromotion 기준. 헤더 하단 패딩 12, 13/18 흰색 80%, 같은 자리에서 1초 페이드로 교차 */
+.campaign-section-promo {
+  --campaign-promo-interval: 4s; /* 문구가 바뀌는 간격 (페이드 시작 기준) */
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: var(--mobile-max-w);
+  margin: 0 auto;
+  padding: 0 16px 12px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+  pointer-events: none;
+}
+.campaign-section-promo-item {grid-area: 1 / 1; opacity: 0; transition: opacity 1000ms;}
+.campaign-section-promo-item.is-active {opacity: 1;}
+.campaign-section-promo-item span {display: block; overflow: hidden; opacity: 0.8; text-overflow: ellipsis; white-space: nowrap;}
+.campaign-section-promo-timer {font-variant-numeric: tabular-nums;}
