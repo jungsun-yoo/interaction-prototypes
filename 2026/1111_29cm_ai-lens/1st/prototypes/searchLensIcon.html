@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko"> <!-- 폰 크기: 390×844 고정 (배경 이미지 780×1688 @2x 기준, type_2.css에서 지정) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>[검색] 검색창 렌즈아이콘</title>
+  <!-- 홈 화면 아이콘으로 열면 사파리 없이 전체 화면 (링크로 열면 기존처럼 사파리) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="[검색] 검색창 렌즈아이콘"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261111-12">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261111-12">
+  <link rel="stylesheet" href="./src/types/type_2.css?v=20261111-12">
+</head>
+<body>
+
+  <!-- 상태바 요소 없음: 배경 search_start_page.png(780×1688 @2x)에 상태바까지 그려져 있음 -->
+  <main class="phone">
+    <img class="phone-bg" src="src/img/search_start_page.png" alt="">
+
+    <!-- 렌즈 아이콘 로티 (96×96 → 24×24, 중심 x324 y76: 검색창 돋보기 왼쪽)
+         lens_emphasis 1회 재생 → lens_default 무한 반복 -->
+    <div class="lens-icon" id="lensIcon" aria-hidden="true">
+      <div class="lens-icon-layer" id="lensEmphasis"></div>
+      <div class="lens-icon-layer" id="lensDefault" hidden></div>
+    </div>
+
+    <!-- 툴팁: Figma 11837:49595, 145×58, 화살표 끝이 렌즈 아이콘 중심(x324)을 가리킴 -->
+    <div class="search-tip" id="searchTip" role="tooltip">
+      <svg width="38" height="6" viewBox="0 0 38 6" fill="none" aria-hidden="true"><path d="M24 6L19.7682 0.921865C19.3684 0.442111 18.6316 0.442112 18.2318 0.921866L14 6H24Z" fill="#000"/></svg>
+      <div class="search-tip-body">사진 검색으로<br>비슷한 상품을 찾아보세요</div>
+    </div>
+  </main>
+
+  <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
+  <script src="./src/common/common.js?v=20261111-12"></script>
+  <script src="./src/types/type_2.js?v=20261111-12"></script>
+</body>
+</html>

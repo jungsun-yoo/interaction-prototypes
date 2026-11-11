@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko"> <!-- 폰 크기: 390×844 고정 (배경 이미지 780×1688 @2x 기준, type_3.css에서 지정) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>사진 검색 가이드</title>
+  <!-- 홈 화면 아이콘으로 열면 사파리 없이 전체 화면 (링크로 열면 기존처럼 사파리) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="사진 검색 가이드"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261111-12">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261111-12">
+  <link rel="stylesheet" href="./src/types/type_3.css?v=20261111-12">
+</head>
+<body>
+
+  <!-- 상태바 요소 없음: 배경 tutorial.png(780×1688 @2x)에 상태바·바텀시트까지 그려져 있음 -->
+  <main class="phone">
+    <img class="phone-bg" src="src/img/tutorial.png" alt="">
+
+    <!-- 가이드 로티: tutorial_lens.json (1074×858 → 358×286, 바텀시트 안 이미지 카드 자리 x16 y426) -->
+    <div class="guide-lottie" id="guideLottie" aria-hidden="true"></div>
+  </main>
+
+  <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
+  <script src="./src/common/common.js?v=20261111-12"></script>
+  <script src="./src/types/type_3.js?v=20261111-12"></script>
+</body>
+</html>
