@@ -65,3 +65,15 @@
   transform: scale(0);
   transform-origin: 0 100%; /* 좌하단 */
 }
+
+/* ════════════════════════════════════════════════════
+   무신사 앱테크 아이콘 영상 2개 겹치기 (재생은 type_1.js)
+   무신사(icon_roll-musinsa_290) 위에 광고판용(icon_roll-ad-musinsa_290)을 겹쳐 두고 항상 같이 재생
+   보이는 것만 투명도로 바꿈: 평소엔 무신사 1 · 광고판 0, 광고판 진입하면 무신사 0 · 광고판 1
+   (storeheader.css의 '광고판이면 영상 교체(display)' 규칙보다 우선)
+   ════════════════════════════════════════════════════ */
+.phone[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="musinsa"],
+.phone[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="ad-musinsa"] {display: block;}
+.phone[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="ad-musinsa"] {position: absolute; top: 0; left: 0; opacity: 0;}
+.phone.is-ad-board[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="musinsa"] {opacity: 0;}
+.phone.is-ad-board[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="ad-musinsa"] {opacity: 1;}

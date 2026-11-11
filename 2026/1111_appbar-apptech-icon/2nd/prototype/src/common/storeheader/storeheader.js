@@ -75,6 +75,7 @@
   function apply() {
     var key = currentKey();
     videos.forEach(function (video) {
+      if (video.hasAttribute('data-manual')) return; /* 재생을 타입 js가 직접 맡는 영상 (예: 2nd Type 1 무신사) */
       /* 타입 css가 숨긴 영상(예: Type 2 광고판은 svg 정지 이미지)도 멈춤 */
       if (video.dataset.video !== key || getComputedStyle(video).display === 'none') {
         video.pause();
