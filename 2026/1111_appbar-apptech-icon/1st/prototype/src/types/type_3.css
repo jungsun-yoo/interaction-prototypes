@@ -1,0 +1,63 @@
+/* Type 3 전용 스타일 (Type 1 기준으로 시작, 공통 영역은 src/common/)
+   앱테크 아이콘: 영상 없이 기존 리워드 svg + 오른쪽 위 점 + "혜택" 라벨 (Figma 237:107715 ICON) */
+
+/* storeheader.css가 전문관마다 svg를 숨기므로(영상 타입용) Type 3에서는 다시 보이게 */
+.phone[data-store] .appbar-icon--reward svg {display: block;}
+
+/* 뱃지(점 · 혜택 라벨) 색: 기본(무신사) semantic/blue + 흰 글씨
+   헤더가 진한 색인 뷰티 · 킥스 · 부티크 · 아울렛은 흰 뱃지 + 전문관 색 글씨, 스포츠 · 키즈는 전문관 색(MDS store 토큰), 유즈드는 검정 */
+.phone {--reward-badge-bg: #245EFF; --reward-badge-text: #fff;}
+.phone[data-store="beauty"] {--reward-badge-bg: #fff; --reward-badge-text: var(--mds-color-store-beauty);}
+.phone[data-store="kicks"] {--reward-badge-bg: #fff; --reward-badge-text: var(--mds-color-store-kicks);}
+.phone[data-store="boutique"] {--reward-badge-bg: #fff; --reward-badge-text: var(--mds-color-store-boutique);}
+.phone[data-store="outlet"] {--reward-badge-bg: #fff; --reward-badge-text: var(--mds-color-store-outlet);}
+.phone[data-store="sports"] {--reward-badge-bg: var(--mds-color-store-sports);}
+.phone[data-store="kids"] {--reward-badge-bg: var(--mds-color-store-kids);}
+.phone[data-store="used"] {--reward-badge-bg: #000;}
+/* 광고판: 헤더가 광고 색으로 바뀌는 전문관(스포츠 · 유즈드 · 키즈 제외, storeheader.css와 같은 조건)은 흰 뱃지 + 광고 색 글씨 */
+.phone.is-ad-board:not([data-store="sports"]):not([data-store="used"]):not([data-store="kids"]) {--reward-badge-bg: #fff; --reward-badge-text: rgb(var(--ad-color-rgb));}
+
+/* 점: 4px (Badge type=dot) */
+.appbar-reward-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 100px;
+  background: var(--reward-badge-bg);
+}
+
+/* "혜택" 라벨 (Figma 239:24859): 아이콘(28) 기준 left 15 · top -2, 27 × 13 고정(글자 가운데), Pretendard Medium 8px (색은 위 뱃지 색)
+   모션(type_3.js): 랜딩 1초 후 등장 → 3초 노출 → 사라짐 → 6초 후 다시 등장, 반복. 중심점은 라벨 좌하단 */
+.appbar-reward-label {
+  --reward-label-first-delay: 1s;   /* 랜딩(처음 열기 · 전문관 전환) 후 첫 등장까지 */
+  --reward-label-show: 3s;          /* 등장 모션이 끝난 뒤 보이는 시간 */
+  --reward-label-hide: 6s;          /* 완전히 사라진 뒤 다시 등장까지 */
+  --reward-label-fade: 0.15s;       /* opacity linear */
+  --reward-label-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); /* scale: mds.spring.bouncy */
+  --reward-label-spring-damping: var(--mds-motion-spring-bouncy-damping);
+  position: absolute;
+  top: -2px;
+  left: 15px;
+  z-index: 1; /* 점 위 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 27px;
+  height: 13px;
+  padding: 1.5px 0;
+  border-radius: 18px;
+  background: var(--reward-badge-bg);
+  color: var(--reward-badge-text);
+  font-family: var(--mds-font-family);
+  font-size: 8px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;           /* 처음엔 숨김 → type_3.js가 등장시킴 */
+  transform: scale(0);
+  transform-origin: 0 100%; /* 좌하단 */
+}

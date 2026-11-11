@@ -1,0 +1,6 @@
+/* Type 2 전용 스타일 (Type 1 기준으로 시작, 공통 영역은 src/common/) */
+
+/* 앱테크 아이콘: 광고판에서는 영상 대신 기존 svg 정지 이미지 (색은 앱바 --store-icon)
+   영상은 storeheader.js가 보이는 것만 재생하므로 숨기면 같이 멈춤 */
+.phone.is-ad-board .appbar-icon--reward .appbar-reward-video {display: none;} /* storeheader.css 전문관별 영상 규칙보다 우선 */
+.phone.is-ad-board .appbar-icon--reward svg {display: block;}

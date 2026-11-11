@@ -1,0 +1,203 @@
+/* ════════════════════════════════════════════════════
+   storeheader.css — 전문관 헤더: 전문관 테마 · 헤더 · 앱바 · 검색창 · 탭
+   상태바(common.css)부터 탭까지 전문관 색이 이어지는 상단 영역 전체. 동작은 storeheader.js
+   ════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════
+   전문관(멀티스토어) 테마
+   .phone의 data-store 값 하나로 헤더 배경 · 상태바 · 아이콘 · 탭 색이 바뀜
+   배경·상태바색 출처: MDS 2.0 Multi Store Component (헤더 전체 높이 기준 --store-bg-h)
+   쓰는 곳: 상태바(common.css) · 헤더 배경, 앱바(--store-icon), 탭(--tab-*)
+   전환: common.js의 window.setStore('kids') 등
+   ════════════════════════════════════════════════════ */
+.phone {
+  --store-bg-h: 181px;
+  --store-bg: #1A1B1F;
+  --store-bg-size: 100% var(--store-bg-h);
+  --store-bg-x: 0px;
+  --store-status: #fff;
+  --store-icon: #fff;
+  --ad-color-rgb: 107, 78, 162; /* 광고판 색(#6B4EA2): 헤더 · 배너 노티스 공통. 실제는 소재의 bannerNoticeBackgroundColor */
+}
+.phone[data-store="musinsa"] { --tab-color: rgba(255, 255, 255, 0.6); }
+/* .phone[data-store="beauty"] { --store-bg: linear-gradient(143deg, #E62B6E -8.5%, #E55651 22.3%, #D6C27A 108.6%); } 기존 그라디언트 (보관) */
+.phone[data-store="beauty"] { --store-bg: #F2665E; }
+.phone[data-store="sports"] { --store-bg: #fff; --store-status: #000; --store-icon: #000; --tab-color: #666; --tab-selected: #37B0F4; --tab-underline-bottom: 7px; --tab-ad-label: rgba(0, 0, 0, 0.2); }
+.phone[data-store="outlet"] { --store-bg: #B90000; }
+.phone[data-store="kids"] { --store-bg: #3734B8; --store-icon: #FF5F00; --tab-selected: #3734B8; }
+.phone[data-store="boutique"] { --store-bg: #0000FF; }
+/* 킥스 체크무늬: Figma 배경 이미지를 잰 값. 한 칸 30 × 헤더 높이의 1/6, 왼쪽 첫 칸 경계가 26.3이 되도록 시작점을 이동 */
+/* .phone[data-store="kicks"] { --store-bg: repeating-conic-gradient(#25ADFA 0 25%, #009FF9 0 50%); --store-bg-size: 60px calc(var(--store-bg-h) / 3); --store-bg-x: -3.7px; --tab-weight: 500; } 기존 체커보드 (보관) */
+.phone[data-store="kicks"] { --store-bg: #009FF9; --tab-weight: 500; }
+.phone[data-store="used"] { --store-bg: #F7E74B; --store-status: #000; --store-icon: #000; --tab-color: rgba(0, 0, 0, 0.6); --tab-selected: #000; --tab-ad-label: rgba(0, 0, 0, 0.2); }
+/* 광고판 진입 시 헤더색 전환. 플레이어(스포츠) · 유즈드 · 키즈는 GNB에 적용되지 않음 (브랜드광고 PRD 3-8-3 As-Is) */
+.phone.is-ad-board:not([data-store="sports"]):not([data-store="used"]):not([data-store="kids"]) { --store-bg: rgb(var(--ad-color-rgb)); }
+
+/* 전문관 배경: 상태바와 헤더가 각자 가지되 폰 맨 위 기준으로 같은 그림이 이어지게 맞춤.
+   상태바는 불투명해서 올라가는 헤더를 가림 */
+.status-bar, .header {background: var(--store-bg); background-size: var(--store-bg-size);}
+.status-bar {background-position: var(--store-bg-x) 0;} /* 위 background 단축 속성이 위치를 초기화하므로 다시 지정 (헤더 위치는 아래 헤더 구간) */
+
+/* ════════════════════════════════════════════════════
+   헤더: 앱바 + 검색창 + 탭 한 덩어리
+   --header-offset만큼 위로 올라감 (storeheader.js가 스크롤에 맞춰 0 → -(앱바 + 검색창))
+   배경은 반대로 밀어서 화면에 고정된 것처럼 보이게 함 (그라디언트·체크무늬 어긋남 방지)
+   HTML: header.header > .appbar + .search-bar + nav.tab-underline
+   높이: 앱바(--appbar-h) + 검색창(--search-h) + 탭(--tab-h) / 배경은 위 전문관 테마
+   ════════════════════════════════════════════════════ */
+.header {
+  --header-offset: 0px;
+  position: absolute;
+  top: var(--status-bar-h);   /* status-bar 아래부터 시작 */
+  left: 0;
+  width: 100%;
+  height: calc(var(--appbar-h) + var(--search-h) + var(--tab-h));
+  z-index: 20;
+  background-position: var(--store-bg-x, 0px) calc(0px - var(--status-bar-h) - var(--header-offset));
+  transform: translateY(var(--header-offset));
+  will-change: transform;
+}
+
+/* 모바일: 문서 스크롤이라 화면 위에 fixed (최대 --mobile-max-w, 가운데), 위 안전영역만큼 아래로 */
+@media (hover: none), (pointer: coarse) {
+  .header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    min-width: var(--mobile-min-w);
+    max-width: var(--mobile-max-w);
+    margin: 0 auto;
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(var(--appbar-h) + var(--search-h) + var(--tab-h) + env(safe-area-inset-top, 0px));
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   앱바 (MDS AppBar type=homeMusinsa)
+   좌우 16 · 로고(앞부분 + 뒷부분, 간격 8) + 게이트웨이 로티와 아이콘 3개 양끝 정렬
+   HTML: .appbar > .appbar-brand(.appbar-logo[data-logo] × 전문관, #appbarGateway) + .appbar-icons
+   로고는 .phone[data-store]와 같은 data-logo만 보임 / 아이콘 색은 전문관 테마의 --store-icon
+   동작: storeheader.js (게이트웨이 로티)
+   ════════════════════════════════════════════════════ */
+:root {
+  --appbar-h: 52px;
+}
+
+.appbar {display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; height: var(--appbar-h); padding: 0 16px;} /* gap: 로고 묶음과 아이콘 사이 최소 간격 (앱 캡처에 맞춘 값) */
+/* 좁은 화면(최소 320): 서비스 StoreAppbar와 같이 로고만 flex-shrink 1로 축소. 앞·뒷부분은 폭 비율대로 줄고 높이 20 유지, 간격 8·아이콘은 고정 */
+.appbar-brand {display: flex; align-items: center; flex: 0 1 auto; min-width: 0;}
+.appbar-gateway {flex: none; width: 28px; height: 24px;} /* 게이트웨이 버튼 로티: 로고 오른쪽에 갭 없이, 줄어들지 않음 */
+.appbar-gateway svg {display: block;}
+.appbar-logo {display: none; align-items: center; gap: 8px; flex: 0 1 auto; min-width: 0;}
+.appbar-logo img {display: block; flex: 0 1 auto; min-width: 0; height: 20px; object-fit: contain;}
+.phone[data-store="musinsa"] .appbar-logo[data-logo="musinsa"],
+.phone[data-store="beauty"] .appbar-logo[data-logo="beauty"],
+.phone[data-store="sports"] .appbar-logo[data-logo="sports"],
+.phone[data-store="outlet"] .appbar-logo[data-logo="outlet"],
+.phone[data-store="kids"] .appbar-logo[data-logo="kids"],
+.phone[data-store="boutique"] .appbar-logo[data-logo="boutique"],
+.phone[data-store="kicks"] .appbar-logo[data-logo="kicks"],
+.phone[data-store="used"] .appbar-logo[data-logo="used"] {display: flex;}
+.appbar-icons {display: flex; align-items: center; gap: 8px; flex-shrink: 0; color: var(--store-icon, #000);}
+.appbar-icon {position: relative; width: 28px; height: 28px;}
+.appbar-icon svg {display: block;}
+.appbar-badge {display: none; position: absolute; top: 0; right: 0; width: 4px; height: 4px; border-radius: 50%; background: currentColor;}
+.phone[data-store="used"] .appbar-badge {display: block;}
+/* 앱테크 아이콘 모션: 8개 전문관 모두 전문관별 영상(.appbar-reward-video[data-video])으로 대체, svg는 영상 없는 경우 대비로 남겨 둠 */
+.appbar-reward-video {display: none; width: 28px; height: 28px; object-fit: contain; pointer-events: none;}
+.phone:is([data-store="musinsa"], [data-store="beauty"], [data-store="sports"], [data-store="outlet"], [data-store="kids"], [data-store="boutique"], [data-store="kicks"], [data-store="used"]) .appbar-icon--reward svg {display: none;}
+.phone[data-store="musinsa"] .appbar-reward-video[data-video="musinsa"],
+.phone[data-store="beauty"] .appbar-reward-video[data-video="beauty"],
+.phone[data-store="sports"] .appbar-reward-video[data-video="sports"],
+.phone[data-store="outlet"] .appbar-reward-video[data-video="outlet"],
+.phone[data-store="kids"] .appbar-reward-video[data-video="kids"],
+.phone[data-store="boutique"] .appbar-reward-video[data-video="boutique"],
+.phone[data-store="kicks"] .appbar-reward-video[data-video="kicks"],
+.phone[data-store="used"] .appbar-reward-video[data-video="used"] {display: block;}
+/* 광고판 진입 시 광고판용 영상(data-video="ad-전문관", 배경 #6B4CA1)으로 교체: 헤더가 광고 색으로 바뀌는 전문관 5개
+   (스포츠 · 키즈 · 유즈드는 광고판에서도 헤더 색이 그대로라 전문관 영상 유지) */
+.phone.is-ad-board[data-store="musinsa"] .appbar-reward-video[data-video="musinsa"],
+.phone.is-ad-board[data-store="beauty"] .appbar-reward-video[data-video="beauty"],
+.phone.is-ad-board[data-store="outlet"] .appbar-reward-video[data-video="outlet"],
+.phone.is-ad-board[data-store="boutique"] .appbar-reward-video[data-video="boutique"],
+.phone.is-ad-board[data-store="kicks"] .appbar-reward-video[data-video="kicks"] {display: none;}
+.phone.is-ad-board[data-store="musinsa"] .appbar-reward-video[data-video="ad-musinsa"],
+.phone.is-ad-board[data-store="beauty"] .appbar-reward-video[data-video="ad-beauty"],
+.phone.is-ad-board[data-store="outlet"] .appbar-reward-video[data-video="ad-outlet"],
+.phone.is-ad-board[data-store="boutique"] .appbar-reward-video[data-video="ad-boutique"],
+.phone.is-ad-board[data-store="kicks"] .appbar-reward-video[data-video="ad-kicks"] {display: block;}
+
+/* ════════════════════════════════════════════════════
+   검색창 (MDS TextFieldSearch)
+   좌우 16, 필드 패딩 6/8, 문구 14/20, 아이콘 24. 테두리는 Figma처럼 안쪽 정렬이라 inset 그림자로
+   HTML: .search-bar > img.search-shape + .search-field(#searchText, #searchLens, svg.search-icon) + img.search-shape
+   전문관별 모양은 .phone[data-store] / 동작: storeheader.js (문구 · 렌즈 로티)
+   ════════════════════════════════════════════════════ */
+:root {
+  --search-h: 36px;
+}
+
+.search-bar {display: flex; align-items: center; width: 100%; height: var(--search-h); padding: 0 16px;}
+.search-field {display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; height: 100%; padding: 6px 8px; border-radius: 4px; background: #fff; color: #666;}
+.search-text {flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; font-weight: 400; line-height: 20px; color: #8A8A8A;}
+.search-lens {display: none; flex: none; width: 24px; height: 24px;}
+.search-lens svg {display: block;}
+.search-icon {display: block; flex: none;}
+.search-shape {display: none; flex: none;}
+.phone[data-store="musinsa"] .search-lens {display: block;}
+.phone[data-store="beauty"] .search-field {border-radius: 0;}
+.phone[data-store="sports"] .search-field {padding: 6px 0; border-radius: 0; box-shadow: inset 0 1.5px 0 #37B0F4, inset 0 -1.5px 0 #37B0F4;}
+.phone[data-store="sports"] .search-shape {display: block;}
+.phone[data-store="kids"] .search-field {border-radius: 0; background: rgba(0, 0, 0, 0.08); box-shadow: inset 0 0 0 1px #FF5F00; color: #FF5F00;}
+.phone[data-store="kids"] .search-text {color: rgba(255, 255, 255, 0.6);}
+
+/* ════════════════════════════════════════════════════
+   전문관 탭 (MDS TabUnderline · KidsTabUnderline · 광고탭 TabUnderlineItemAD)
+   좌우 패딩 8, 아이템 높이 48 · 글자 좌우 7
+   unselected: 14/20 --tab-color · --tab-weight / selected: Bold 14/20 --tab-selected + 밑줄 2 (좌우 8 안쪽)
+   HTML: nav.tab-underline > button.tab-item (.is-clickable · .is-selected · .tab-item--ad)
+   전문관별 색은 전문관 테마 / 동작: storeheader.js (탭 선택 · 광고탭 로티)
+   ════════════════════════════════════════════════════ */
+.phone {
+  --tab-h: 48px;
+  --tab-color: rgba(255, 255, 255, 0.8); /* unselected 글자 */
+  --tab-weight: 400;                     /* unselected 굵기 */
+  --tab-selected: #fff;                  /* selected 글자 · 밑줄 */
+  --tab-underline-bottom: 0px;           /* 밑줄과 탭 바닥 사이 */
+  --tab-ad-label: rgba(255, 255, 255, 0.6); /* 광고탭 AD 글자 */
+}
+
+.tab-underline {display: flex; align-items: flex-start; width: 100%; height: var(--tab-h); padding: 0 8px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none;} /* 폭이 모자라면 가로 스크롤 */
+.tab-underline::-webkit-scrollbar {display: none;}
+.tab-item {position: relative; display: block; flex: none; height: 48px; padding: 14px 7px; border: 0; background: transparent; color: var(--tab-color); font-family: inherit; font-size: 14px; font-weight: var(--tab-weight); line-height: 20px; white-space: nowrap; pointer-events: none; -webkit-tap-highlight-color: transparent;} /* 기본은 클릭 안 됨 */
+.tab-item.is-clickable {pointer-events: auto; cursor: pointer;} /* 추천 · 광고탭만 클릭 */
+.tab-item.is-selected {color: var(--tab-selected); font-weight: 700;}
+.tab-item.is-selected::after {content: ''; position: absolute; left: 8px; right: 8px; bottom: var(--tab-underline-bottom); height: 2px; background: var(--tab-selected);}
+/* KidsTabUnderline: 밑줄 대신 주황 블록. 좌우 패딩 16 · 위 8, 아이템 높이 40 */
+.phone[data-store="kids"] .tab-underline {padding: 8px 16px 0;}
+.phone[data-store="kids"] .tab-item {height: 40px; padding: 10px 7px;}
+.phone[data-store="kids"] .tab-item.is-selected {background: #FF5F00;}
+.phone[data-store="kids"] .tab-item.is-selected::after {display: none;}
+/* 광고탭: 크기·위치는 플러그인 TabAD 기준. 폭 109 = 왼쪽 8 + (로티 81 + 좌우 2) + 오른쪽 16. 로티 원본 243×144의 1/3
+   선택 표시(밑줄 = 로티 + 4, 키즈는 블록 전체)와 AD 색은 MDS TabUnderlineItemAD 기준 */
+.tab-item.tab-item--ad, .phone[data-store="kids"] .tab-item.tab-item--ad {width: 109px; padding: 0;}
+.tab-ad-lottie {position: absolute; top: 0; left: 10px; width: 81px; height: 48px;}
+.tab-ad-lottie svg {display: block;}
+.phone[data-store="kids"] .tab-ad-lottie {height: 40px;} /* 키즈 로티 원본 243×120의 1/3 */
+.tab-ad-label {position: absolute; top: 14px; right: 4px; z-index: 2; color: var(--tab-ad-label); font-size: 8px; font-weight: 600; line-height: 6px;}
+.phone[data-store="kids"] .tab-ad-label {top: 8px;}
+.tab-item--ad.is-selected::after {left: 8px; right: 16px;}
+
+/* MusinsaTab: 48px height, 가로 스크롤 (이미지 탭. 지금 Type_1에서는 쓰지 않음) */
+.musinsa-tab-wrap {
+  width: 100%;
+  height: 48px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.musinsa-tab-wrap::-webkit-scrollbar { display: none; }
+.musinsa-tab-wrap img {
+  display: block;
+  height: 100%;
+}

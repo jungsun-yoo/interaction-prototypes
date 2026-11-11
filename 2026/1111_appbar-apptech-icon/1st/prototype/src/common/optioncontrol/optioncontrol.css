@@ -1,0 +1,53 @@
+/* ════════════════════════════════════════════════════
+   optioncontrol.css — 프로토타입 옵션 컨트롤: 전문관 전환 버튼 (실제 앱 UI 아님)
+   HTML: .phone 바로 안의 .option-control (버튼은 optioncontrol.js가 생성)
+   위치: 헤더(펼친 상태) 바로 아래 = 빅배너 윗부분에 고정으로 떠 있음. 스크롤 · 광고판과 상관없이 항상 보임
+   ════════════════════════════════════════════════════ */
+.option-control {
+  --option-control-top: calc(var(--status-bar-h) + var(--appbar-h) + var(--search-h) + var(--tab-h) + 12px);
+  position: absolute;
+  top: var(--option-control-top);
+  left: 50%;
+  z-index: 30; /* 헤더 · 바텀네비(20) 위 */
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  max-width: calc(100% - 24px);
+  padding: 3px;
+  overflow-x: auto;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  scrollbar-width: none;
+  font-family: var(--mds-font-family);
+}
+.option-control::-webkit-scrollbar {display: none;}
+
+/* 모바일: 문서 스크롤이라 화면에 fixed (헤더처럼 위 안전영역만큼 아래로, 최대 --mobile-max-w 안에서 가운데) */
+@media (hover: none), (pointer: coarse) {
+  .option-control {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + var(--appbar-h) + var(--search-h) + var(--tab-h) + 12px);
+    max-width: calc(min(100vw, var(--mobile-max-w)) - 24px);
+  }
+}
+
+.option-control-button {
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 8px; /* 402 폭에서 8개가 스크롤 없이 다 보이는 값 (좁은 화면은 가로 스크롤) */
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 26px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s linear, color 0.15s linear;
+}
+.option-control-button[aria-pressed="true"] {background: #fff; color: #000; font-weight: 600;}

@@ -1,0 +1,32 @@
+/* ════════════════════════════════════════════════════
+   pan_ad.css — 광고판(판 > 광고): 탭 아래를 영상 자리 이미지로 꽉 채우는 판 (스크롤 없음, Figma 138:65342)
+   .phone.is-ad-board일 때 보이고, 스크롤 영역 · 바텀네비는 숨김 (헤더 색 전환은 storeheader/storeheader.css)
+   HTML: section.ad-board > img.ad-board-visual + .ad-board-top(.ad-board-timer + .ad-board-sound) + .ad-board-notice
+   필요: storeheader/storeheader.css의 높이 변수, mds-motion.css (노티스 스프링) / 동작: pan_ad.js
+   ════════════════════════════════════════════════════ */
+.ad-board {display: none; position: absolute; top: calc(var(--status-bar-h) + var(--appbar-h) + var(--search-h) + var(--tab-h)); right: 0; bottom: 0; left: 0; z-index: 10; overflow: hidden; background: #111;}
+.phone.is-ad-board .ad-board {display: block;}
+.phone.is-ad-board .scroll-area, .phone.is-ad-board .bottom-navigation {display: none;}
+.ad-board-visual {display: block; width: 100%; height: 100%; object-fit: cover;}
+/* 위: 광고 라벨 + 초수, 음소거 */
+.ad-board-top {position: absolute; top: 16px; right: 16px; left: 16px; display: flex; align-items: flex-start; justify-content: space-between;}
+.ad-board-timer {display: flex; align-items: center; gap: 8px;}
+.ad-board-label {padding: 1px 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.6); color: #000; font-size: 11px; font-weight: 400; line-height: 14px;}
+.ad-board-time {color: rgba(255, 255, 255, 0.8); font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 18px;}
+.ad-board-sound {display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(255, 255, 255, 0.1);}
+.ad-board-sound svg, .ad-board-notice-arrow {display: block; flex: none;}
+/* 아래: 배너 노티스. 이미지는 ImageSquare 파일만 바꾸면 교체됨
+   등장 모션(pan_ad.js): 무신사 스낵바 등장 모션 — 배너 높이만큼 아래에서 spring.bouncy로 올라오고, 투명도는 0.15s linear로 페이드인 */
+.ad-board-notice {--ad-notice-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); --ad-notice-spring-damping: var(--mds-motion-spring-bouncy-damping); --ad-notice-fade: 0.15s; position: absolute; right: 16px; bottom: max(var(--safe-area-bottom), 12px); left: 16px; display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 6px 12px; border-radius: 4px; background: rgba(var(--ad-color-rgb, 107, 78, 162), 0.85); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);}
+.ad-board-notice-image {display: block; flex: none; width: 40px; height: 40px; border-radius: 4px; object-fit: cover;}
+.ad-board-notice-text {flex: 1 1 auto; min-width: 0;}
+.ad-board-notice-title, .ad-board-notice-sub {overflow: hidden; font-size: 13px; line-height: 18px; text-overflow: ellipsis; white-space: nowrap;}
+.ad-board-notice-title {color: #E8E8E8; font-weight: 600;}
+.ad-board-notice-sub {color: rgba(232, 232, 232, 0.6); font-weight: 400;}
+
+/* 모바일: 스크롤 없는 판이라 화면 높이에 고정, 판은 fixed 헤더 바로 아래부터 */
+@media (hover: none), (pointer: coarse) {
+  html.is-ad-board, html.is-ad-board body { height: 100%; overflow: hidden; }
+  .phone.is-ad-board { height: 100vh; height: 100svh; overflow: hidden; }
+  .ad-board { top: calc(var(--appbar-h) + var(--search-h) + var(--tab-h) + env(safe-area-inset-top, 0px)); }
+}
