@@ -15,10 +15,11 @@
 
   function playNotice() {
     if (!notice) return;
-    notice.style.opacity = '0'; /* 모션 시작 전 한 프레임 깜빡임 방지 */
+    notice.style.opacity = '0'; /* 모션 시작 전(딜레이 동안 포함) 숨김 · 깜빡임 방지 */
+    var delay = cssNumber('--ad-notice-delay'); /* 광고판 진입 후 0.5초 뒤 등장 */
     entering = Motion.animate(notice, { y: [notice.offsetHeight, 0], opacity: [0, 1] }, {
-      y: { type: 'spring', stiffness: cssNumber('--ad-notice-spring-stiffness'), damping: cssNumber('--ad-notice-spring-damping') },
-      opacity: { duration: cssNumber('--ad-notice-fade'), ease: 'linear' }
+      y: { type: 'spring', stiffness: cssNumber('--ad-notice-spring-stiffness'), damping: cssNumber('--ad-notice-spring-damping'), delay: delay },
+      opacity: { duration: cssNumber('--ad-notice-fade'), ease: 'linear', delay: delay }
     });
   }
 

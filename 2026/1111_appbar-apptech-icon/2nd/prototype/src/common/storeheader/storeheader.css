@@ -20,15 +20,15 @@
   --ad-color-rgb: 107, 78, 162; /* 광고판 색(#6B4EA2): 헤더 · 배너 노티스 공통. 실제는 소재의 bannerNoticeBackgroundColor */
 }
 .phone[data-store="musinsa"] { --tab-color: rgba(255, 255, 255, 0.6); }
-/* .phone[data-store="beauty"] { --store-bg: linear-gradient(143deg, #E62B6E -8.5%, #E55651 22.3%, #D6C27A 108.6%); } 기존 그라디언트 (보관) */
-.phone[data-store="beauty"] { --store-bg: #F2665E; }
+.phone[data-store="beauty"] { --store-bg: linear-gradient(143deg, #E62B6E -8.5%, #E55651 22.3%, #D6C27A 108.6%); } /* 원래 그라디언트 (앱테크 아이콘이 투명 로티라 다시 사용) */
+/* .phone[data-store="beauty"] { --store-bg: #F2665E; } 영상 아이콘용 단색 (보관) */
 .phone[data-store="sports"] { --store-bg: #fff; --store-status: #000; --store-icon: #000; --tab-color: #666; --tab-selected: #37B0F4; --tab-underline-bottom: 7px; --tab-ad-label: rgba(0, 0, 0, 0.2); }
 .phone[data-store="outlet"] { --store-bg: #B90000; }
 .phone[data-store="kids"] { --store-bg: #3734B8; --store-icon: #FF5F00; --tab-selected: #3734B8; }
 .phone[data-store="boutique"] { --store-bg: #0000FF; }
 /* 킥스 체크무늬: Figma 배경 이미지를 잰 값. 한 칸 30 × 헤더 높이의 1/6, 왼쪽 첫 칸 경계가 26.3이 되도록 시작점을 이동 */
-/* .phone[data-store="kicks"] { --store-bg: repeating-conic-gradient(#25ADFA 0 25%, #009FF9 0 50%); --store-bg-size: 60px calc(var(--store-bg-h) / 3); --store-bg-x: -3.7px; --tab-weight: 500; } 기존 체커보드 (보관) */
-.phone[data-store="kicks"] { --store-bg: #009FF9; --tab-weight: 500; }
+.phone[data-store="kicks"] { --store-bg: repeating-conic-gradient(#25ADFA 0 25%, #009FF9 0 50%); --store-bg-size: 60px calc(var(--store-bg-h) / 3); --store-bg-x: -3.7px; --tab-weight: 500; } /* 원래 체커보드 (다시 사용) */
+/* .phone[data-store="kicks"] { --store-bg: #009FF9; --tab-weight: 500; } 영상 아이콘용 단색 (보관) */
 .phone[data-store="used"] { --store-bg: #F7E74B; --store-status: #000; --store-icon: #000; --tab-color: rgba(0, 0, 0, 0.6); --tab-selected: #000; --tab-ad-label: rgba(0, 0, 0, 0.2); }
 /* 광고판 진입 시 헤더색 전환. 플레이어(스포츠) · 유즈드 · 키즈는 GNB에 적용되지 않음 (브랜드광고 PRD 3-8-3 As-Is) */
 .phone.is-ad-board:not([data-store="sports"]):not([data-store="used"]):not([data-store="kids"]) { --store-bg: rgb(var(--ad-color-rgb)); }

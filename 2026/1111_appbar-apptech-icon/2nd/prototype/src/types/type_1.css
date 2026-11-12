@@ -6,9 +6,12 @@
    "이벤트" 배지: 아이콘 기준 (15, -2), 높이 13, 여백 1.5 / 3, Pretendard Medium 8px
    모션(type_1.js): 랜딩 1초 후 등장 → 3초 노출 → 사라짐 → 6초 후 다시 등장, 반복. 중심점은 배지 좌하단
    ════════════════════════════════════════════════════ */
-/* 체크인 아이콘은 무신사 스토어에만 */
-.appbar-icon--checkin {display: none;}
-.phone[data-store="musinsa"] .appbar-icon--checkin {display: block;}
+/* 체크인 아이콘 + "이벤트" 배지: 모든 전문관 앱바 (예전엔 무신사만) */
+.appbar-icon--checkin {display: block;}
+.phone.is-no-checkin .appbar-icon--checkin {display: none;} /* 옵션 컨트롤 '이벤트 아이콘' 끔 (type_1.js setCheckin) */
+/* 배지가 오른쪽 앱테크 아이콘(로티 svg는 GPU 레이어라 브라우저에 따라 위로 올라올 수 있음) 위에 항상 보이도록
+   체크인 칸 전체를 앱바 아이콘들보다 한 단계 위로. 칸 안에서는 배지(z-index 1)가 핀 위 */
+.appbar-icon--checkin {z-index: 2;}
 
 .appbar-checkin-pin {
   position: absolute;
@@ -30,7 +33,7 @@
 .phone[data-store="boutique"] {--checkin-badge-bg: #fff; --checkin-badge-text: var(--mds-color-store-boutique);}
 .phone[data-store="outlet"] {--checkin-badge-bg: #fff; --checkin-badge-text: var(--mds-color-store-outlet);}
 .phone[data-store="sports"] {--checkin-badge-bg: var(--mds-color-store-sports);}
-.phone[data-store="kids"] {--checkin-badge-bg: var(--mds-color-store-kids);}
+.phone[data-store="kids"] {--checkin-badge-bg: var(--mds-color-store-kids); --checkin-badge-text: #3734B8;} /* 글자: 키즈 헤더색 */
 .phone[data-store="used"] {--checkin-badge-bg: #000;}
 .phone.is-ad-board:not([data-store="sports"]):not([data-store="used"]):not([data-store="kids"]) {--checkin-badge-bg: #fff; --checkin-badge-text: rgb(var(--ad-color-rgb));}
 
@@ -67,13 +70,17 @@
 }
 
 /* ════════════════════════════════════════════════════
-   무신사 앱테크 아이콘 영상 2개 겹치기 (재생은 type_1.js)
-   무신사(icon_roll-musinsa_290) 위에 광고판용(icon_roll-ad-musinsa_290)을 겹쳐 두고 항상 같이 재생
-   보이는 것만 투명도로 바꿈: 평소엔 무신사 1 · 광고판 0, 광고판 진입하면 무신사 0 · 광고판 1
-   (storeheader.css의 '광고판이면 영상 교체(display)' 규칙보다 우선)
+   앱테크 아이콘: 모든 스토어, 아이콘 색별 투명 로티(ic_appbar_apptech_white · black · kids)를 28 칸에 맞춰 표시
+   (어떤 스토어가 어떤 파일인지 · 재생은 type_1.js) 배경이 투명해서 광고판(헤더 색 바뀜)에서도 같은 로티를 그대로 씀
    ════════════════════════════════════════════════════ */
-.phone[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="musinsa"],
-.phone[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="ad-musinsa"] {display: block;}
-.phone[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="ad-musinsa"] {position: absolute; top: 0; left: 0; opacity: 0;}
-.phone.is-ad-board[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="musinsa"] {opacity: 0;}
-.phone.is-ad-board[data-store="musinsa"] .appbar-icon--reward .appbar-reward-video[data-video="ad-musinsa"] {opacity: 1;}
+/* 앱테크 아이콘 닷: 모든 스토어, 오른쪽 위 4px (1st Type 3 Badge type=dot)
+   색은 체크인 배지 바탕색과 같은 규칙(--checkin-badge-bg): 무신사 파랑, 진한 헤더는 흰색, 스포츠 · 키즈는 스토어 색, 유즈드는 검정, 광고판은 흰색
+   영상 · 로티 위에 보이도록 z-index */
+.appbar-reward-dot {position: absolute; top: 0; right: 0; z-index: 1; width: 4px; height: 4px; border-radius: 100px; background: var(--checkin-badge-bg); pointer-events: none;}
+
+/* 종(알림) 아이콘 닷: 모든 스토어 (storeheader.css에선 유즈드만 보임). 색은 앱테크 닷과 같은 규칙 */
+.phone .appbar-icon--alarm .appbar-badge {display: block; background: var(--checkin-badge-bg);}
+
+.appbar-reward-lottie {display: block; width: 28px; height: 28px; pointer-events: none;}
+/* storeheader.css가 리워드 칸의 svg(정지 아이콘)를 숨기는 규칙에 로티 svg도 걸려서 다시 보이게 */
+.phone[data-store] .appbar-icon--reward .appbar-reward-lottie svg {display: block;}

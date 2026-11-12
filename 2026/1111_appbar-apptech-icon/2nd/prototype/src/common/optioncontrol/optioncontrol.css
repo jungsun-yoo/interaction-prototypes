@@ -51,3 +51,30 @@
   transition: background-color 0.15s linear, color 0.15s linear;
 }
 .option-control-button[aria-pressed="true"] {background: #fff; color: #000; font-weight: 600;}
+
+/* '이벤트 아이콘' 체크박스 (체크인 아이콘 켜기 · 끄기). 맨 앞(데스크탑 창은 맨 위, 모바일 가로 줄은 맨 왼쪽)에 구분선 두고 붙음 */
+.option-control-check {flex-shrink: 0; display: flex; align-items: center; gap: 4px; height: 26px; margin-right: 4px; padding: 0 10px 0 8px; border-right: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer;}
+.option-control-check input {width: 14px; height: 14px; margin: 0; accent-color: #fff; cursor: pointer;}
+
+/* 데스크탑에서 단독으로 연 페이지: 폰 오른쪽 세로 창 (left · top은 optioncontrol.js가 폰 위치에 맞춤)
+   인덱스(index.html) 안에서는 이 창 대신 인덱스가 같은 모양의 창을 폰 오른쪽에 그림 */
+.option-control--panel {
+  position: fixed;
+  transform: none;
+  flex-direction: column;
+  width: 136px;
+  max-width: none;
+  padding: 4px;
+  overflow: visible;
+  border-radius: 12px;
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+}
+.option-control-title {padding: 8px 12px 6px; color: rgba(0, 0, 0, 0.45); font-size: 11px; font-weight: 600; line-height: 16px; letter-spacing: 0.08em;}
+.option-control--panel .option-control-button {width: 100%; height: 36px; padding: 0 12px; border-radius: 8px; color: rgba(0, 0, 0, 0.7); font-size: 13px; line-height: 36px; text-align: left;}
+.option-control--panel .option-control-button:hover {background: rgba(0, 0, 0, 0.06);}
+.option-control--panel .option-control-button[aria-pressed="true"] {background: #000; color: #fff;}
+.option-control--panel .option-control-check {height: 40px; margin: 0 0 4px; padding: 0 12px; border-left: 0; border-right: 0; border-bottom: 1px solid rgba(0, 0, 0, 0.08); color: rgba(0, 0, 0, 0.8); font-size: 13px; gap: 8px;}
+.option-control--panel .option-control-check input {accent-color: #000;}

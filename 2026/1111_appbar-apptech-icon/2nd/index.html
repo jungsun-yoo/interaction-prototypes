@@ -60,9 +60,6 @@
     .panel-download svg {flex-shrink: 0; display: block;}
     .panel-download:hover {background: rgba(255, 255, 255, 0.85);}
     .panel-download + .panel-download {margin-top: 6px;}
-    /* md(명세) 버튼: zip보다 약한 보조 버튼 (링크 칩과 같은 어두운 바탕) */
-    .panel-download--sub {height: 32px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600;}
-    .panel-download--sub:hover {background: rgba(255, 255, 255, 0.16);}
     /* 숨김: 버튼 각각, 둘 다 숨으면 묶음(위 여백)까지 */
     .panel-download.is-hidden, .panel-download-wrap:not(:has(.panel-download:not(.is-hidden))) {display: none;}
 
@@ -104,6 +101,18 @@
     .tool-button::after {content: attr(data-tip); position: absolute; top: 50%; left: calc(100% + 10px); padding: 6px 8px; border-radius: 6px; background: #1c1c1e; color: #fff; font-size: 12px; line-height: 16px; white-space: nowrap; opacity: 0; pointer-events: none; transform: translateY(-50%); transition: opacity 0.15s;}
     .stage-tools:not(.is-attached) .tool-button::after {left: auto; right: calc(100% + 10px);}
     .tool-button:hover::after {opacity: 1;}
+    /* 옵션 컨트롤 창: 프로토타입이 window.optionControl(전문관 목록 · 전환 함수)을 열어 두면 툴바 아래 8px에 그림 (위치는 script fitFrame)
+       모바일에서는 이 창 대신 프로토타입 안(빅배너 위)에 가로 버튼이 뜸 (prototype/src/common/optioncontrol) */
+    .option-panel {position: absolute; z-index: 1; width: 136px; padding: 4px; border-radius: 12px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;}
+    .option-panel[hidden] {display: none;}
+    .option-panel-title {padding: 8px 12px 6px; font-size: 11px; font-weight: 600; line-height: 16px; letter-spacing: 0.08em; color: rgba(0, 0, 0, 0.45);}
+    .option-panel-list {display: flex; flex-direction: column; gap: 2px;}
+    .option-panel-button {display: block; width: 100%; height: 36px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: rgba(0, 0, 0, 0.7); font: inherit; font-size: 13px; font-weight: 500; line-height: 36px; text-align: left; cursor: pointer;}
+    .option-panel-button:hover {background: rgba(0, 0, 0, 0.06);}
+    .option-panel-button.is-active {background: #000; color: #fff; font-weight: 600;}
+    .option-panel-check {display: flex; white-space: nowrap; align-items: center; gap: 8px; height: 40px; margin-bottom: 4px; padding: 0 12px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); color: rgba(0, 0, 0, 0.8); font-size: 13px; font-weight: 500; cursor: pointer;}
+    .option-panel-check[hidden] {display: none;}
+    .option-panel-check input {width: 14px; height: 14px; margin: 0; accent-color: #000; cursor: pointer;}
     .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
   </style>
 </head>
@@ -157,6 +166,12 @@
         <button class="tool-button" type="button" id="openButton" data-tip="새 창으로 보기" aria-label="새 창으로 보기"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></button>
         <button class="tool-button" type="button" id="qrButton" data-tip="QR 코드" aria-label="QR 코드" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M21 21h-4v-4"/></svg></button>
       </div>
+      <div class="option-panel" id="optionPanel" role="group" aria-label="스토어 선택" hidden>
+        <!-- 체크인 아이콘 켜기 · 끄기 (프로토타입 optionControl.hasCheckin일 때만 보임). 창 맨 위 -->
+        <label class="option-panel-check" id="optionCheckin" hidden><input type="checkbox" checked>이벤트 아이콘</label>
+        <p class="option-panel-title">스토어</p>
+        <div class="option-panel-list" id="optionList"></div>
+      </div>
       <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
     </main>
   </div>
@@ -181,13 +196,13 @@
       title: '[앱바] 앱테크 진입점 모션',
       sub: '26-1111 · Prototype',
       label: 'TYPES',
-      version: '20261111-09',
+      version: '20261111-27',
       qrHost: '192.168.0.79', // localhost에서 QR을 쓸 때만 내 PC 내부 IP 입력
       // figma: 'https://www.figma.com/design/C0XR68hLZmVbjQEOOqKCd0/%EC%9E%91%EC%97%85-26-11?node-id=55-2', // 확정 전이라 보관 (확정되면 주석 해제)
-      figma: '',
-      jira: '',
-      spec: '', // 예: 'prototype/interaction.md' (보여줄 때만)
-      download: '', // 예: 'download/prototype.zip'
+      figma: 'https://www.figma.com/design/o0jTKUbX15ampUa9e8VUEP/MDS-2.0-%EB%B3%80%EA%B2%BD-%EB%A1%9C%EA%B7%B8-%EA%B3%B5%EC%9C%A0?node-id=9373-12156&t=Xd5vaxGnlqC6HeJw-4',
+      jira: 'https://jira.team.musinsa.com/browse/PD-10142',
+      spec: 'prototype/interaction.md', // 인터랙션 명세 (보여줄 때만)
+      download: 'download/prototype.zip', // prototype 폴더 압축 (prototype 안 파일을 고치면 다시 압축)
       showTypes: false, // 2nd는 Type 1 하나라 TYPES 목록 숨김 (타입이 늘면 true)
       /* 전문관 전환은 프로토타입 안(빅배너 위 옵션 컨트롤, optioncontrol.js)에서 함 → items는 타입 순서
          예전 방식(인덱스 왼쪽 목록에서 전문관 고르기)은 store 값으로 같은 화면을 여러 항목으로 띄웠음:
@@ -404,6 +419,57 @@
         tools.style.left = attached ? phoneRight + 12 + 'px' : '';
         tools.style.top = attached ? phoneTop + 'px' : '';
         placeQrPopover();
+        placeOptionPanel();
+      }
+
+      /* 옵션 컨트롤 창: 툴바 아래 8px, 툴바 왼쪽 끝에 맞춤 (툴바가 우상단으로 갔을 땐 오른쪽 끝에 맞춤) */
+      function placeOptionPanel() {
+        var panel = document.getElementById('optionPanel');
+        var tools = document.getElementById('stageTools');
+        if (panel.hidden) return;
+        var attached = tools.classList.contains('is-attached');
+        panel.style.left = (attached ? tools.offsetLeft : tools.offsetLeft + tools.offsetWidth - panel.offsetWidth) + 'px';
+        panel.style.top = tools.offsetTop + tools.offsetHeight + 8 + 'px';
+      }
+
+      /* 프로토타입이 window.optionControl을 열어 두면 버튼을 만들고, 프로토타입의 'storechange'로 선택 표시를 맞춤 */
+      function buildOptionPanel(win) {
+        var panel = document.getElementById('optionPanel');
+        var list = document.getElementById('optionList');
+        var control = win && win.optionControl;
+        list.innerHTML = '';
+        panel.hidden = !control;
+        if (!control) return;
+        var phone = win.document.querySelector('.phone');
+        var buttons = control.stores.map(function (store) {
+          var button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'option-panel-button';
+          button.textContent = store.label;
+          button.addEventListener('click', function () { control.select(store.id); });
+          list.appendChild(button);
+          return { id: store.id, el: button };
+        });
+        function update() {
+          buttons.forEach(function (b) {
+            var active = phone && phone.dataset.store === b.id;
+            b.el.classList.toggle('is-active', active);
+            b.el.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+        }
+        win.addEventListener('storechange', update);
+        update();
+
+        /* '이벤트 아이콘' 체크박스: 프로토타입에 체크인 켜기 · 끄기가 있을 때만 (type_1.js setCheckin) */
+        var check = document.getElementById('optionCheckin');
+        var input = check.querySelector('input');
+        check.hidden = !(control.hasCheckin && control.hasCheckin());
+        if (!check.hidden) {
+          input.checked = control.isCheckinOn();
+          input.onchange = function () { control.setCheckin(input.checked); };
+          win.addEventListener('checkinchange', function (event) { input.checked = event.detail; });
+        }
+        placeOptionPanel();
       }
 
       /* 접힌 QR 팝오버: 툴바 아래 8px, 툴바 오른쪽 끝에 맞춤 (폰 위에 겹쳐 뜸) */
@@ -426,6 +492,7 @@
         var doc = frame.contentDocument;
         if (!doc) return;
         doc.addEventListener('keydown', onKey); /* 폰 안에 포커스가 있어도 단축키 동작 */
+        buildOptionPanel(frame.contentWindow); /* 전문관 전환 창 (프로토타입에 optionControl이 있을 때만) */
         var phone = getComputedStyle(doc.documentElement);
         var w = parseFloat(phone.getPropertyValue('--phone-w'));
         var h = parseFloat(phone.getPropertyValue('--phone-h'));
