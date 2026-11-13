@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"> <!-- 폰 크기: 390×844 고정 (배경 이미지 780×1688 @2x 기준, type_2.css에서 지정) -->
+<html lang="ko"> <!-- 폰 크기: 390×844 고정 (배경 이미지 780×1688 @2x 기준, 아래 <style>에서 지정) -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -11,14 +11,93 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="[검색] 검색창 렌즈아이콘"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261111-12">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261111-12">
-  <link rel="stylesheet" href="./src/types/type_2.css?v=20261111-12">
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261113-57">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261113-57">
+  <link rel="stylesheet" href="./src/components/ProtoSpec/proto-spec.css?v=20261113-57"> <!-- 폰 오른쪽 개발 전달용 설명창 -->
+  <style>
+    /* ════════════════════════════════════════════════════
+       화면 스타일 — [검색] 검색창 렌즈아이콘 (화면 이미지 + 렌즈 아이콘 로티 + 툴팁)
+       배경 search_start_page.png(780×1688 @2x)에 상태바까지 그려져 있어 상태바 요소 없이 390×844로 고정
+       ════════════════════════════════════════════════════ */
+
+    :root {
+      /* 폰 크기: 폰 화면 390×844 + 오른쪽 설명창 (index가 --phone-w·--phone-h를 읽어 프레임을 맞추고, 툴바는 --phone-screen-w 오른쪽에 붙임) */
+      --phone-screen-w: 390px;
+      --phone-w: 682px;   /* 폰 390 + 간격 12 + 설명창 280 (index가 숫자로 읽어서 calc 대신 값으로 적음) */
+      --phone-h: 844px;
+      --phone-radius: 0px;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 폰 틀(.phone)은 폰 화면 + 설명창을 담는 투명 상자 (proto-spec.css). 폰 화면은 390×844 고정 */
+    .phone {
+      width: var(--phone-w);
+      min-width: 0;
+      max-width: var(--phone-w);
+      height: var(--phone-h);
+    }
+    .proto-screen {background: #fff;}
+    .phone-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ---------- 렌즈 아이콘 로티 (24×24, 중심 x324 y76) ---------- */
+    .lens-icon {
+      position: absolute;
+      left: 312px;
+      top: 64px;
+      width: 24px;
+      height: 24px;
+    }
+    .lens-icon-layer {position: absolute; inset: 0;}
+    .lens-icon-layer[hidden] {display: none;}
+    .lens-icon svg {display: block;}
+
+    /* ---------- 툴팁 (홈 검색아이콘과 같은 모션, 크기·위치는 Figma 11837:49595) ---------- */
+    .search-tip {
+      position: absolute;
+      left: 198px;
+      top: 96px;
+      z-index: 2;
+      width: 145px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-4px) scale(.96);
+      transform-origin: 126px 0; /* 화살표 끝 */
+      transition: opacity .25s ease, transform .25s ease;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .1));
+    }
+    .search-tip.is-on {
+      opacity: 1;
+      transform: none;
+      transition: opacity .45s ease, transform .55s cubic-bezier(.22, 1, .36, 1);
+    }
+    .search-tip svg {display: block; margin-left: 107px;}
+    .search-tip-body {
+      padding: 8px;
+      border-radius: 4px;
+      background: #000;
+      color: #fff;
+      font: 500 13px/1.4 var(--mds-font-family);
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body>
 
   <!-- 상태바 요소 없음: 배경 search_start_page.png(780×1688 @2x)에 상태바까지 그려져 있음 -->
-  <main class="phone">
+  <main class="phone has-spec">
+   <div class="proto-layout">
+    <div class="proto-screen">
     <img class="phone-bg" src="src/img/search_start_page.png" alt="">
 
     <!-- 렌즈 아이콘 로티 (96×96 → 24×24, 중심 x324 y76: 검색창 돋보기 왼쪽)
@@ -33,11 +112,73 @@
       <svg width="38" height="6" viewBox="0 0 38 6" fill="none" aria-hidden="true"><path d="M24 6L19.7682 0.921865C19.3684 0.442111 18.6316 0.442112 18.2318 0.921866L14 6H24Z" fill="#000"/></svg>
       <div class="search-tip-body">사진 검색으로<br>비슷한 상품을 찾아보세요</div>
     </div>
+    </div>
+
+    <!-- 개발 전달용 설명창 (폰 오른쪽, index 툴바 아래) -->
+    <aside class="proto-spec" aria-label="개발 전달 사항">
+      <p class="proto-spec-title">[검색] 검색창 렌즈아이콘</p>
+      <div class="proto-spec-files">
+        <a class="proto-spec-file" href="src/img/lens_emphasis.json" download="lens_emphasis.json">lens_emphasis 다운로드</a>
+        <a class="proto-spec-file" href="src/img/lens_default.json" download="lens_default.json">lens_default 다운로드</a>
+      </div>
+
+      <h3>재생 방식</h3>
+      <ol>
+        <li><code>lens_emphasis</code> <strong>1회 재생</strong> (약 4초)</li>
+        <li>끝나면 <code>lens_default</code>로 바꿔 <strong>무한 반복</strong> (한 번에 약 5초)</li>
+      </ol>
+      <p class="proto-spec-note">기본 로티를 미리 불러와 두고, 강조 로티가 끝나는 순간 바꾸면 깜빡임이 없어요.</p>
+    </aside>
+   </div>
   </main>
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
-  <script src="./src/common/common.js?v=20261111-12"></script>
-  <script src="./src/types/type_2.js?v=20261111-12"></script>
+  <script src="./src/common/common.js?v=20261113-57"></script>
+  <script>
+    /* 화면 동작 — [검색] 검색창 렌즈아이콘 툴팁 + 로티
+       툴팁: 홈 검색아이콘과 같음. 화면 진입 0.4초 뒤 등장, 4초 노출 후 사라짐
+       로티: 툴팁 등장과 동시에 lens_emphasis 1회 재생 → 끝나면 lens_default 무한 반복
+             (그 전에는 lens_emphasis 첫 프레임에 멈춰 있음)
+       index 다시 재생(R)으로 처음부터 */
+    (function () {
+        var tip = document.getElementById('searchTip');
+        var emphasisEl = document.getElementById('lensEmphasis');
+        var defaultEl = document.getElementById('lensDefault');
+        if (!tip || !emphasisEl || !defaultEl || !window.lottie) return;
+
+        var TIP_DELAY = 400;   /* 툴팁 등장까지 (ms) */
+        var TIP_HOLD = 4000;   /* 툴팁 노출 유지 */
+        var nocache = '?t=' + Date.now(); /* 로티를 다시 내보내도 바로 반영되게 캐시 방지 */
+
+        var emphasis = lottie.loadAnimation({
+            container: emphasisEl,
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: 'src/img/lens_emphasis.json' + nocache
+        });
+        /* 기본 루프는 미리 불러와 숨겨 둠 → 강조가 끝나는 순간 깜빡임 없이 바꿈 */
+        var idle = lottie.loadAnimation({
+            container: defaultEl,
+            renderer: 'svg',
+            loop: true,
+            autoplay: false,
+            path: 'src/img/lens_default.json' + nocache
+        });
+
+        emphasis.addEventListener('complete', function () {
+            defaultEl.hidden = false;
+            emphasisEl.hidden = true;
+            idle.goToAndPlay(0, true);
+        });
+
+        setTimeout(function () {
+            tip.classList.add('is-on');
+            emphasis.play();                                                      /* 툴팁 등장과 동시에 강조 로티 재생 */
+            setTimeout(function () { tip.classList.remove('is-on'); }, TIP_HOLD);
+        }, TIP_DELAY);
+    })();
+  </script>
 </body>
 </html>

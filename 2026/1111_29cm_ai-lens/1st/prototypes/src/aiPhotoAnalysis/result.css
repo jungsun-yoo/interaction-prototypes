@@ -1,0 +1,177 @@
+/* ════════════════════════════════════════════════════
+   result.css — 29CM 분석 결과 화면 (390×844)
+   위에서부터: 상태바 50 → 앱바 60 → 사진 영역 292 → 바텀시트 442
+   값은 values.css 7~9. 사진 축소·밝은 창·모서리 움직임은 js/result.js가 매 프레임 그림 (여기는 시작·끝 상태만)
+   ════════════════════════════════════════════════════ */
+
+.lens-result {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    overflow: hidden;
+    background: #000;
+}
+.lens-result img {display: block;}
+
+/* ---------- 상단: 상태바 50 + 내비게이션 60 ---------- */
+.lens-result-status {width: 390px; height: 50px;}
+.lens-result-nav {
+    position: relative;
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    height: 60px;
+}
+.lens-result-nav .CenterItem {justify-self: center;}
+/* 공유 아이콘: 우측 postfix (pr16, 아이콘 26 + 간격 12) → 스캔 아이콘 왼쪽 x310, 26 상자 안 24 아이콘 */
+.lens-result-share {position: absolute; top: 18px; left: 311px; width: 24px; height: 24px;}
+
+/* ---------- 사진 영역 390×292 (y110) ---------- */
+.lens-result-photo {
+    position: relative;
+    width: 390px;
+    height: 292px;   /* 로딩 완료 때 줄어드는 사진이 이 영역 밖(아래)에서 시작하므로 잘라 내지 않음 */
+}
+.lens-result-photo .crop-photo,
+.lens-result-photo .crop-dim {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 186.03px;   /* 390:587 비율, 높이 280 */
+    height: 280px;
+    object-fit: cover;
+    transform: translateX(-50%);
+}
+.lens-result-photo .crop-dim {background: rgba(0, 0, 0, 0.58);}   /* Figma 딤: 검정 58% */
+
+/* 로딩 완료 전: 로딩 화면 사진 자리(화면 y162, 390×520 → 이 영역 기준 top 52)에 있다가 .is-sheet-down 이 빠지면 줄어듦
+   object-fit: cover 라 크기가 바뀌는 동안에도 사진이 비율대로 채워짐 */
+.lens-result.is-sheet-down .lens-result-photo .crop-photo,
+.lens-result.is-sheet-down .lens-result-photo .crop-dim {top: 52px; width: 390px; height: 520px;}
+
+/* 로딩 완료 진입 포커스: 밝은 창·모서리가 선택 상품 가운데 한 점에서 시작해 사진이 줄어드는 동안 같이 바깥으로 커져 나옴
+   창·모서리는 투명에서 시작해 같이 밝아짐 → 시작 화면이 로딩 화면(사진 전체가 어두움)과 같아 끊김 없음
+   ※ 위치(창 inset·모서리·시작점·파형 점)는 상품 좌표 데이터(aiPhotoAnalysis.html의 lensResultData)로 js/result.js가 계산해
+     <style id="lensFocusStyle">에 상품별 규칙으로 넣음. 여기에는 상품과 상관없는 공통 규칙만 있음
+   ※ 사진·창·모서리의 움직임은 CSS transition이 아니라 js/result.js가 매 프레임 한꺼번에 그림
+     (clip-path는 브라우저가 별도 스레드에서 그려 left/top과 어긋날 수 있어서) */
+.lens-result.is-sheet-down .crop-reveal {opacity: 0;}
+.lens-result.is-sheet-down .crop-corner {opacity: 0;}
+/* 파형 점 묶음: 사진이 줄어드는 끝 무렵 --lens-overlay-* 로 페이드 인해, 사진 축소와 같은 순간에 다 나타남 */
+.lens-result-photo .crop-points {
+    position: absolute;
+    inset: 0;
+    opacity: 1;
+    /* 사진 축소가 끝나는 순간에 점 페이드 인도 같이 끝나도록: 지연 = 축소 시간 - 페이드 시간 (음수면 0) */
+    transition: opacity var(--lens-overlay-duration) var(--lens-overlay-easing) max(0s, calc(var(--lens-sheet-duration) - var(--lens-overlay-duration)));
+}
+.lens-result.is-sheet-down .crop-points {opacity: 0; transition: none;}
+
+/* 포커스 이동 모션 (디자이너 샘플 v3 방식, 속도는 MDS 값)
+   딤 위에 같은 사진을 한 장 더 올리고(.crop-reveal) clip-path 창으로 잘라 밝은 영역을 만듦
+   썸네일·점을 누르면 data-focus(상품 id)가 바뀌고, js/result.js가 창·모서리를 같은 프레임에서 함께 옮김
+   창·모서리 모두 --lens-focus-duration · --lens-focus-easing → 같이 출발해 같이 도착 */
+
+/* 모서리 (10×10 상자, 선 11×11이 위·왼쪽으로 1px 넘침). 왼쪽 아래는 위 오른쪽 모양을 180° 돌림 */
+.lens-result-photo .crop-corner {position: absolute; width: 10px; height: 10px;}
+.lens-result-photo .crop-corner img {position: absolute; top: -1px; left: -1px; width: 11px; height: 11px;}
+.lens-result-photo .crop-corner.is-bl {transform: rotate(180deg);}
+
+/* 파형 점: 상품마다 하나 (위치는 js/result.js가 좌표로 계산). 선택된 상품의 점은 즉시 사라지고(.is-current),
+   나머지는 지연 없이 --lens-point-in-* 로 페이드 인. 점은 버튼: 누르면 그 상품 썸네일이 선택됨 */
+.lens-result-photo .crop-point {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity var(--lens-point-in-duration) var(--lens-point-in-easing);
+    -webkit-tap-highlight-color: transparent;
+}
+.lens-result-photo .crop-point::before {content: ""; position: absolute; inset: -16px; border-radius: 50%;}   /* 누르는 영역 46×46 */
+.lens-result-photo .crop-point.is-current {opacity: 0; pointer-events: none; transition: none;}
+
+/* 점 파형(펄스): 점과 같은 14px 고리가 --lens-pulse-scale 배로 커지며 사라짐, 무한 반복 (값은 :root) */
+.lens-result-photo .crop-point img {width: 14px; height: 14px;}
+.lens-result-photo .crop-point::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    box-sizing: border-box;
+    border: 1.4px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: LensPointPulse var(--lens-pulse-duration) var(--lens-pulse-easing) var(--lens-pulse-delay) infinite;
+}
+@keyframes LensPointPulse {
+    0% { transform: scale(1); opacity: var(--lens-pulse-opacity); }
+    100% { transform: scale(var(--lens-pulse-scale)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .lens-result-photo .crop-point::after {animation: none; opacity: 0;}
+}
+
+/* ---------- 바텀시트 390×442 (y402), 위 모서리 20 ---------- */
+.lens-result-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 442px;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    transform: translateY(0);
+    transition: transform var(--lens-sheet-duration) var(--lens-sheet-easing) var(--lens-sheet-delay);
+}
+/* 등장 전: 화면 아래로 내려가 있음 (js/flow.js가 .is-sheet-down 을 떼면 올라옴) */
+.lens-result.is-sheet-down .lens-result-sheet {transform: translateY(100%); transition: none;}
+.lens-result-handle {position: relative; height: 24px;}
+.lens-result-handle::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: calc(50% - 1px);
+    width: 36px;
+    height: 5px;
+    border-radius: 2.5px;
+    background: rgba(93, 93, 93, 0.64);
+    transform: translateX(-50%);
+}
+.lens-result-title {width: 390px; height: 46px;}
+
+/* 썸네일 3개: 52 원, 간격 8, 좌우 16, 아래 12. 선택 = 검정 테두리 1.4 + 안쪽 여백 2 / 미선택 = 투명도 0.4 */
+.lens-result-thumbs {display: flex; gap: 8px; padding: 0 16px 12px;}
+.lens-result-thumb {
+    box-sizing: border-box;
+    width: 52px;
+    height: 52px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    opacity: 0.4;
+    cursor: pointer;
+}
+.lens-result-thumb img {width: 100%; height: 100%; border-radius: 50%;}
+.lens-result-thumb.is-selected {padding: 2px; border: 1.4px solid #000; opacity: 1;}
+
+/* 상품 리스트 3장을 겹쳐 두고 선택된 것만 보임. 바텀시트 안은 모션 없이 바로 전환 */
+.lens-result-lists {position: relative; width: 390px; height: 308px;}
+.lens-result-list {position: absolute; top: 0; left: 0; width: 390px; height: 308px; visibility: hidden;}
+.lens-result-list.is-on {visibility: visible;}
+
+@media (prefers-reduced-motion: reduce) {
+    .lens-result-photo .crop-point,
+    .lens-result-photo .crop-points,
+    .lens-result-sheet {transition: none;}   /* 창·모서리·사진 축소는 js/result.js가 동작 줄이기 설정을 보고 바로 끝 상태로 */
+}

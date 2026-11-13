@@ -1,0 +1,116 @@
+/* ════════════════════════════════════════════════════
+   controls.css — 옵션창 (PC에서 폰 화면 옆, 수치 조절용. 휴대폰에서는 숨김)
+   ════════════════════════════════════════════════════ */
+
+/* 옵션창 묶음: index 툴바(버튼 2개 = 92) 아래 8px부터
+   1줄: AI 사진 분석 / 2줄: Inner Glow · Light 가로로 나란히 */
+.lens-controls {
+  align-self: flex-start;
+  display: grid;
+  grid-template-columns: 200px 200px;
+  align-items: start;
+  gap: 12px;
+  margin-top: 100px;
+}
+#lensGlowControl {grid-column: 1; grid-row: 2;}
+#lensLightControl {grid-column: 2; grid-row: 2;}
+.lens-control {
+  box-sizing: border-box;
+  width: 200px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1f1f1f;
+}
+.lens-control-title {margin: 0 0 12px; font-size: 15px; font-weight: 700; line-height: 22px;}
+/* 제목 줄: 제목(왼쪽) + 리셋 아이콘(오른쪽, 누르면 values.css 기본값으로) */
+.lens-control-head {display: flex; align-items: center; justify-content: space-between; margin: 0 0 12px;}
+.lens-control-head .lens-control-title {margin: 0;}
+.lens-control-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px -4px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #1f1f1f;
+  cursor: pointer;
+}
+.lens-control-icon::before {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: auto;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7'/%3E%3Cpath d='M3 4v5h5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7'/%3E%3Cpath d='M3 4v5h5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.lens-control-icon:hover {background: #f2f2f2;}
+.lens-control-state {margin: 0 0 16px; color: #8a8a8a; font-size: 13px; line-height: 18px;}
+.lens-control-state strong {margin-left: 4px; color: #1f1f1f; font-weight: 600;}
+.lens-control-field {margin: 0 0 16px;}
+.lens-control-label {display: block; margin: 0 0 8px; color: #8a8a8a; font-size: 13px; line-height: 18px;}
+.lens-control-duration {display: flex; align-items: center; gap: 8px;}
+/* Inner Glow · Light: 항목이 많아 상하 간격을 좁게 (이름 ↔ 슬라이더 4, 항목 사이 10, 마지막 항목 아래 0) */
+#lensGlowControl .lens-control-label,
+#lensLightControl .lens-control-label {margin-bottom: 4px;}
+#lensGlowControl .lens-control-field,
+#lensLightControl .lens-control-field {margin-bottom: 10px;}
+#lensGlowControl .lens-control-field:last-child,
+#lensLightControl .lens-control-field:last-child {margin-bottom: 0;}
+/* 켜기/끄기 줄 (Light 맨 위 On): 다른 자리에 두면 위에 구분선 */
+.lens-control-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 10px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+  color: #1f1f1f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  cursor: pointer;
+}
+.lens-control-toggle input {width: 16px; height: 16px; margin: 0; accent-color: #000; cursor: pointer;}
+.lens-control-toggle.is-first {margin-top: 0; padding-top: 0; border-top: 0;}   /* 옵션창 맨 위 체크박스는 구분선 없이 */
+.lens-control-toggle.is-loading-only {margin-bottom: 16px;}
+/* 로딩만 보기를 켜면 분석 시간은 흐리게 (조작 불가) */
+.lens-control-field.is-disabled {opacity: 0.35; pointer-events: none;}
+.lens-control-range {flex: 1; min-width: 0; margin: 0; accent-color: #000; cursor: pointer;}
+.lens-control-number {display: flex; align-items: center; gap: 4px; color: #1f1f1f; font-size: 13px;}
+.lens-control-number input {
+  box-sizing: border-box;
+  width: 60px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #1f1f1f;
+  font: inherit;
+  font-size: 13px;
+  text-align: right;
+}
+.lens-control-number input:focus {border-color: #000; outline: none;}
+.lens-control-btn {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f1f1f;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lens-control-btn + .lens-control-btn {margin-top: 8px;}
+.lens-control-btn.is-primary {border-color: #000; background: #000; color: #fff;}
+.lens-control-btn:disabled {border-color: #eee; background: #f5f5f5; color: #bbb; cursor: default;}

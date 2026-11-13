@@ -154,8 +154,8 @@
         <p class="qr-url" id="qrUrl"></p>
       </div>
       <div class="stage-tools" id="stageTools">
-        <button class="tool-button" type="button" id="replayButton" data-tip="다시 재생 (R)" aria-label="다시 재생"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
         <button class="tool-button" type="button" id="openButton" data-tip="새 창으로 보기" aria-label="새 창으로 보기"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></button>
+        <button class="tool-button" type="button" id="replayButton" data-tip="다시 재생 (R)" aria-label="다시 재생"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
         <button class="tool-button" type="button" id="qrButton" data-tip="QR 코드" aria-label="QR 코드" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M21 21h-4v-4"/></svg></button>
       </div>
       <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
@@ -181,9 +181,9 @@
       title: '[29CM] AI 렌즈',
       sub: '26-1111 · Prototype',
       label: 'TYPES',
-      version: '20261111-12',
-      qrHost: '172.18.102.47', // localhost에서 QR을 쓸 때만 내 PC 내부 IP 입력
-      figma: '',
+      version: '20261113-86',
+      qrHost: '192.168.0.79', // localhost에서 QR을 쓸 때만 내 PC 내부 IP 입력
+      figma: 'https://www.figma.com/design/8fTes280dXd8VYDwwLf8x8/-26-4Q--29CM-%EB%A0%8C%EC%A6%88?node-id=578-147386&t=sVmmStfHts2RfKdT-4',
       jira: '',
       spec: '', // 예: 'prototype/interaction.md' (보여줄 때만)
       download: '', // 최종 결정 후 'download/prototype.zip'
@@ -191,7 +191,9 @@
       items: [
         { id: 'type1', title: '[홈] 검색아이콘', file: 'prototypes/searchIcon.html', qr: false },
         { id: 'type2', title: '[검색] 검색창 렌즈아이콘', file: 'prototypes/searchLensIcon.html', qr: false },
-        { id: 'type3', title: '사진 검색 가이드', file: 'prototypes/photoSearchGuide.html', qr: false }
+        { id: 'type3', title: '사진 검색 가이드', file: 'prototypes/photoSearchGuide.html', qr: false },
+        { id: 'type4', title: 'AI 로딩 아이콘', file: 'prototypes/aiLoading.html', qr: false },
+        { id: 'type5', title: 'AI 사진 분석', file: 'prototypes/aiPhotoAnalysis.html' }
       ]
     };
     // ================================================================================================= //
@@ -204,6 +206,7 @@
       var qrCard = document.getElementById('qrCard');
       var qrButton = document.getElementById('qrButton');
       var current = null;
+      var protoParams = {}; /* 프로토타입이 보낸 옵션 값 (기본값과 다른 것만) → QR 주소 뒤에 붙임 */
 
       /* 설정 텍스트 채우기 */
       [].forEach.call(document.querySelectorAll('[data-config]'), function (el) {
@@ -235,6 +238,7 @@
           if (!CONFIG.qrHost) return null;
           url.hostname = CONFIG.qrHost;
         }
+        Object.keys(protoParams).forEach(function (key) { url.searchParams.set(key, protoParams[key]); });
         return url;
       }
 
@@ -245,6 +249,11 @@
         qrCard.classList.remove('is-open');
         fitFrame();
         if (qrCard.hidden) return;
+        drawQr(type);
+      }
+
+      /* QR 그림·주소만 다시 그림 (옵션 값이 바뀔 때는 카드 열림 상태를 그대로 두고 이것만) */
+      function drawQr(type) {
         var url = shareUrl(type);
         var image = document.getElementById('qrImage');
         document.getElementById('qrTitle').textContent = type.title;
@@ -296,8 +305,17 @@
         link.title = file ? file.split('/').pop() + ' 내려받기' : '';
       }
 
+      /* 프로토타입 옵션 값이 바뀌면 (postMessage 'proto-params') QR을 실시간으로 다시 그림 */
+      window.addEventListener('message', function (e) {
+        if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
+        if (!e.data || e.data.type !== 'proto-params' || typeof e.data.params !== 'object') return;
+        protoParams = e.data.params || {};
+        if (current && !qrCard.hidden) drawQr(current);
+      });
+
       function select(id) {
         current = findType(id);
+        protoParams = {};
         loadFrame(fileUrl(current));
         renderQr(current);
         renderFigma(current);
@@ -364,6 +382,8 @@
       }
       document.addEventListener('keydown', onKey);
 
+      var phoneScreenW = 0; /* 툴바 기준 폰 화면 너비 (프로토타입 --phone-screen-w, 없으면 0) */
+
       /* 화면이 프레임보다 작으면 비율 유지하며 축소 */
       function fitFrame() {
         var style = getComputedStyle(document.documentElement);
@@ -383,9 +403,10 @@
         qrButton.hidden = !folded || qrCard.hidden;
         if (!folded) qrCard.classList.remove('is-open');
 
-        /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단 */
+        /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단
+           프로토타입이 --phone-screen-w를 정하면(폰 옆에 옵션 패널 등이 있어 --phone-w가 더 넓을 때) 그 폰 화면 오른쪽에 붙임 */
         var tools = document.getElementById('stageTools');
-        var phoneRight = stage.clientWidth - phoneLeft;
+        var phoneRight = phoneScreenW ? phoneLeft + phoneScreenW * scale : stage.clientWidth - phoneLeft;
         var phoneTop = (stage.clientHeight - frameH * scale) / 2 + pad * scale;
         var attached = phoneRight + 12 + tools.offsetWidth + 16 <= stage.clientWidth;
         tools.classList.toggle('is-attached', attached);
@@ -417,6 +438,7 @@
         var phone = getComputedStyle(doc.documentElement);
         var w = parseFloat(phone.getPropertyValue('--phone-w'));
         var h = parseFloat(phone.getPropertyValue('--phone-h'));
+        phoneScreenW = parseFloat(phone.getPropertyValue('--phone-screen-w')) || 0; /* 없으면 0 → 프레임 오른쪽 기준 */
         if (!w || !h) return;
         document.documentElement.style.setProperty('--phone-w', w + 'px');
         document.documentElement.style.setProperty('--phone-h', h + 'px');

@@ -1,0 +1,93 @@
+.IconAILoading {
+    --icon-size: var(--IconAILoading-size, 32px);
+    position: absolute; top: 50%; left: 50%;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    transform: translate(-50%, -50%);
+}
+.IconAILoading[hidden] { display: none; }
+.IconAILoading > span { position: absolute; inset: 0; }
+.IconAILoading img { display: block; width: 100%; height: 100%; }
+
+.IconAILoading.is-playing > span,
+.IconAILoading.is-playing img {
+    animation-duration: var(--IconAILoading-time, 1.8s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.IconAILoading > span:nth-child(1) { translate: 0% 0%; }
+.IconAILoading > span:nth-child(1) img { scale: 1.05; }
+.IconAILoading > span:nth-child(2) { translate: -32.42% -27.34%; }
+.IconAILoading > span:nth-child(2) img { scale: 0; }
+.IconAILoading > span:nth-child(3) { translate: -24.22% 3.12%; }
+.IconAILoading > span:nth-child(3) img { scale: 0; }
+.IconAILoading > span:nth-child(4) { translate: -12.24% -36.57%; }
+.IconAILoading > span:nth-child(4) img { scale: 0; }
+
+.IconAILoading.is-playing > span:nth-child(1) { animation-name: icon-ai-loading-img-position1; }
+.IconAILoading.is-playing > span:nth-child(1) img { animation-name: icon-ai-loading-img-scale1; }
+.IconAILoading.is-playing > span:nth-child(2) { animation-name: icon-ai-loading-img-position2; }
+.IconAILoading.is-playing > span:nth-child(2) img { animation-name: icon-ai-loading-img-scale2; }
+.IconAILoading.is-playing > span:nth-child(3) { animation-name: icon-ai-loading-img-position3, icon-ai-loading-img-opacity3; }
+.IconAILoading.is-playing > span:nth-child(3) img { animation-name: icon-ai-loading-img-scale3; }
+.IconAILoading.is-playing > span:nth-child(4) { animation-name: icon-ai-loading-img-position4-x, icon-ai-loading-img-position4-y; }
+.IconAILoading.is-playing > span:nth-child(4) img { animation-name: icon-ai-loading-img-scale4; }
+
+@keyframes icon-ai-loading-img-position1 {
+    0% { translate: 0% 0%; }
+    45.37%, 100% { translate: 35.74% 35.74%; }
+}
+
+@keyframes icon-ai-loading-img-scale1 {
+    0% { scale: 1.05; animation-timing-function: cubic-bezier(0.438, -0.008, 0.667, 0.483); }
+    34.26% { scale: 0.25; animation-timing-function: cubic-bezier(0.24, 0.387, 0.667, 1); }
+    45.37%, 100% { scale: 0; }
+}
+
+@keyframes icon-ai-loading-img-position2 {
+    0%, 3.7% { translate: -32.42% -27.34%; animation-timing-function: cubic-bezier(0.178, 0, 0.801, 1); }
+    75%, 100% { translate: 29.69% 26.56%; }
+}
+
+@keyframes icon-ai-loading-img-scale2 {
+    0%, 3.7% { scale: 0; animation-timing-function: cubic-bezier(0.543, 0, 0.675, 0.642); }
+    27.78% { scale: 0.92; animation-timing-function: cubic-bezier(0.319, 1.051, 0.667, 1); }
+    37.96% { scale: 1.05; animation-timing-function: cubic-bezier(0.394, 0, 0.667, 1); }
+    75%, 100% { scale: 0; }
+}
+
+@keyframes icon-ai-loading-img-position3 {
+    0%, 47.22% { translate: -24.22% 3.12%; animation-timing-function: cubic-bezier(0.333, 0, 0.667, 0.36); }
+    67.59% { translate: -10.94% 13.67%; animation-timing-function: cubic-bezier(0.316, 0.334, 0.693, 0.654); }
+    75% { translate: -2.06% 20.5%; animation-timing-function: cubic-bezier(0.519, 0.637, 0.758, 1); }
+    95.37%, 100% { translate: 20.21% 37.96%; }
+}
+
+@keyframes icon-ai-loading-img-opacity3 {
+    0%, 67.59% { opacity: 1; animation-timing-function: cubic-bezier(0.333, 0, 0.667, 1); }
+    80.76%, 100% { opacity: 0.8; }
+}
+
+@keyframes icon-ai-loading-img-scale3 {
+    0%, 47.22% { scale: 0; animation-timing-function: cubic-bezier(0.333, 0, 0.25, 1); }
+    67.59% { scale: 0.7; animation-timing-function: cubic-bezier(0.7, 0, 0.667, 1); }
+    95.37%, 100% { scale: 0; }
+}
+
+@keyframes icon-ai-loading-img-position4-x {
+    0%, 60.19% { translate: -12.24% 0; animation-timing-function: cubic-bezier(0.272, -0.861, 0.643, 0.179); }
+    99.07%, 100% { translate: 0% 0; }
+}
+
+@keyframes icon-ai-loading-img-position4-y {
+    0%, 60.19% { transform: translateY(-36.57%); animation-timing-function: cubic-bezier(0.378, 0.336, 0.181, 0.288); }
+    99.07%, 100% { transform: translateY(0%); }
+}
+
+@keyframes icon-ai-loading-img-scale4 {
+    0%, 60.19% { scale: 0; animation-timing-function: cubic-bezier(0.447, 0.009, 0.632, -0.083); }
+    69.44% { scale: 0.2; animation-timing-function: cubic-bezier(0.319, 0.706, 0.667, 1); }
+    99.07%, 100% { scale: 1.05; }
+}

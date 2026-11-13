@@ -1,0 +1,76 @@
+/* ════════════════════════════════════════════════════
+   values.css — AI 사진 분석 조절 값 (수치 결정용)
+   화면에 보이는 순서대로 모았어요. 값을 바꾸고 새로고침하면 바로 반영됨
+   옵션창(Inner Glow · Light)의 기본값·리셋값도 여기 값을 그대로 읽어요
+   이징 이름(power1~4 easeIn/Out/InOut)은 src/common/mds-motion.css 의 MDS 토큰
+   ════════════════════════════════════════════════════ */
+
+:root {
+    /* ---------- 1. 로딩 화면 등장: 사진이 살짝 확대된 상태에서 줌아웃 ---------- */
+    --lens-landing-duration: 1.3s;
+    --lens-landing-easing: var(--mds-motion-power2-easeOut);   /* cubic-bezier(.25, 1, .5, 1) */
+    --lens-landing-scale: 1.08;           /* 시작 크기 */
+
+    /* ---------- 2. 로딩 중 사진 숨쉬기: 등장이 끝나면 100% ↔ 이 크기를 천천히 왕복 ---------- */
+    --lens-breath-scale: 1.04;            /* 커지는 정도 */
+    --lens-breath-duration: 3.0s;         /* 한 방향 시간 (왕복은 두 배) */
+    --lens-breath-easing: var(--mds-motion-power1-easeInOut);
+    --lens-breath-delay: var(--lens-landing-duration);   /* 등장이 끝나면 시작 */
+
+    /* ---------- 3. 딤: 로딩 중 사진 위 검정 막 ---------- */
+    --img-dim-opacity: 0.6;
+
+    /* ---------- 4. Light: 원형 창이 사진 위를 떠다니며 지나가는 자리만 원본 사진이 밝게 비침 (옵션창 Light) ---------- */
+    --lens-light-size: 350px;             /* 빛 지름 */
+    --lens-light-opacity: 0.75;           /* 최종 진하기 */
+    --lens-light-x-duration: 2.0s;        /* 가로 한 방향 시간 (가로·세로 시간이 달라서 곡선으로 훑음) */
+    --lens-light-y-duration: 3.0s;        /* 세로 한 방향 시간 */
+    --lens-light-easing: var(--mds-motion-power1-easeInOut);   /* cubic-bezier(.33, 0, .67, 1) */
+    --lens-light-x-from: 60px;            /* 가로 이동 범위 (사진 390×520 안, 빛 중심 기준) */
+    --lens-light-x-to: 330px;
+    --lens-light-y-from: 60px;            /* 세로 이동 범위 */
+    --lens-light-y-to: 460px;
+    /* 나타나기: 사진 등장 줌아웃과 같이 시작해 같은 시간·이징으로
+       시작 위치는 사진 가운데 위 (반쯤 나타난 순간에 가로 한가운데·세로 맨 위, loading.css에서 자동 계산) */
+    --lens-light-in-delay: 0s;
+    --lens-light-in-duration: var(--lens-landing-duration);
+    --lens-light-in-easing: var(--lens-landing-easing);
+
+    /* ---------- 5. Inner Glow: 사진 테두리를 도는 색 글로우 (옵션창 Inner Glow) ---------- */
+    --inner-glow-duration: 4s;            /* 한 바퀴 시간 */
+    --inner-glow-opacity: 0.75;
+    --inner-glow-width: 6px;              /* 두께 */
+    --inner-glow-blur: 12px;              /* 흐림 */
+    --ai-effect-color-1: #86baff;         /* 색 (고정) */
+    --ai-effect-color-2: #e476ff;
+    --ai-effect-color-3: #878fff;
+
+    /* ---------- 6. 로딩 문구 "AI가 사진을 분석중입니다": 흰 하이라이트가 왼→오로 지나감 ---------- */
+    --loading-msg-white: rgb(255 255 255 / 0.7);        /* 글자 기본색 */
+    --loading-msg-highlight-color: rgba(255, 255, 255, 1);
+    --loading-msg-cycle: 3.0s;            /* 한 번 지나가는 주기 */
+    --loading-msg-angle: 90deg;
+    --loading-msg-width: 20%;             /* 하이라이트 폭 (문구 너비의 %) */
+    --loading-msg-easing: linear;
+
+    /* ---------- 7. 결과 화면 전환: 분석 시간이 지나면 사진이 결과 크기로 줄고 바텀시트가 올라옴 ---------- */
+    --lens-sheet-duration: 0.7s;          /* 사진 축소·바텀시트 같은 시간·곡선 */
+    --lens-sheet-easing: var(--mds-motion-power3-easeInOut);
+    --lens-sheet-delay: 0.15s;            /* 바텀시트만 사진 축소보다 늦게 출발 */
+    /* 파형 점: 사진 축소가 끝나는 순간에 같이 다 나타남 */
+    --lens-overlay-duration: 0.2s;
+    --lens-overlay-easing: ease;
+
+    /* ---------- 8. 결과 화면 포커스 이동: 썸네일·점을 누르면 밝은 창·모서리가 그 상품으로 이동 ---------- */
+    --lens-focus-duration: 0.4s;
+    --lens-focus-easing: var(--mds-motion-power3-easeOut);    /* cubic-bezier(.22, 1, .36, 1) */
+
+    /* ---------- 9. 결과 화면 파형 점 ---------- */
+    --lens-point-in-duration: 0.2s;       /* 점이 다시 나타날 때 페이드 인 */
+    --lens-point-in-easing: ease;
+    --lens-pulse-duration: 2.0s;          /* 점에서 고리가 커지며 사라짐, 무한 반복 */
+    --lens-pulse-easing: ease;
+    --lens-pulse-delay: 1.5s;
+    --lens-pulse-scale: 2.0;              /* 고리 최종 크기 (배) */
+    --lens-pulse-opacity: 0.7;            /* 고리 시작 투명도 */
+}
