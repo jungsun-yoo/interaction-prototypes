@@ -1,0 +1,202 @@
+/* ════════════════════════════════════════════════════
+   [앱바] 앱테크 진입점 모션 — common.css (모든 Type 공통)
+   반응형: 모바일 최대 너비(--mobile-max-w) / PC에서는 폰 프레임 / 헤더 스크롤 연동
+   ════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* ── 기기 크기: 프로젝트마다 Figma 프레임에 맞춰 여기만 수정 ──
+     데스크탑(PC)에서 보는 폰 프레임 값. index.html은 --phone-w·--phone-h를 읽어 프레임 크기를 자동으로 맞춤 */
+  --phone-w: 375px;           /* 폰 너비 (프리셋: 아래 data-phone 375·393·402·440) */
+  --phone-h: 812px;           /* 폰 높이 */
+  --phone-radius: 32px;       /* 폰 모서리 */
+  --status-bar-h: 45px;       /* 상태바 높이 (PC 프레임 전용, 실제 모바일은 0) */
+  --phone-safe-bottom: 34px;  /* 하단 안전영역 (홈 인디케이터 영역) */
+
+  /* 모바일(터치 기기) 화면 너비: 무신사 앱 기본 최소 320 · 최대 600. 넓은 화면(태블릿 등)에서는 최대 너비로 가운데 정렬 */
+  --mobile-min-w: 320px;
+  --mobile-max-w: 600px;
+
+  /* 하단 안전영역: 실제 기기는 env() 값, 데스크탑 폰 프레임은 아래 미디어쿼리에서 --phone-safe-bottom으로 강제 */
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ── 무신사 디자인 시스템 기본값 (프로토타입 인덱스 샘플_2와 같음) ──
+     폰트: Pretendard 우선 (Type_N.html의 무신사 dsFont-1.5.css가 웹폰트를 불러옴), 못 불러오면 시스템 폰트 */
+  --mds-font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', Roboto, 'Noto Sans KR', 'Malgun Gothic', 'Segoe UI', sans-serif;
+
+  /* MDS 2.0 컬러 팔레트 — Figma: MDS-2.0-Specimen > Color Pallette (node 1439-50413)
+     사용: color: var(--mds-color-gray700); background: var(--mds-color-gray100); */
+  --mds-color-black: #000000;
+  --mds-color-gray700: #2A2A2A;
+  --mds-color-gray600: #666666;
+  --mds-color-gray500: #8A8A8A;
+  --mds-color-gray400: #CCCCCC;
+  --mds-color-gray300: #E0E0E0;
+  --mds-color-gray200: #EBEBEB;
+  --mds-color-gray100: #F5F5F5;
+  --mds-color-white: #FFFFFF;
+  --mds-color-blue: #245EFF;
+  --mds-color-red: #F31110;
+  --mds-color-yellow: #FA9200;
+  --mds-color-highlight-1: #A3F8FB; /* 24.5% 하늘 */
+  --mds-color-highlight-2: #245EFF; /* 62% 파랑 */
+  --mds-color-highlight-3: #7CCEFF; /* 100% 연파랑 (Figma 라벨 7CEFF는 오타) */
+  --mds-gradient-highlight: linear-gradient(to bottom right, var(--mds-color-highlight-1) 24.5%, var(--mds-color-highlight-2) 62%, var(--mds-color-highlight-3) 100%);
+  --mds-color-label-darkgray: #4A4A4A;
+  --mds-color-label-blue: #3A6EFF;
+  --mds-color-label-red: #F73C3B;
+  --mds-color-black-80: rgba(0, 0, 0, 0.8);
+  --mds-color-black-60: rgba(0, 0, 0, 0.6);
+  --mds-color-black-40: rgba(0, 0, 0, 0.4);
+  --mds-color-black-20: rgba(0, 0, 0, 0.2);
+  --mds-color-white-80: rgba(255, 255, 255, 0.8);
+  --mds-color-white-60: rgba(255, 255, 255, 0.6);
+  --mds-color-white-40: rgba(255, 255, 255, 0.4);
+  --mds-color-white-20: rgba(255, 255, 255, 0.2);
+  --mds-color-gray500-30: rgba(138, 138, 138, 0.3);
+  --mds-color-gray500-10: rgba(138, 138, 138, 0.1);
+  --mds-color-blue-10: rgba(36, 94, 255, 0.1);
+  --mds-color-red-10: rgba(243, 17, 16, 0.1);
+
+  /* MDS 2.0 멀티스토어(전문관) 컬러 — Figma: MDS-2.0-Specimen > Multistore color (node 5576-486422)
+     전문관 헤더 색은 아래 .phone[data-store] 규칙이 원본 (샘플_2의 --mds-header-* 변수가 여기서 나옴) */
+  --mds-color-store-beauty: #F2665E;
+  --mds-color-store-boutique: #0000FF;
+  --mds-color-store-sports: #37B0F4;
+  --mds-color-store-kicks: #009FF9;
+  --mds-color-store-kids: #FF5F00;
+  --mds-color-store-outlet: #B90000;
+  --mds-color-store-used: #F7E74B;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f0f0f0;
+  font-family: var(--mds-font-family);
+  -webkit-text-size-adjust: 100%; /* 가로 회전 시 iOS가 글자를 키우지 않게 */
+  text-size-adjust: 100%;
+}
+
+/* ── 폰 크기 프리셋 (아이폰 기준, PC 폰 프레임 전용) ──
+   Type_N.html의 <html data-phone="..."> 값으로 고름. 없거나 375면 위 :root 기본값(375×812)
+   실제 폰·태블릿은 프리셋과 상관없이 기기 너비(--mobile-min-w ~ --mobile-max-w)로 보임
+   상태바는 모든 프리셋에서 45 (Figma 디자인이 전부 45 기준)
+   [참고] 실제 아이폰 상태바·안전영역 값은 프로토타입 인덱스 샘플_2 common.css 주석 참고 */
+:root[data-phone="375"] {--phone-w: 375px; --phone-h: 812px;}
+:root[data-phone="393"] {--phone-w: 393px; --phone-h: 852px;}
+:root[data-phone="402"] {--phone-w: 402px; --phone-h: 874px;}
+:root[data-phone="440"] {--phone-w: 440px; --phone-h: 956px;}
+
+/* 프로토타입 이미지: 드래그·롱프레스 메뉴·선택 방지 (iOS Safari / Chrome) */
+img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ─────────────────────────────
+    Phone  — 모바일 반응형 (최대 --mobile-max-w)
+───────────────────────────── */
+.phone {
+  position: relative;
+  width: 100%;
+  min-width: var(--mobile-min-w);
+  max-width: var(--mobile-max-w);
+  height: 100vh;    /* fallback: 구형 브라우저 */
+  height: 100svh;   /* iOS Safari: 주소창 포함한 최소 뷰포트 (항상 보임) */
+  overflow: hidden;
+  background: #f5f5f5;
+  margin: 0 auto;
+}
+
+/* 데스크탑(마우스 기기): --phone-w × --phone-h 고정, 중앙 정렬. 터치 기기는 너비와 상관없이 모바일(최대 --mobile-max-w) */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .phone {
+    width: var(--phone-w);
+    max-width: var(--phone-w);
+    height: var(--phone-h);
+    border-radius: var(--phone-radius);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+  }
+
+  :root {
+    --safe-area-bottom: var(--phone-safe-bottom);
+  }
+}
+
+/* ─────────────────────────────
+    Scroll Area
+    top: 0 으로 올리고 padding-top: 181px (상태바 45 + 헤더 136)
+    → 헤더가 올라가면 콘텐츠가 자연스럽게 채워짐
+───────────────────────────── */
+.scroll-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* 바텀네비 뒤까지 확장 → backdrop-filter 작동 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding-top: 181px;    /* 헤더 높이만큼 밀어냄 */
+  padding-bottom: 207px; /* 바텀네비 뒤로 콘텐츠 안 숨도록 */
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* 모바일: 위 기본 스타일을 덮어쓰므로 그 뒤에 위치
+   문서(window) 전체가 스크롤 → 사파리 주소창이 스크롤에 따라 줄어듦. 헤더·바텀네비는 화면에 fixed (storeheader/ · bottomnavi/)
+   상태바는 사파리가 대신 보여주므로 --status-bar-h를 0으로 해 영역도 없앰 (숨김은 아래 StatusBar) */
+@media (hover: none), (pointer: coarse) {
+  :root {
+    --status-bar-h: 0px;
+  }
+  html, body {
+    height: auto;
+    overflow: visible;
+    background: #f5f5f5;
+  }
+  .phone {
+    height: auto;
+    overflow: visible;
+  }
+  .scroll-area {
+    position: static;
+    height: auto;
+    overflow-x: clip;     /* 화면보다 넓은 로티 등이 문서를 좌우로 밀지 않게 자름 (스크롤 컨테이너는 안 됨) */
+    overflow-y: visible;
+    padding-top: calc(136px + env(safe-area-inset-top, 0px));
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   StatusBar — 상태바 (PC 폰 프레임 전용, 실제 모바일은 숨기고 영역도 없앰)
+   HTML: .status-bar > .status-bar-time + svg.status-bar-icons
+   배경·글자색은 storeheader/storeheader.css의 전문관 테마 (없으면 투명·검정)
+   ════════════════════════════════════════════════════ */
+
+/* 잉크색 = color. 기본은 전문관 색(--store-status), .is-dark로 검정 고정
+   높이 +1: 화면이 축소될 때 헤더와의 경계에 폰 바탕이 실선처럼 비치지 않게 1px 겹침 */
+.status-bar {position: absolute; top: 0; left: 0; width: 100%; height: calc(var(--status-bar-h) + 1px); z-index: 30; overflow: hidden; color: var(--store-status, #000); background-position: var(--store-bg-x, 0px) 0;}
+.status-bar.is-dark {color: #000;}
+/* 위치·글자는 Figma StatusBar / iPhone 14 (375×45) 그대로: 시간 x25 y14 54×21, 아이콘 오른쪽 끝에서 23.6 */
+.status-bar-time {position: absolute; top: 14px; left: 25px; width: 54px; height: 21px; padding-top: 1px; font-family: var(--mds-font-family); font-size: 17px; font-weight: 600; line-height: 22px; letter-spacing: -0.408px; text-align: center;}
+.status-bar-icons {position: absolute; top: 19px; right: 23.6px; display: block; overflow: visible;}
+
+/* 모바일: 사파리가 상태바를 대신 보여줌 (--status-bar-h 0은 위 모바일 미디어쿼리) */
+@media (hover: none), (pointer: coarse) {
+  .status-bar { display: none; }
+}

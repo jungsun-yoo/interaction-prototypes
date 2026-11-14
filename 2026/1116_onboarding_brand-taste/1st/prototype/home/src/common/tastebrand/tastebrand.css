@@ -1,0 +1,98 @@
+/* tastebrand.css — 홈: 내 취향 브랜드 맞춤 추천 모듈 (Figma 304:201941 취향 브랜드 모듈)
+   퀵메뉴 아래 · 캠페인 섹션 위. 높이 617 = 위 12 + 타이틀 46 + 브랜드 탭 44 + 상품 카드 495 + 아래 20
+   - 헤더 그라디언트(Figma 304:201942): 이미지(src/img/brand/header.png, 483.75 × 124.25 · 2배수, 투명)를 왼쪽 위에 고정 — 스크롤 안 됨
+   - 브랜드 탭 · 상품 카드: 투명 배경 이미지 한 장(src/img/brand/content.png, 600 × 617 · 2배수)을 가로 스크롤
+     이미지 위 58은 타이틀 자리(비어 있음), 카드 아래 버튼 자리는 비어 있음
+   - 타이틀 · 버튼: 화면 폭에 맞춰 코딩, 스크롤해도 제자리
+     타이틀: 좌우 16 · 위아래 11, AI 별 아이콘 20(가운데 12) + 2 + "내 취향 브랜드 맞춤 추천" 18/24 Medium, 오른쪽 "다시 선택하기" 13/18 #666 밑줄
+     버튼: 카드 안 왼쪽 32 · 오른쪽 16, 위치 y 549(카드 끝 597 - 아래 16 - 높이 32), 흰 바탕 · 테두리 #E0E0E0 · 모서리 4
+           문구 + 아이콘은 이미지(src/img/brand/btn-text.png, 112 × 18 · 2배수)
+   HTML: section.taste-brand > img.taste-brand-header + .taste-brand-scroll > img.taste-brand-content
+                              + .taste-brand-title(.taste-brand-heading(img + h2) + button.taste-brand-reselect)
+                              + .taste-brand-button(img) */
+.taste-brand {
+  position: relative;
+  height: 617px;
+  background: var(--mds-color-gray100, #F5F5F5);
+  overflow: hidden;
+}
+
+.taste-brand-header { /* 고정 헤더 그라디언트: 스크롤 층 뒤 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 483.75px;
+  max-width: none;
+  height: 124.25px;
+  pointer-events: none;
+}
+
+.taste-brand-scroll {
+  position: relative; /* 헤더 그라디언트 위 */
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.taste-brand-scroll::-webkit-scrollbar {display: none;}
+.taste-brand-content {display: block; width: 600px; max-width: none; height: 617px;}
+
+.taste-brand-title {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 40px;
+  padding: 11px 16px;
+  pointer-events: none; /* 아래 이미지 가로 스크롤을 막지 않게 (글자 버튼만 누름) */
+}
+.taste-brand-heading {display: flex; flex: 1; align-items: center; gap: 2px; min-width: 0;}
+.taste-brand-icon {flex-shrink: 0; width: 20px; height: 20px; padding: 4px; box-sizing: border-box;}
+.taste-brand-heading h2 {
+  min-width: 0;
+  margin: 0;
+  font-family: var(--mds-font-family);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.taste-brand-reselect {
+  flex-shrink: 0;
+  padding: 3px 0;
+  border: 0;
+  background: none;
+  font-family: var(--mds-font-family);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  color: #666;
+  text-decoration: underline;
+  text-underline-position: from-font;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.taste-brand-button {
+  position: absolute;
+  top: 549px;
+  left: 32px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  box-sizing: border-box;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+.taste-brand-button img {display: block; width: 112px; height: 18px;}

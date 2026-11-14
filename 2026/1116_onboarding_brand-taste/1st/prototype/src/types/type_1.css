@@ -1,0 +1,782 @@
+/* ════════════════════════════════════════════════════
+   type_1.css — 취향 선택 · 브랜드 (Figma node 278:99499)
+   상태바: common.css 기본(배경 gray100) 그대로
+   ════════════════════════════════════════════════════ */
+
+:root {
+  --brand-point: #334CFF;      /* Figma 강조 파랑 (캡션 '30대 여성'·버튼 기본) — MDS 팔레트 밖 값 */
+  --brand-fade: #F6F7FF;       /* 하단 페이드 끝 색 */
+  --appbar-h: 80px;           /* 앱바 = 위 20 + 제목 48 + 아래 12 */
+  --cta-area-h: 86px;          /* 바텀 = 인포 18 + 버튼 영역(위 12 + 버튼 44 + 아래 12) */
+}
+
+/* 화면 배경: Figma = 파스텔 그라디언트 60% + gray100
+   두 겹을 합친 불투명색으로 둠 (보이는 색 같음) → AI 배경 효과의 바탕·덮개도 같은 색을 씀 */
+:root {
+  --page-bg-left: #ECF0FB;   /* rgba(230,236,255,.6) + gray100 */
+  --page-bg-mid: #F4F1F9;    /* rgba(243,239,251,.6) + gray100, 51.923% */
+  --page-bg-right: #E9F6F9;  /* rgba(225,247,251,.6) + gray100 */
+  --page-bg: linear-gradient(90deg, var(--page-bg-left) 0%, var(--page-bg-mid) 51.923%, var(--page-bg-right) 100%);
+}
+.phone {background: var(--page-bg);}
+
+.scroll-area {
+  top: calc(var(--status-bar-h) + var(--appbar-h)); /* 앱바 아래부터 스크롤 (Figma Main pt 80) */
+  height: calc(100% - var(--status-bar-h) - var(--appbar-h));
+  padding-top: 0;
+  padding-bottom: calc(var(--cta-area-h) + var(--safe-area-bottom) + 12px); /* 하단 바텀에 가리지 않게 (끝에서 다음에 할게요 ↔ 인포 44) */
+}
+
+/* ─── 앱바: 제목 2줄 (상태바 아래 고정) ─── */
+.appbar {
+  position: absolute;
+  top: var(--status-bar-h);
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  height: var(--appbar-h);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 16px 12px;
+}
+/* 선택 후 타이틀 강조 (브랜드 이름·개수): Figma 캡션 '30대 여성'과 같은 파랑 */
+.appbar-em {
+  font-style: normal;
+  color: var(--brand-point);
+}
+.appbar-title {
+  position: relative;
+  z-index: 1; /* 배경 효과 위 */
+  flex: 1;
+  min-width: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--mds-color-black);
+  word-break: keep-all; /* 단어 중간에서 줄바꿈하지 않게 */
+}
+
+/* ─── AI 배경 효과 (뱅크시 gradientEffect.html 값 그대로, 앱바 뒤 전체) ───
+   원본과 다른 점: 높이 66 → 앱바 80에 맞춤 / 높이 펼침(0 → 66, 0.3s) 생략
+   바탕·덮개를 gray100 대신 화면 파스텔 배경으로 → 앱바 아래 경계 없음
+   글로우가 약해서 세로로 키움: 고정 글로우 48 → 80, 루핑 덮개 top 0 → 16, 섬광 덮개 top 20 → 32 */
+:root {
+  --glow-periwinkle: #99ACFF;
+  --glow-pink: #E476FF;
+  --glow-sky: #659EFF;
+  --glow-lavender: #E3BCFF;
+  --glow-purple: #AF69FF;
+  --glow-cyan: #47E6ED;
+}
+@property --glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.gradient-effect {
+  --effect-bg: var(--page-bg-mid); /* 스피너 conic 안의 바탕색 (단색이 필요해서 화면 배경 가운데 색) */
+  container-type: size;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--page-bg);
+  pointer-events: none;
+}
+
+/* 01 상단 그라디언트 루핑: conic 시작 각도만 3초에 한 바퀴 */
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.5;
+  background: conic-gradient(from var(--glow-angle) at 50% 50%,
+    var(--glow-periwinkle) 0deg, var(--glow-pink) 90deg, var(--glow-sky) 180deg,
+    var(--glow-lavender) 270deg, var(--glow-periwinkle) 360deg);
+}
+.ambient-glow::after { /* 배경 가림 (고정). 원본 top 0 → 16 (보이는 띠를 넓힘) */
+  content: '';
+  position: absolute;
+  z-index: 10;
+  top: 16px;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translateX(-50%);
+  /* 너비 150% (-25% ~ 125%)에서 화면 0~100%와 같은 위치에 스톱 */
+  background: linear-gradient(90deg, var(--page-bg-left) 16.667%, var(--page-bg-mid) 51.282%, var(--page-bg-right) 83.333%);
+  filter: blur(12px);
+}
+@keyframes glowRotate {
+  0%   {--glow-angle: 0deg;}
+  100% {--glow-angle: 360deg;}
+}
+.gradient-effect.is-active .ambient-glow {animation: glowRotate 3s linear infinite;}
+
+/* 02 등장 섬광 1회: 스피너 180° → 360° (4s), 전체 6s 페이드 아웃 */
+.entrance-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  opacity: 0;
+}
+.entrance-glow::after { /* 배경 가림 (고정). 원본 top 20 → 32 */
+  content: '';
+  position: absolute;
+  z-index: 10;
+  top: 32px;
+  left: 50%;
+  width: 120%;
+  height: 150%;
+  transform: translateX(-50%);
+  border-radius: 25%;
+  /* 너비 120% (-10% ~ 110%)에서 화면 0~100%와 같은 위치에 스톱 */
+  background: linear-gradient(90deg, var(--page-bg-left) 8.333%, var(--page-bg-mid) 51.602%, var(--page-bg-right) 91.667%);
+  filter: blur(16px);
+}
+.entrance-glow-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 110cqmax; /* 너비·높이 중 큰 값의 110% */
+  aspect-ratio: 1 / 1;
+  translate: -50% -50%;
+  transform: rotate(180deg);
+  border-radius: 50%;
+  opacity: 0.5;
+  filter: blur(20px);
+  background: conic-gradient(
+    var(--effect-bg) 0deg, var(--glow-purple) 30deg, var(--glow-sky) 60deg,
+    var(--glow-cyan) 90deg, var(--effect-bg) 100deg, rgb(from var(--effect-bg) r g b / 0) 360deg);
+}
+@keyframes glowFadeOut {
+  0%   {opacity: 1;}
+  100% {opacity: 0;}
+}
+@keyframes glowSpin {
+  0%   {transform: rotate(180deg);}
+  100% {transform: rotate(360deg);}
+}
+.gradient-effect.is-active .entrance-glow {animation: glowFadeOut 6s cubic-bezier(0, 0, 0.2, 1) forwards;}
+.gradient-effect.is-active .entrance-glow-spinner {animation: glowSpin 4s cubic-bezier(0, 0, 0.2, 1) forwards;}
+
+/* 03 고정 SVG 글로우: 1초 대기 후 2초 페이드 인. 세로 48 → 80 (앱바 전체, scaleY 약 1.67) */
+.static-glow {
+  display: block;
+  position: relative;
+  z-index: 3;
+  width: 360px;
+  height: 100%;
+  opacity: 0;
+}
+@keyframes glowFadeIn {
+  0%   {opacity: 0;}
+  100% {opacity: 1;}
+}
+.gradient-effect.is-active .static-glow {animation: glowFadeIn 2s ease 1s forwards;}
+
+/* 옵션 '글로우 세로' 끔 = 원본 값 (인덱스 오른쪽 옵션 컨트롤, <html data-glow="original">) */
+:root[data-glow="original"] .ambient-glow::after {top: 0;}
+:root[data-glow="original"] .entrance-glow::after {top: 20px;}
+:root[data-glow="original"] .static-glow {height: 48px;}
+
+/* 모션 줄이기: 섬광 없이 안정된 배경 */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-effect.is-active .ambient-glow,
+  .gradient-effect.is-active .entrance-glow,
+  .gradient-effect.is-active .entrance-glow-spinner,
+  .gradient-effect.is-active .static-glow {animation: none;}
+  .entrance-glow {opacity: 0;}
+  .static-glow {opacity: 1;}
+}
+
+/* ─── 캡션: 반짝이 아이콘 18(안 12) + 13/18 ─── */
+.brand-caption {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 16px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--mds-color-gray700);
+}
+.brand-caption-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+.brand-caption-icon img {display: block;}
+
+/* AI 아이콘 모션 (Figma IconAI 컴포넌트 설명 · 뱅크시 AIIcon.html과 같은 값)
+   등장 1.3s 1회 → 끝나면 루프. opacity는 바꾸지 않고 scale 0에서 시작. 기준점: 가운데
+   rotate 전용 곡선 2개는 MDS 토큰에 없는 이 아이콘 전용 값 (토큰으로 바꾸지 않음) */
+.ai-icon {
+  transform-origin: center;
+  scale: 1;
+  rotate: 0deg;
+}
+.ai-icon.is-entrance {
+  animation: aiEntranceScale 1.3s forwards, aiEntranceRotate 1.3s forwards;
+}
+.ai-icon.is-loop {
+  /* 주기 3.5s · 12s는 나누어떨어지지 않게 둠 (반복 인상 줄이기) */
+  animation: aiLoopScale 3.5s var(--mds-motion-power1-easeInOut) infinite,
+             aiLoopRotate 12s var(--mds-motion-power1-easeInOut) infinite;
+}
+@keyframes aiEntranceScale {
+  0%   {scale: 0;   animation-timing-function: var(--mds-motion-power3-easeInOut);}
+  25%  {scale: 1.2; animation-timing-function: var(--mds-motion-power1-easeInOut);} /* 오버슈트 */
+  100% {scale: 1;}
+}
+@keyframes aiEntranceRotate {
+  0%   {rotate: -140deg; animation-timing-function: cubic-bezier(0.33, 0, 0.2, 0.8);}
+  33%  {rotate: -20deg;  animation-timing-function: cubic-bezier(0.5, 1, 0.36, 1);} /* 오버슈트 */
+  100% {rotate: 0deg;}
+}
+@keyframes aiLoopScale {
+  0%   {scale: 1;}
+  25%  {scale: 0.8;}
+  75%  {scale: 1.2;}
+  100% {scale: 1;}
+}
+@keyframes aiLoopRotate {
+  0%     {rotate: 0deg;   animation-timing-function: var(--mds-motion-power2-easeInOut);}
+  16.67% {rotate: 115deg;}
+  33.33% {rotate: 90deg;}  /* 115 → 90 오버슈트 */
+  50%    {rotate: 0deg;}
+  66.67% {rotate: 0deg;   animation-timing-function: var(--mds-motion-power2-easeInOut);} /* 50~66.67% 정지 */
+  83.33% {rotate: -30deg;}
+  100%   {rotate: 0deg;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-icon.is-entrance, .ai-icon.is-loop {animation: none;}
+}
+.brand-caption-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.brand-caption-text em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--brand-point);
+}
+
+/* ─── 브랜드 그리드: 4열, 간격 세로 12 · 가로 9 ─── */
+.brand-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 9px;
+  padding: 8px 16px;
+  list-style: none;
+}
+.brand-item {
+  position: relative;
+  width: 79px;
+}
+.brand-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none; /* 롱프레스 때 글자 선택 막기 */
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation; /* 두 번 탭 확대 대기 없앰 (스크롤은 그대로) */
+}
+.brand-thumb {
+  display: block;
+  width: 79px;
+  height: 79px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.brand-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* 선택 상태 (Figma thumb 284:148873): 딤 검정 40% 원 + 체크 28 (x25.5 y25)
+   처음엔 안 보임 → type_1.js가 선택할 때 딤 스케일 0 → 1, 체크는 선이 그려짐 */
+.brand-thumb {position: relative;}
+.brand-dim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(0);
+  pointer-events: none;
+}
+.brand-check {
+  position: absolute;
+  top: calc(25px + 14px - 14.107px);  /* 28 칸(x25.5 y25) 가운데에 28.2143 아이콘 */
+  left: calc(25.5px + 14px - 14.107px);
+  display: block;
+  overflow: visible;
+  transform-origin: 50% 50%; /* 체크 스케일 기준: 가운데 (AE 그룹 기준점과 같음) */
+  pointer-events: none;
+}
+.brand-check path {
+  stroke-linecap: butt;
+  stroke-dasharray: 1;    /* pathLength="1" 기준: 선 전체 길이 = 1 */
+  stroke-dashoffset: 1;   /* 처음엔 다 지워진 상태 */
+}
+/* 딤 등장 (CSS 애니메이션): 선택(.is-selected)되면 스케일 0 → 1, 0.3s mds.motion.power3.easeOut
+   해제되면 클래스가 빠지면서 바로 사라짐 (위 기본 상태 scale(0)) */
+.brand-button.is-selected .brand-dim {
+  animation: brandDimIn 0.3s var(--mds-motion-power3-easeOut) both;
+}
+@keyframes brandDimIn {
+  from {transform: scale(0);}
+  to   {transform: scale(1);}
+}
+
+/* 체크 등장 (CSS 애니메이션): 출석체크 ic_daily_check 스타일, 원본 0.5s → 0.3s
+   선택(.is-selected)되면 바로(딜레이 없음) 0.3s 동안 그리기 0 → 100% · 스케일 1.5 → 1 · 굵기 4 → 2 동시에 (mds.motion.power2.easeInOut)
+   해제되면 클래스가 빠지면서 바로 사라짐 (위 기본 상태) */
+.brand-button.is-selected .brand-check {
+  animation: brandCheckScale 0.3s var(--mds-motion-power2-easeInOut) both;
+}
+.brand-button.is-selected .brand-check path {
+  animation: brandCheckDraw 0.3s var(--mds-motion-power2-easeInOut) both;
+}
+@keyframes brandCheckScale {
+  from {transform: scale(1.5);}
+  to   {transform: scale(1);}
+}
+@keyframes brandCheckDraw {
+  from {stroke-dashoffset: 1; stroke-width: 4px;}
+  to   {stroke-dashoffset: 0; stroke-width: 2px;}
+}
+.brand-name {
+  width: 100%;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--mds-color-black);
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 롱프레스 툴팁: 썸네일 위 4px, 가운데 정렬 (Figma x167 y244 = '리' 썸네일 중심) */
+.longpress-tooltip {
+  position: absolute;
+  top: -52px; /* 툴팁 높이 48 + 간격 4 */
+  left: 50%;
+  z-index: 2;
+  display: block;
+  margin-left: -64.5px; /* 너비 129의 절반 — transform은 스케일 모션에 씀 */
+  transform-origin: 50% 100%; /* 스케일 기준: 하단 가운데 (말꼬리 끝) */
+  opacity: 0;                 /* 처음엔 안 보임 → type_1.js가 0.5초 후 등장 */
+  transform: scale(0.75);
+  pointer-events: none;
+  cursor: pointer;
+}
+.longpress-tooltip.is-visible {pointer-events: auto;} /* 보일 때만 탭으로 닫기 */
+
+/* ─── 다음에 할게요: 그리드 아래 가운데, 밑줄 (디자이너 프로토타입 실측: 마지막 이름과 32, 인포 문구와 44) ─── */
+.skip-area {
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px 28px;
+}
+.skip-button {
+  padding: 4px 8px;
+  border: 0;
+  background: none;
+  color: var(--mds-color-gray500);
+  font-size: 13px;
+  line-height: 18px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+/* 스낵바: 하단 102 (버튼 영역 68 + 34), Figma Snackbar */
+.snackbar {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(var(--cta-area-h) - 18px + var(--safe-area-bottom)); /* 102 = 86 - 18 + 34 */
+  z-index: 12;
+  padding: 9px 12px;
+  border-radius: 4px;
+  background: var(--mds-color-gray700);
+  color: var(--mds-color-white);
+  font-size: 13px;
+  line-height: 18px;
+}
+.snackbar[hidden] {display: none;}
+.snackbar {touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none;} /* 아래로 드래그해서 닫기 */
+
+/* ─── 하단 고정 (Figma BottomButton): 페이드 + 인포 문구 + 버튼 영역 ─── */
+.bottom-button {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 11;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* 페이드: 인포 문구 위 40부터 화면 끝까지 (PC 높이 160), Figma gradeint-dim 284:148409
+   스톱(시작 기준 실제 위치): 0 투명 → 33px 0.8 → 50px 완전히 덮음 (인포 문구 상단 아래 10) */
+.bottom-fade {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(246, 247, 255, 0) 0px, rgba(246, 247, 255, 0.8) 33px, var(--brand-fade) 50px);
+  pointer-events: none;
+}
+/* 인포 문구: 13/18 gray600, 바로 아래 버튼 영역 */
+.cta-info {
+  width: 100%;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--mds-color-gray600);
+  text-align: center;
+}
+.cta-area {
+  width: 100%;
+  padding: 12px 16px calc(12px + var(--safe-area-bottom));
+}
+.cta-button {
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--brand-point);
+  color: var(--mds-color-white);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+}
+/* 선택 후 상태 (Figma '1개 선택하고 추천받기'): semantic blue */
+.cta-button.is-selected {background: var(--mds-color-blue);}
+
+/* ─── 다이얼로그 (Figma 295:151182 · MDS 2.0 Dialog + ButtonDialog) ───
+   딤: MDS Dim type=full 블랙 60%. 상태바(네이티브) 아래 웹뷰 전체를 덮음
+   폭: 375 기준 311 (좌우 32), 세로 가운데 */
+.dialog-layer {
+  position: absolute;
+  top: var(--status-bar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+}
+.dialog-layer[hidden] {display: none;}
+.dialog-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--mds-color-black-60);
+}
+.dialog {
+  position: relative;
+  width: 100%;
+  max-width: 311px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--mds-color-white);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.dialog-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 16px 0;
+}
+.dialog-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--mds-color-black);
+}
+.dialog-desc {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--mds-color-gray600);
+}
+.dialog-buttons {
+  display: flex;
+  gap: 4px;
+  padding: 24px 16px 20px;
+}
+.dialog-button {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--mds-color-gray300);
+  border-radius: 4px;
+  background: var(--mds-color-white);
+  color: var(--mds-color-black);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.dialog-button.is-primary {
+  border-color: var(--mds-color-black);
+  background: var(--mds-color-black);
+  color: var(--mds-color-white);
+}
+
+/* ─── 바텀시트 (Figma 290:150996 · MDS BottomSheet) ───
+   딤 블랙 60% (상태바 아래 웹뷰 전체), 시트는 아래에 붙고 위 모서리 8, 최대 높이 584 */
+.sheet-layer {
+  position: absolute;
+  top: var(--status-bar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  overflow: hidden;
+}
+.sheet-layer[hidden] {display: none;}
+.sheet-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--mds-color-black-60);
+}
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 584px;
+  border-radius: 8px 8px 0 0;
+  background: var(--mds-color-white);
+  padding-bottom: var(--safe-area-bottom); /* 홈 인디케이터 영역 34 */
+}
+.sheet-handle-area {height: 12px;}
+.sheet-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 4px 16px 8px;
+}
+.sheet-title {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--mds-color-black);
+}
+.sheet-title-icon {
+  display: flex;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+.sheet-title-icon img {display: block;}
+.sheet-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.sheet-close img {display: block;}
+.sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px 20px;
+}
+.sheet-brand, .sheet-tags {display: block;}
+.sheet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sheet-desc {
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--mds-color-black);
+  word-break: keep-all;
+}
+.sheet-desc em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--brand-point);
+}
+
+/* ─── 로딩 화면 (Figma 299:151314) ───
+   상태바(네이티브) 아래 웹뷰 전체를 덮음. 배경은 화면과 같은 파스텔
+   내용 묶음: Figma top 278 (상태바 45 포함) → 웹뷰 기준 233, 가로 가운데, 간격 20 */
+.loading-screen {
+  position: absolute;
+  top: var(--status-bar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  background: var(--page-bg);
+}
+.loading-screen[hidden] {display: none;}
+.loading-content {
+  position: absolute;
+  top: 233px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+/* 브랜드 썸네일: 64 원 + 흰 테두리 3 (전체 70), 16씩 겹침, 뒤에 선택한 것이 위 */
+.loading-stack {
+  display: flex;
+  align-items: center;
+  height: 64px;
+}
+.loading-thumb {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 3px var(--mds-color-white);
+}
+.loading-thumb + .loading-thumb {margin-left: -16px;}
+.loading-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.loading-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+.loading-title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--mds-color-black);
+}
+/* 타이틀 글자: 한 글자씩 6 아래에서 페이드 인하며 올라옴 (마스크 없음, type_1_loading.js) */
+.loading-char {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+.loading-title.is-rise .loading-char:last-child {transform-origin: 50% 100%;} /* "!": 하단 중앙 기준 스케일 */
+.loading-desc {
+  font-size: 14px;
+  line-height: 20px;
+  color: #737373; /* Figma 값 (MDS 팔레트 밖) */
+}
+/* AI 아이콘 로딩 자리: 원본 CSS가 .IconAILoading 을 부모 가운데(absolute 50%)에 놓으므로 32 기준 상자
+   크기·속도는 원본 변수로 (32px, 한 바퀴 1.8s linear 무한) */
+.loading-icon {
+  --IconAILoading-size: 32px;
+  --IconAILoading-time: 1.8s;
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+/* 하단 안내: Figma 하단에서 68 (홈 인디케이터 34 포함) → 안전영역 위 16 */
+.loading-footnote {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(16px + var(--safe-area-bottom));
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--mds-color-gray500);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ─── 페이지: 첫 페이지(브랜드 선택 + 로딩) / 랜딩 페이지 (위치·전환은 common .proto-page / protoPage)
+   상태바(z 30)는 네이티브 영역이라 페이지 전환에서 움직이지 않음 → 페이지는 모두 상태바 아래 층 */
+.page {
+  z-index: 0;
+  background: var(--page-bg);
+}
+
+/* 랜딩 페이지 (Figma 302:198803 신규 가입 혜택) */
+.landing-page {
+  z-index: 20; /* 첫 페이지 위, 상태바 아래 */
+  padding-top: var(--status-bar-h);
+  background: var(--mds-color-gray100);
+}
+.landing-appbar { /* Figma AppBar: 높이 52, 좌우 16, 뒤로가기 28 + 2 + 제목 16/22 Medium, 오른쪽 홈 28 */
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--mds-color-gray100);
+}
+.landing-icon-button {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.landing-icon-button img {display: block; width: 28px; height: 28px;}
+.landing-title {
+  flex: 1;
+  min-width: 0;
+  padding-right: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--mds-color-black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.landing-content { /* 콘텐츠 이미지: 앱바 아래 11 (Figma 콘텐츠 y 108 = 상태바 45 + 앱바 52 + 11), 너비에 맞춤 */
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 11px;
+}
+
+/* 무신사 홈 (home/Home.html iframe) — 랜딩 페이지보다 위, 상태바는 홈 안의 것을 씀 */
+.home-page {z-index: 25; background: #F5F5F5;} /* 페이드 인 전 빈 화면 (기존 화면은 바로 가려짐) */
+.home-frame {display: block; width: 100%; height: 100%; border: 0;}
+.phone.is-home > .status-bar {display: none;}
+
+/* 버튼 포커스 테두리 없앰: 앱(터치) 화면을 흉내 내는 프로토타입이라 브라우저 기본 포커스 링(시스템 강조색, 예: 주황)을 보이지 않게
+   키보드 조작 뒤나 누른 버튼에 포커스가 남을 때 '다음에 할게요' · 다이얼로그 버튼 등에 생기던 테두리 */
+.phone button:focus,
+.phone button:focus-visible {outline: none;}

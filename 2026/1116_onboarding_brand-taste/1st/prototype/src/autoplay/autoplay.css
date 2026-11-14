@@ -1,0 +1,25 @@
+/* autoplay.css — 자동 재생 터치 표시 (autoplay.js)
+   회색 반투명 원 44, 누를 때 작아졌다 커지고 물결이 퍼짐. 맨 위 층 · 클릭을 막지 않음 */
+.autoplay-touch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px; /* 원 가운데가 좌표 */
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+}
+.autoplay-ripple {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  opacity: 0;
+}
