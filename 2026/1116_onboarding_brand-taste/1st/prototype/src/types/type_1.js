@@ -248,6 +248,9 @@ var brandSelect = (function () {
    - 해제해도 들어온 추천 브랜드는 그대로 남음
    모션
    - 기존 썸네일: 원래 자리 → 밀려난 새 자리 (mds.spring.normal)
+   - 화면 포커싱: 새 썸네일 3개가 보이는 영역(앱바 아래 ~ 하단 버튼 영역 위, 여백 16) 밖이면
+     선택 순간 3개 전체가 보이도록 필요한 만큼만 스크롤 (0.4s mds power3.easeInOut, 밀림과 동시). 이미 보이면 그대로
+     스크롤 중 사용자가 만지면 멈춤
    - 새 썸네일 3개: 0.2s 뒤부터 0.1s 간격으로 스케일 0 → 1 (1·2번째 mds.spring.normal, 3번째 mds.spring.bouncy) + 투명도 0 → 1 (0.2s linear) */
 (function () {
     var grid = document.querySelector('.brand-grid');
@@ -282,6 +285,37 @@ var brandSelect = (function () {
     var STAGGER = 0.1;
     var FADE = 0.2;
     var expanded = new WeakSet(); // 이미 추천을 펼친 썸네일 (이름이 겹칠 수 있어 버튼 기준)
+
+    /* 화면 포커싱: 새 썸네일들이 보이는 영역 안에 들어오도록 스크롤 */
+    var scrollArea = document.querySelector('#brandPage .scroll-area');
+    var bottomBar = document.querySelector('#brandPage .bottom-button');
+    var FOCUS_MARGIN = 16;
+    var FOCUS_SCROLL = { duration: 0.4, ease: [0.33, 0, 0.2, 1] }; // mds power3.easeInOut
+    var focusRun = null;
+    function stopFocus() { if (focusRun) { focusRun.stop(); focusRun = null; } }
+    if (scrollArea) {
+        scrollArea.addEventListener('touchstart', stopFocus, { passive: true });
+        scrollArea.addEventListener('wheel', stopFocus, { passive: true });
+    }
+
+    function focusItems(items) {
+        if (!scrollArea || !items.length) return;
+        /* 레이아웃 위치(스크롤 내용 기준). 새 칸은 scale(0)이라 offsetTop으로 잼 */
+        var top = Math.min.apply(null, items.map(function (li) { return li.offsetTop; }));
+        var bottom = Math.max.apply(null, items.map(function (li) { return li.offsetTop + li.offsetHeight; }));
+        var areaRect = scrollArea.getBoundingClientRect();
+        var visibleH = (bottomBar ? bottomBar.getBoundingClientRect().top : areaRect.bottom) - areaRect.top;
+        var from = scrollArea.scrollTop;
+        var target = from;
+        if (bottom > from + visibleH - FOCUS_MARGIN) target = bottom - visibleH + FOCUS_MARGIN; /* 아래로 가려짐 → 올림 */
+        else if (top < from + FOCUS_MARGIN) target = top - FOCUS_MARGIN;                       /* 위로 가려짐 → 내림 */
+        target = Math.max(0, Math.min(scrollArea.scrollHeight - scrollArea.clientHeight, target));
+        if (Math.abs(target - from) < 1) return;
+        stopFocus();
+        focusRun = Motion.animate(from, target, Object.assign({
+            onUpdate: function (v) { scrollArea.scrollTop = v; }
+        }, FOCUS_SCROLL));
+    }
 
     /* 처음 있던 썸네일 하나를 틀로 써서 새 썸네일을 만듦 (툴팁·선택 상태는 빼고) */
     var template = grid.querySelector('.brand-item').cloneNode(true);
@@ -323,6 +357,8 @@ var brandSelect = (function () {
             var dy = before[i].top - now.top;
             if (dx || dy) Motion.animate(li, { x: [dx, 0], y: [dy, 0] }, MOVE);
         });
+
+        focusItems(added); // 새 칸 3개가 화면 안에서 등장하도록 (밀림과 동시)
 
         added.forEach(function (li, i) {
             var delay = ENTER_DELAY + STAGGER * i;

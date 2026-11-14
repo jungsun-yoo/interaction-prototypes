@@ -3,9 +3,9 @@
 > 개발 전달용 인터랙션 명세입니다. 값은 MDS 모션 토큰(`src/common/mds-motion.css`) 기준입니다.
 > 모션 라이브러리: **Motion** (motion.dev) — 웹 `motion`, React `motion/react`. 스프링 값은 두 환경 공통입니다.
 
-- 프로토타입: `Type_1.html` (코드 블록 기준 버전 `20261115-27`, 홈 `20261115-15`)
+- 프로토타입: `Type_1.html` (코드 블록 기준 버전 `20261115-30`, 홈 `20261115-15`)
 - Figma: [작업-26-11](https://www.figma.com/design/C0XR68hLZmVbjQEOOqKCd0) — 브랜드 선택 284:148309 · 썸네일 284:148873 · 다이얼로그 295:151182 · 바텀시트 290:150996 · 로딩 299:151314 · 혜택 페이지 302:198803 · 취향 브랜드 모듈 304:201941
-- 수정일: 2026-11-15 (로딩 썸네일 간격 · 타이틀 글자 모션 · 홈 헤더 접힘 확정 반영)
+- 수정일: 2026-11-15 (로딩 썸네일 간격 · 타이틀 글자 모션 · 홈 헤더 접힘 · 추천 브랜드 화면 포커싱 확정 반영)
 - 진행: 1차 브랜드 선택 화면 · 2차 로딩 화면 · **3차 혜택 페이지 · 무신사 홈** (전체 흐름 1차 정리 완료)
 - ⚠️ **초안**: 프로토타입이 최종 확정되면 명세 전체(표 · 코드 블록)를 다시 검토하고 고칩니다.
 
@@ -543,6 +543,14 @@ function play(scaleTo, opacityTo) {
 | 기존 썸네일 | 원래 자리 → 밀려난 새 자리 (FLIP) | `spring.normal` · 선택 즉시 |
 | 새 썸네일 3개 | scale 0 → 1 | **0.2s 후 시작, 0.1s 간격** · 1·2번째 `spring.normal`, 3번째 `spring.bouncy` |
 | | 투명도 0 → 1 | 각각 같은 시작 시점에 **0.2s linear** |
+| 리스트 스크롤 (화면 포커싱) | 새 썸네일 3개가 **모두 보이도록** 필요한 만큼만 스크롤 | **0.4s** · `power3.easeInOut` · 선택 즉시 (밀림과 동시) |
+
+**화면 포커싱 규칙**
+- 보이는 영역: 앱바 아래 ~ **하단 버튼 영역 위**, 여백 **16**
+- 새 썸네일 3개 중 하나라도 이 영역 밖(아래로 하단 버튼에 가려짐 / 위로 앱바에 가려짐)이면, 3개 전체가 영역 안에 들어오는 위치까지 스크롤
+- 이미 모두 보이면 스크롤하지 않음
+- 새 썸네일 등장(0.2s 뒤 시작)은 스크롤 도중 화면 안에서 보임
+- 자동 스크롤 중 사용자가 만지거나 스크롤하면 그 자리에서 멈춤
 
 > 프로토타입은 데이터가 없어 기존 20개 중 무작위 3개를 씁니다 (실서비스는 추천 결과).
 
@@ -563,11 +571,34 @@ items.forEach(function (li, i) {
     var dy = before[i].top - now.top;
     if (dx || dy) Motion.animate(li, { x: [dx, 0], y: [dy, 0] }, MDS_SPRING.normal);
 });
+focusItems(added); // 새 칸 3개가 화면 안에서 등장하도록 (밀림과 동시)
 added.forEach(function (li, i) {
     var delay = ENTER_DELAY + STAGGER * i;
     Motion.animate(li, { scale: [0, 1] }, Object.assign({ delay: delay }, ENTER[i]));
     Motion.animate(li, { opacity: [0, 1] }, { duration: FADE, ease: 'linear', delay: delay });
 });
+
+/* 화면 포커싱: 새 칸들이 보이는 영역(앱바 아래 ~ 하단 버튼 위, 여백 16) 안에 들어오도록 스크롤 */
+var FOCUS_MARGIN = 16;
+var FOCUS_SCROLL = { duration: 0.4, ease: [0.33, 0, 0.2, 1] }; // mds power3.easeInOut
+function focusItems(items) {
+    /* 레이아웃 위치(스크롤 내용 기준). 새 칸은 scale(0)이라 offsetTop으로 잼 */
+    var top = Math.min.apply(null, items.map(function (li) { return li.offsetTop; }));
+    var bottom = Math.max.apply(null, items.map(function (li) { return li.offsetTop + li.offsetHeight; }));
+    var areaRect = scrollArea.getBoundingClientRect();
+    var visibleH = bottomBar.getBoundingClientRect().top - areaRect.top;
+    var from = scrollArea.scrollTop, target = from;
+    if (bottom > from + visibleH - FOCUS_MARGIN) target = bottom - visibleH + FOCUS_MARGIN; // 아래로 가려짐 → 올림
+    else if (top < from + FOCUS_MARGIN) target = top - FOCUS_MARGIN;                       // 위로 가려짐 → 내림
+    target = Math.max(0, Math.min(scrollArea.scrollHeight - scrollArea.clientHeight, target));
+    if (Math.abs(target - from) < 1) return;                                                // 이미 보이면 그대로
+    focusRun = Motion.animate(from, target, Object.assign({
+        onUpdate: function (v) { scrollArea.scrollTop = v; }
+    }, FOCUS_SCROLL));
+}
+// 사용자가 만지면 멈춤
+scrollArea.addEventListener('touchstart', stopFocus, { passive: true });
+scrollArea.addEventListener('wheel', stopFocus, { passive: true });
 ```
 
 ---
