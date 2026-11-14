@@ -64,7 +64,7 @@ var homePage = (function () {
     var page = document.getElementById('homePage');
     var frame = document.getElementById('homeFrame');
     if (!page || !frame) return null;
-    var SRC = 'home/Home.html?embed=1&v=20261115-12';
+    var SRC = 'home/Home.html?embed=1&v=20261115-15';
     var HOME_FADE = 0.35; // 홈 랜딩 페이드 인 (s)
 
     var fadeRun = null;

@@ -3,9 +3,9 @@
 > 개발 전달용 인터랙션 명세입니다. 값은 MDS 모션 토큰(`src/common/mds-motion.css`) 기준입니다.
 > 모션 라이브러리: **Motion** (motion.dev) — 웹 `motion`, React `motion/react`. 스프링 값은 두 환경 공통입니다.
 
-- 프로토타입: `Type_1.html` (코드 블록 기준 버전 `20261115-27`)
+- 프로토타입: `Type_1.html` (코드 블록 기준 버전 `20261115-27`, 홈 `20261115-15`)
 - Figma: [작업-26-11](https://www.figma.com/design/C0XR68hLZmVbjQEOOqKCd0) — 브랜드 선택 284:148309 · 썸네일 284:148873 · 다이얼로그 295:151182 · 바텀시트 290:150996 · 로딩 299:151314 · 혜택 페이지 302:198803 · 취향 브랜드 모듈 304:201941
-- 수정일: 2026-11-15 (로딩 썸네일 간격 · 타이틀 글자 모션 확정 반영)
+- 수정일: 2026-11-15 (로딩 썸네일 간격 · 타이틀 글자 모션 · 홈 헤더 접힘 확정 반영)
 - 진행: 1차 브랜드 선택 화면 · 2차 로딩 화면 · **3차 혜택 페이지 · 무신사 홈** (전체 흐름 1차 정리 완료)
 - ⚠️ **초안**: 프로토타입이 최종 확정되면 명세 전체(표 · 코드 블록)를 다시 검토하고 고칩니다.
 
@@ -987,14 +987,34 @@ document.addEventListener('brandpage:reset', function () {
 | 이동 | **0.4s** · cubic-bezier(0.33, 0, 0.2, 1) = MDS 2.0 `power3.easeInOut` |
 | 도착 위치 | 모듈의 세로 가운데가 **헤더 아래 ~ 화면 아래** 영역의 가운데 |
 | 매번 | 홈에 들어올 때마다 맨 위에서 다시 시작 |
-| 끊김 | 자동 스크롤 중 사용자가 화면을 만지거나 스크롤하면 그 자리에서 멈춤 |
+| 끊김 | 자동 스크롤 중(대기 0.5s 포함) 사용자가 화면을 만지거나 스크롤하면 그 자리에서 멈춤 → 헤더 고정도 풀림 |
+| 평소 스크롤 | 자동 스크롤이 끝난 뒤의 휠 · 터치 스크롤은 자동 스크롤과 상관없음 — 아래 '헤더 접힘' 규칙만 적용 |
 
 **조건 (반드시)**
 
 | 대상 | 조건 |
 |---|---|
-| **상단 헤더** | **고정** — 자동 스크롤 중에도, 이후에도 접히지 않음 (기본 홈은 스크롤하면 앱바 · 검색창이 접히지만 이 진입에서는 고정) |
+| **상단 헤더** | **자동 스크롤 중에만 고정** (접히지 않음). 자동 스크롤이 끝나거나 사용자가 만져서 멈추면 **원래 홈 규칙**으로 — 아래 '헤더 접힘' 표 |
 | **바텀 네비게이션 · FAB** | 자동 스크롤이 **시작되면 사라짐** (아래로 스크롤할 때와 같은 상태). 랜딩 순간(맨 위)에는 보임 |
+
+**헤더 접힘 (자동 스크롤 이후 · 원래 홈 규칙)** — 접히는 높이 = 앱바 52 + 검색창 36 = **88**, 스크롤에 1:1 (모션 이징 없음)
+
+| 사용자 스크롤 | 헤더 |
+|---|---|
+| 아래로 | **지금 자리부터** 스크롤한 만큼 접힘 → 88까지 접히면 탭만 상태바 밑에 붙음 (스티키) |
+| 위로 | 접힌 채 유지 |
+| 맨 위 근처 (스크롤 위치 88 안) | 스크롤 위치만큼만 접힘 → 맨 위에서 다 펼쳐짐 |
+
+- 자동 스크롤 뒤(스크롤 위치 약 376)에 손을 대도 헤더가 한 번에 접히지 않음 — 그 자리부터 내린 만큼 접힘
+- 맨 위에서 시작하면 "접힘 = 스크롤 위치"인 기존 규칙과 같은 결과
+- 접힘 기준 위치는 **자동 스크롤이 끝나는(또는 멈추는) 순간 한 번만** 지금 위치로 맞춤. 평소 스크롤 중에 다시 맞추면 내린 거리가 쌓이지 않아 헤더가 거의 접히지 않음 (PC 휠에서 확인된 문제, 2026-11-15 수정)
+
+| 예시 (375 × 812, PC 휠) | 스크롤 위치 | 헤더 접힘 |
+|---|---|---|
+| 자동 스크롤 끝 | 약 376 | 0 (펼침) |
+| 아래로 스크롤 | 576 | −88 (탭만 스티키) |
+| 위로 조금 | 476 | −88 유지 |
+| 맨 위까지 | 0 | 0 (다 펼쳐짐) |
 
 바텀 네비게이션 · FAB이 사라지고 나타나는 모션은 기존 홈 규칙 그대로입니다 (참고).
 
@@ -1026,9 +1046,9 @@ function targetScroll() {
     return scrollTop() + (rect.top + rect.height / 2) - (top + (bottom - top) / 2);
 }
 
-function homeReset() {            // 처음 상태: 맨 위 · 헤더 고정 · 바텀 네비 보임
+function homeReset() {            // 처음 상태: 맨 위 · 헤더 펼침 · 바텀 네비 보임
     stop();
-    setHeaderCollapse(0);         // 헤더 고정 (접힘 0)
+    header.reset();               // 헤더 펼침 (접힘 0)
     setScrollTop(0);
     setBottomVisible(true);
 }
@@ -1037,15 +1057,50 @@ function homeFocus() {
     homeReset();
     timer = setTimeout(function () {
         setBottomVisible(false);  // 자동 스크롤 시작 → 바텀 네비게이션 · FAB 사라짐
+        headerHold = true;        // 자동 스크롤 동안 헤더 고정
         run = Motion.animate(scrollTop(), Math.max(0, targetScroll()), {
             duration: DURATION, ease: EASE, onUpdate: setScrollTop
         });
+        run.then(releaseHeader);  // 끝나면 원래 홈 규칙으로
     }, DELAY);
+}
+
+function releaseHeader() {        // 지금 위치를 헤더 기준으로 맞춘 뒤 고정을 풂 (늦게 오는 스크롤 이벤트가 접힘으로 잡히지 않게)
+    header.sync();
+    headerHold = false;
+}
+function stop() {                 // 자동 스크롤이 돌고 있을 때만: 사용자가 만지면 멈춤 + 헤더 고정 풂
+    var active = timer || run || headerHold;
+    clearTimeout(timer); timer = null;
+    if (run) { run.stop(); run = null; }
+    if (active) releaseHeader();  // 평소 휠 · 터치에서 기준을 맞추면 헤더가 거의 안 접히므로 이때만
 }
 
 // 사용자가 만지거나 스크롤하면 멈춤
 scrollTarget.addEventListener('touchstart', stop, { passive: true });
 scrollTarget.addEventListener('wheel', stop, { passive: true });
+```
+
+```js
+// 프로토타입: home/src/common/storeheader/storeheader.js — 헤더 접힘 (원래 홈 규칙, 지금 자리부터)
+var COLLAPSE = 88;                // 앱바 52 + 검색창 36
+var offset = 0;                   // 지금 접힌 정도 (0 ~ -88)
+var lastTop = scrollTop();
+
+scrollTarget.addEventListener('scroll', function () {
+    var top = Math.max(0, scrollTop());     // 음수 오버스크롤은 0
+    var delta = top - lastTop;
+    lastTop = top;
+    if (headerHold) return;                 // 자동 스크롤 중: 헤더 고정
+    var next = offset;
+    if (delta > 0) next = Math.max(-COLLAPSE, offset - delta); // 내려가면 그만큼 접힘
+    next = Math.max(next, -top);                               // 맨 위 근처에서는 스크롤한 만큼만 → 위로 가면 펼쳐짐
+    offset = next;
+    header.style.setProperty('--header-offset', offset + 'px'); // 헤더 translateY
+}, { passive: true });
+
+function reset() { lastTop = scrollTop(); offset = 0; /* 적용 */ }
+function sync() { lastTop = Math.max(0, scrollTop()); }        // 접힘은 그대로, 기준 위치만
 ```
 
 ### 4-3. 내 취향 브랜드 맞춤 추천 모듈

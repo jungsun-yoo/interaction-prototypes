@@ -2,6 +2,11 @@
    전문관이 바뀌면('storechange') 각 부분이 알아서 바뀜 */
 
 /* 헤더: 스크롤하면 헤더가 앱바 + 검색창만큼 올라가 탭이 상태바 밑에 붙음 (스크롤에 1:1 추적)
+   - 내려갈 때: 스크롤한 만큼 접힘 (최대 앱바 + 검색창) → 탭만 상태바 밑에 붙음(스티키)
+   - 올라갈 때: 접힌 채 유지, 맨 위 근처(접힘 높이 안)에 오면 그만큼 다시 펼쳐짐
+     맨 위에서 시작하면 예전 규칙(접힘 = 스크롤 위치)과 똑같고, 중간에서 시작해도(자동 스크롤 뒤) 튀지 않고 그 자리부터 접힘
+   - <html class="is-header-hold"> 동안은 접히지 않음 (취향선택브랜드 홈 자동 스크롤 중: home.js)
+   - window.storeHeader.reset(): 펼친 상태로 처음부터 / sync(): 지금 위치를 기준으로만 맞춤
    광고판 진입 · 이탈('adboardchange') 때 처음 위치로
    필요: common.js (pageScroll), storeheader.css의 높이 변수 */
 (function () {
@@ -21,15 +26,32 @@
   var headerStyle = getComputedStyle(header);
   var COLLAPSE = parseFloat(headerStyle.getPropertyValue('--appbar-h')) + parseFloat(headerStyle.getPropertyValue('--search-h')) + safeAreaTop;
 
-  window.addEventListener('adboardchange', function () {
-    header.style.setProperty('--header-offset', '0px');
-  });
+  var offset = 0;                 /* 지금 접힌 정도 (0 ~ -COLLAPSE) */
+  var lastTop = pageScroll.get();
+
+  function apply(value) {
+    offset = value;
+    header.style.setProperty('--header-offset', offset + 'px');
+  }
+  function reset() {
+    lastTop = pageScroll.get();
+    apply(0);
+  }
+  /* 지금 스크롤 위치를 기준으로만 맞춤 (접힘은 그대로) — 자동 스크롤이 끝났을 때, 늦게 오는 스크롤 이벤트가 이동량으로 잡히지 않게 */
+  function sync() { lastTop = Math.max(0, pageScroll.get()); }
+  window.storeHeader = { reset: reset, sync: sync };
+
+  window.addEventListener('adboardchange', reset);
 
   pageScroll.target.addEventListener('scroll', function () {
-    if (document.documentElement.classList.contains('is-header-fixed')) return; /* 헤더 고정 (취향선택브랜드 홈: home.js) */
-    /* 음수 오버스크롤은 0으로 고정. 배경 보정(storeheader.css)도 이 값을 씀 */
-    var offset = Math.min(0, Math.max(-COLLAPSE, -pageScroll.get()));
-    header.style.setProperty('--header-offset', offset + 'px');
+    var top = Math.max(0, pageScroll.get()); /* 음수 오버스크롤은 0 */
+    var delta = top - lastTop;
+    lastTop = top;
+    if (document.documentElement.classList.contains('is-header-hold')) return; /* 자동 스크롤 중: 헤더 고정 */
+    var next = offset;
+    if (delta > 0) next = Math.max(-COLLAPSE, offset - delta); /* 내려가면 그만큼 접힘 */
+    next = Math.max(next, -top);                               /* 맨 위 근처에서는 스크롤한 만큼만 접힘 → 위로 가면 펼쳐짐 */
+    if (next !== offset) apply(next);
   }, { passive: true });
 })();
 

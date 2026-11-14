@@ -154,7 +154,8 @@
 /* 취향선택브랜드: 홈 진입 시 '내 취향 브랜드 맞춤 추천' 모듈로 자동 스크롤 (포커싱)
    - 홈이 보일 때마다 Type_1.html homePage.show가 window.homeReset(맨 위로) → 0.35초 페이드 인 → 끝나면(= 페이지 랜딩) window.homeFocus → 0.5초 뒤
      모듈이 헤더 아래 보이는 영역의 가운데에 오도록 스크롤. 0.4초, MDS 2.0 power3.easeInOut (cubic-bezier(0.33, 0, 0.2, 1))
-   - 조건 (명세 필수): 상단 헤더는 고정 (<html class="is-header-fixed">, storeheader.js가 접힘을 건너뜀)
+   - 조건 (명세 필수): 자동 스크롤 중에는 상단 헤더 고정 (<html class="is-header-hold">, storeheader.js가 접힘을 건너뜀)
+                      자동 스크롤이 끝나면 원래 홈처럼: 사용자가 내리면 그 자리부터 헤더가 접히고 탭은 스티키
                       바텀 네비게이션 · FAB은 자동 스크롤이 시작되면 사라짐 (아래로 스크롤할 때와 같은 상태)
    - 자동 스크롤 중 사용자가 만지거나 휠을 굴리면 멈춤
    필요: common.js (pageScroll), Motion (CDN) */
@@ -178,9 +179,20 @@
   var timer = null;
   var run = null;
 
+  var root = document.documentElement;
+  /* 자동 스크롤이 끝나거나 멈추면 헤더는 원래 홈 규칙으로 (지금 위치를 기준으로 맞춘 뒤 고정을 풂) */
+  function releaseHeader() {
+    if (window.storeHeader) storeHeader.sync();
+    root.classList.remove('is-header-hold');
+  }
+  /* 자동 스크롤이 돌고 있을 때(대기 · 이동 · 헤더 고정 중)만 멈춤. 평소 휠 · 터치는 건드리지 않음
+     (평소에도 기준 위치를 맞추면 휠 스크롤마다 접힘이 사라져 헤더가 거의 접히지 않음) */
   function stop() {
+    var active = timer || run || root.classList.contains('is-header-hold');
     clearTimeout(timer);
+    timer = null;
     if (run) { run.stop(); run = null; }
+    if (active) releaseHeader();
   }
 
   /* 모듈 가운데가 (헤더 아래 ~ 화면 아래) 가운데에 오는 스크롤 위치 */
@@ -194,7 +206,7 @@
   /* 처음 상태: 맨 위 · 헤더 고정 · 바텀 네비 보임 (페이드 인 전에 부름) */
   window.homeReset = function () {
     stop();
-    header.style.setProperty('--header-offset', '0px'); /* 헤더 고정: 처음 위치 */
+    if (window.storeHeader) storeHeader.reset(); else header.style.setProperty('--header-offset', '0px'); /* 헤더: 펼친 처음 위치 */
     pageScroll.set(0);
     setBottomVisible(true);   /* 랜딩: 맨 위라 보임 */
   };
@@ -203,11 +215,17 @@
   window.homeFocus = function () {
     window.homeReset();
     timer = setTimeout(function () {
+      timer = null;
       setBottomVisible(false); /* 자동 스크롤 시작 → 바텀 네비게이션 사라짐 */
+      root.classList.add('is-header-hold'); /* 자동 스크롤 동안 헤더 고정 */
       run = Motion.animate(pageScroll.get(), Math.max(0, targetScroll()), {
         duration: DURATION,
         ease: EASE,
         onUpdate: pageScroll.set
+      });
+      run.then(function () {
+        run = null;
+        requestAnimationFrame(function () { requestAnimationFrame(releaseHeader); }); /* 마지막 스크롤 이벤트가 지나간 뒤 */
       });
     }, DELAY);
   };
