@@ -42,7 +42,11 @@ var pageScroll = (function () {
         if (window.parent !== window && window.parent.CONFIG) { apply(window.parent.CONFIG.title); return; }
     } catch (e) { /* 다른 출처면 부모를 못 읽음 → 아래에서 파일로 읽기 */ }
     if (!window.fetch) return;
-    fetch('../index.html', { cache: 'no-cache' })
+    /* 인덱스 위치: 기본 ../index.html, 폴더가 한 단계 더 깊으면 <html data-index-path="../../index.html">, 빈 값이면 읽지 않음(전달용 zip) */
+    var indexPath = document.documentElement.getAttribute('data-index-path');
+    if (indexPath === null) indexPath = '../index.html';
+    if (!indexPath) return;
+    fetch(indexPath, { cache: 'no-cache' })
         .then(function (res) { return res.ok ? res.text() : ''; })
         .then(function (html) {
             var match = html.match(/var CONFIG = \{[\s\S]*?\btitle:\s*'([^']*)'/);

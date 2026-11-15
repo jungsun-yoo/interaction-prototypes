@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════
    result.js — 29CM 분석 결과 화면
-   - 상품 좌표 데이터(aiPhotoAnalysis.html의 lensResultData)로 밝은 창·모서리·파형 점·썸네일·상품 리스트를 만듦
+   - 상품 좌표 데이터(index.html의 lensResultData)로 밝은 창·모서리·파형 점·썸네일·상품 리스트를 만듦
    - 썸네일·점을 누르면 포커스 창·모서리가 values.css --lens-focus-* 로 이동, 상품 리스트는 바로 전환
    - 사진 축소·창·모서리 움직임은 frameMotion()이 매 프레임 한꺼번에 그림 (result.css는 시작·끝 상태만 정함)
    다른 파일에서 쓰는 것: AIPhoto.result.frameMotion · stopMotion · selectItem · firstId
@@ -157,7 +157,7 @@
     function stopMotion() { cancelAnimationFrame(motionFrame); clearInline(); }
 
     /* ---------- AI 분석 결과(상품 좌표) → 화면 위치 ----------
-       lensResultData(aiPhotoAnalysis.html)의 상품마다 box(상품 영역)·point(파형 점)를 사진 원본 기준 0~1 비율로 받음
+       lensResultData(index.html)의 상품마다 box(상품 영역)·point(파형 점)를 사진 원본 기준 0~1 비율로 받음
        사진이 사진 틀에 object-fit: cover 로 들어가므로, 확대 배율과 잘린 양을 계산해 틀 안 px로 바꿈 */
     var photo = document.getElementById('lensResultPhoto');
     var pointsBox = document.getElementById('lensResultPoints');

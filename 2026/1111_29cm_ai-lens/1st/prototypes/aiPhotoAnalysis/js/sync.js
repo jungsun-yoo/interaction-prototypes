@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════════════
    sync.js — PC에서 바꾼 값을 휴대폰으로
    1) QR 주소: index 안에서 열렸을 때 바꾼 값(기본값과 다른 것만)을 index에 보냄 → index가 QR 주소 뒤에 붙임
-      예) …/aiPhotoAnalysis.html?v=…&time=5&loadingOnly=1&lightSize=400&light=0
+      예) …/aiPhotoAnalysis/index.html?v=…&time=5&loadingOnly=1&lightSize=400&light=0
    2) 실시간 동기화: 로컬 서버(.claude/dev-server.py)로 열었을 때만
       PC(index 안) → 서버(/__sync/state) → 이미 열려 있는 휴대폰(/__sync/events)에 바로 반영
       옵션 값 + [로딩 완료]·[다시 로딩]·자동 완료까지 따라 함

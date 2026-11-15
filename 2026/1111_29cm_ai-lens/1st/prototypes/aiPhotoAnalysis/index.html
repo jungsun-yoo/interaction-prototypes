@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"> <!-- AI 사진 분석: 29CM 로딩 → 결과 화면 + 옆 옵션창. 파일은 src/aiPhotoAnalysis/ (조절 값은 values.css) -->
+<html lang="ko" data-index-path="../../index.html"> <!-- AI 사진 분석: 29CM 로딩 → 결과 화면 + 옆 옵션창. 이 폴더가 AI 사진 분석 전부 (조절 값은 values.css, 명세는 interaction.md) -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -10,16 +10,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="AI 사진 분석"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261113-86">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261113-86">
+  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261115-02">
+  <link rel="stylesheet" href="../src/common/common.css?v=20261115-02">
   <!-- 가운데 AI 아이콘: AI 로딩 아이콘과 같은 IMG CSS Animation -->
-  <link rel="stylesheet" href="./src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261113-86">
-  <!-- AI 사진 분석 (src/aiPhotoAnalysis/) -->
-  <link rel="stylesheet" href="./src/aiPhotoAnalysis/values.css?v=20261113-86">    <!-- 조절 값: 수치는 여기서 -->
-  <link rel="stylesheet" href="./src/aiPhotoAnalysis/loading.css?v=20261113-86">   <!-- 로딩 화면 -->
-  <link rel="stylesheet" href="./src/aiPhotoAnalysis/result.css?v=20261113-86">    <!-- 결과 화면 -->
-  <link rel="stylesheet" href="./src/aiPhotoAnalysis/layout.css?v=20261113-86">    <!-- 화면 배치 · 휴대폰 -->
-  <link rel="stylesheet" href="./src/aiPhotoAnalysis/controls.css?v=20261113-86">  <!-- 옵션창 -->
+  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261115-02">
+  <!-- AI 사진 분석 (이 폴더) -->
+  <link rel="stylesheet" href="./values.css?v=20261115-02">    <!-- 조절 값: 수치는 여기서 -->
+  <link rel="stylesheet" href="./loading.css?v=20261115-02">   <!-- 로딩 화면 -->
+  <link rel="stylesheet" href="./result.css?v=20261115-02">    <!-- 결과 화면 -->
+  <link rel="stylesheet" href="./layout.css?v=20261115-02">    <!-- 화면 배치 · 휴대폰 -->
+  <link rel="stylesheet" href="./controls.css?v=20261115-02">  <!-- 옵션창 -->
 </head>
 <body>
 
@@ -29,25 +29,25 @@
       <!-- 로딩 화면 (390×844): loading.css -->
       <figure class="lens-device" id="lensLoadingScreen">
         <div class="lens-screen" aria-label="29CM AI 사진 분석 중">
-          <img class="lens-status" src="src/aiPhotoAnalysis/img/shared/status-bar.png" width="390" height="50" alt="">
+          <img class="lens-status" src="img/shared/status-bar.png" width="390" height="50" alt="">
           <section class="Content" aria-label="사진 분석">
             <div class="ImageVertical">
-              <div class="Image"><img src="src/aiPhotoAnalysis/img/loading/photo.webp" width="750" height="1000" alt="분석 중인 사진"></div>
+              <div class="Image"><img src="img/loading/photo.webp" width="750" height="1000" alt="분석 중인 사진"></div>
               <div class="Dim" aria-hidden="true"></div>
             </div>
             <div class="AILoading">
               <!-- 빛(Light): 원형 창이 사진 위를 떠다니며 지나가는 자리만 원본 사진이 밝게 비침. 가로·세로를 따로 움직여 곡선으로 훑음 (모두 transform) -->
               <div class="LensLight" aria-hidden="true"><div class="LensLightX"><div class="LensLightY">
-                <div class="LensLightMask"><div class="LensLightMaskY"><div class="LensLightMaskX"><div class="Image LensLightImage"><img src="src/aiPhotoAnalysis/img/loading/photo.webp" width="750" height="1000" alt=""></div></div></div></div>
+                <div class="LensLightMask"><div class="LensLightMaskY"><div class="LensLightMaskX"><div class="Image LensLightImage"><img src="img/loading/photo.webp" width="750" height="1000" alt=""></div></div></div></div>
               </div></div></div>
               <div class="Effect" aria-hidden="true"><div class="InnerGlow"></div></div>
               <div class="IconAIContainer" role="status">
                 <div class="IconAI" aria-hidden="true">
                   <div class="IconAILoading is-playing"> <!-- IconAI.svg 4장을 icon-ai-loading-img.css로 움직임 (AI 로딩 아이콘과 같은 방식) -->
-                    <span><img src="./src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
-                    <span><img src="./src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
-                    <span><img src="./src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
-                    <span><img src="./src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
                   </div>
                 </div>
                 <div class="LoadingMsg"><p data-text="AI가 사진을 분석중입니다">AI가 사진을 분석중입니다</p></div>
@@ -55,21 +55,21 @@
             </div>
           </section>
           <header class="AppBar" aria-label="29CM 렌즈 앱바">
-            <div class="LeftItem"><img src="src/aiPhotoAnalysis/img/shared/appbar-l.png" width="60" height="60" alt="뒤로"></div>
-            <div class="CenterItem"><img src="src/aiPhotoAnalysis/img/shared/appbar-c.png" width="110" height="60" alt="29CM 렌즈"></div>
-            <div class="RightItem"><img src="src/aiPhotoAnalysis/img/shared/appbar-r.png" width="60" height="60" alt="렌즈 스캔"></div>
+            <div class="LeftItem"><img src="img/shared/appbar-l.png" width="60" height="60" alt="뒤로"></div>
+            <div class="CenterItem"><img src="img/shared/appbar-c.png" width="110" height="60" alt="29CM 렌즈"></div>
+            <div class="RightItem"><img src="img/shared/appbar-r.png" width="60" height="60" alt="렌즈 스캔"></div>
           </header>
         </div>
       </figure>
       <!-- 결과 화면 (390×844): result.css. 처음엔 숨김 → 로딩이 끝나면 로딩 화면 대신 보이고 바텀시트가 아래에서 올라옴 (js/flow.js) -->
       <figure class="lens-device" id="lensResultScreen" hidden>
         <div class="lens-result is-sheet-down" id="lensResult" aria-label="29CM AI 사진 분석 결과">
-          <img class="lens-result-status" src="src/aiPhotoAnalysis/img/shared/status-bar.png" width="390" height="50" alt="">
+          <img class="lens-result-status" src="img/shared/status-bar.png" width="390" height="50" alt="">
           <header class="lens-result-nav" aria-label="29CM 렌즈 앱바">
-            <div class="LeftItem"><img src="src/aiPhotoAnalysis/img/shared/appbar-l.png" width="60" height="60" alt="뒤로"></div>
-            <div class="CenterItem"><img src="src/aiPhotoAnalysis/img/shared/appbar-c.png" width="110" height="60" alt="29CM 렌즈"></div>
-            <div class="RightItem"><img src="src/aiPhotoAnalysis/img/shared/appbar-r.png" width="60" height="60" alt="렌즈 스캔"></div>
-            <img class="lens-result-share" src="src/aiPhotoAnalysis/img/result/ic-share.svg" width="24" height="24" alt="공유">
+            <div class="LeftItem"><img src="img/shared/appbar-l.png" width="60" height="60" alt="뒤로"></div>
+            <div class="CenterItem"><img src="img/shared/appbar-c.png" width="110" height="60" alt="29CM 렌즈"></div>
+            <div class="RightItem"><img src="img/shared/appbar-r.png" width="60" height="60" alt="렌즈 스캔"></div>
+            <img class="lens-result-share" src="img/result/ic-share.svg" width="24" height="24" alt="공유">
           </header>
 
           <!-- 사진 위 표시(밝은 창·모서리·파형 점) 위치는 아래 lensResultData 의 비율 좌표로 js/result.js가 계산함 -->
@@ -77,14 +77,14 @@
             <img class="crop-photo" alt="검색한 사진">
             <div class="crop-dim" aria-hidden="true"></div>
             <img class="crop-photo crop-reveal" alt=""> <!-- 밝은 창: clip-path로 잘라 이동 -->
-            <div class="crop-corner is-tr"><img src="src/aiPhotoAnalysis/img/result/crop-corner-tr.svg" width="11" height="11" alt=""></div>
-            <div class="crop-corner is-bl"><img src="src/aiPhotoAnalysis/img/result/crop-corner-bl.svg" width="11" height="11" alt=""></div>
-            <div class="crop-points" id="lensResultPoints" data-dot="src/aiPhotoAnalysis/img/result/dot.svg"></div> <!-- 파형 점: 상품마다 하나, js/result.js가 만듦 -->
+            <div class="crop-corner is-tr"><img src="img/result/crop-corner-tr.svg" width="11" height="11" alt=""></div>
+            <div class="crop-corner is-bl"><img src="img/result/crop-corner-bl.svg" width="11" height="11" alt=""></div>
+            <div class="crop-points" id="lensResultPoints" data-dot="img/result/dot.svg"></div> <!-- 파형 점: 상품마다 하나, js/result.js가 만듦 -->
           </section>
 
           <section class="lens-result-sheet" aria-label="비슷한 상품">
             <div class="lens-result-handle" aria-hidden="true"></div>
-            <img class="lens-result-title" src="src/aiPhotoAnalysis/img/result/sheet-title.png" width="390" height="46" alt="AI가 사진과 비슷한 상품을 찾았어요 · 다른 사진 검색">
+            <img class="lens-result-title" src="img/result/sheet-title.png" width="390" height="46" alt="AI가 사진과 비슷한 상품을 찾았어요 · 다른 사진 검색">
             <!-- 썸네일·상품 리스트: lensResultData 의 상품마다 하나씩 js/result.js가 만듦 -->
             <div class="lens-result-thumbs" id="lensResultThumbs" role="tablist" aria-label="찾은 상품"></div>
             <div class="lens-result-lists" id="lensResultLists"></div>
@@ -202,22 +202,22 @@
        아래 값은 Figma 29Lens 3화면(241:59837 / 59871 / 59905)의 위치를 이 사진 기준 비율로 바꾼 것 -->
   <script type="application/json" id="lensResultData">
   {
-    "image": "src/aiPhotoAnalysis/img/result/photo-crop.webp",
+    "image": "img/result/photo-crop.webp",
     "items": [
       { "id": "top",    "name": "상의", "box": { "x": 0.2953, "y": 0.2821, "w": 0.4523, "h": 0.425  }, "point": { "x": 0.5667, "y": 0.3893 },
-        "thumb": "src/aiPhotoAnalysis/img/result/thumb-1.png", "list": "src/aiPhotoAnalysis/img/result/product-list-1.webp" },
+        "thumb": "img/result/thumb-1.png", "list": "img/result/product-list-1.webp" },
       { "id": "bottom", "name": "하의", "box": { "x": 0.2667, "y": 0.6607, "w": 0.3952, "h": 0.2464 }, "point": { "x": 0.4667, "y": 0.8107 },
-        "thumb": "src/aiPhotoAnalysis/img/result/thumb-2.png", "list": "src/aiPhotoAnalysis/img/result/product-list-2.webp" },
+        "thumb": "img/result/thumb-2.png", "list": "img/result/product-list-2.webp" },
       { "id": "bag",    "name": "가방", "box": { "x": 0.2048, "y": 0.2679, "w": 0.2761, "h": 0.4929 }, "point": { "x": 0.2333, "y": 0.5929 },
-        "thumb": "src/aiPhotoAnalysis/img/result/thumb-3.png", "list": "src/aiPhotoAnalysis/img/result/product-list-3.webp" }
+        "thumb": "img/result/thumb-3.png", "list": "img/result/product-list-3.webp" }
     ]
   }
   </script>
-  <script src="./src/common/common.js?v=20261113-86"></script>
+  <script src="../src/common/common.js?v=20261115-02"></script>
   <!-- 순서대로: 결과 화면 → 로딩·결과 흐름 → 옵션창 → QR·휴대폰 동기화 -->
-  <script src="./src/aiPhotoAnalysis/js/result.js?v=20261113-86"></script>
-  <script src="./src/aiPhotoAnalysis/js/flow.js?v=20261113-86"></script>
-  <script src="./src/aiPhotoAnalysis/js/controls.js?v=20261113-86"></script>
-  <script src="./src/aiPhotoAnalysis/js/sync.js?v=20261113-86"></script>
+  <script src="./js/result.js?v=20261115-02"></script>
+  <script src="./js/flow.js?v=20261115-02"></script>
+  <script src="./js/controls.js?v=20261115-02"></script>
+  <script src="./js/sync.js?v=20261115-02"></script>
 </body>
 </html>
