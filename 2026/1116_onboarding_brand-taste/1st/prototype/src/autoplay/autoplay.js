@@ -4,13 +4,15 @@
    - 시나리오는 아래 STEPS 목록. 한 번 돌고 홈 랜딩에서 끝
      1. 스크롤 → '다음에 할게요' → 다이얼로그 → 닫기
      2. 하단 버튼(선택 0개) → 스낵바
-     3. 위로 스크롤 → 썸네일 롱프레스 → 바텀시트 → 딤을 눌러 닫기 → 브랜드 3개 차례로 선택
+     3. 위로 스크롤 → 썸네일 롱프레스 → 바텀시트 → 딤을 눌러 닫기 → 브랜드 4개 무작위 선택 → 1개 취소 (최종 3개)
+        (보이는 맨 아래 줄 칸을 골라 추천 칸이 화면 밖에 생기게 → 화면 포커싱 자동 스크롤이 보이게)
      4. 하단 버튼 → 로딩 → 혜택 페이지
      5. 혜택 페이지 홈 아이콘 → 홈 랜딩 (페이드 인 · 자동 스크롤까지 보고 끝)
    필요: Motion (CDN), type_1*.js가 만든 화면 */
 var protoAutoplay = (function () {
     var EASE = [0.33, 0, 0.2, 1]; // MDS 2.0 power3.easeInOut
     var SPEED = {
+        firstScroll: 0.2, // 시작 → 첫 스크롤까지 (s). 인덱스가 화면을 불러온 뒤 0.8초 기다렸다 시작하므로 합쳐서 1초
         appear: 0.2,      // 원 나타남 · 사라짐 (s)
         move: 0.5,        // 원이 다음 누를 곳으로 이동 (s)
         hover: 0.3,       // 누르기 전 멈춤 (s) — 보는 사람이 위치를 알아챔
@@ -21,7 +23,7 @@ var protoAutoplay = (function () {
         snackbarView: 1.6,
         longPress: 0.7,     // 롱프레스 누르고 있는 시간 (판정 0.5초보다 조금 길게)
         sheetView: 1.8,     // 바텀시트 보여 주기
-        betweenBrands: 1.0, // 브랜드 선택 사이 (추천 브랜드 등장을 보여 줌)
+        betweenBrands: 0.9, // 브랜드 선택 사이 (추천 브랜드 등장 + 화면 포커싱 스크롤 0.4초가 끝날 만큼)
         landingView: 1.4,   // 혜택 페이지가 다 들어온 뒤
         homeView: 2.0       // 홈 랜딩 뒤 (페이드 인 + 자동 스크롤을 보고 끝)
     };
@@ -86,7 +88,8 @@ var protoAutoplay = (function () {
         el.dispatchEvent(new MouseEvent('click', opts));
     }
 
-    /* 누를 곳으로 이동 → 멈춤 → 누름 표시 + 실제 탭 */
+    /* 누를 곳으로 이동 → 멈춤 → 누름(작아짐) → 뗌(커지며 물결) 순간에 실제 탭
+       실제 앱처럼 손을 뗄 때 반응 (페이지 전환·선택이 누르는 순간이 아니라 떼는 순간 시작) */
     function tap(getEl, id, pointFn) {
         var el = getEl();
         if (!el) return Promise.resolve();
@@ -94,11 +97,15 @@ var protoAutoplay = (function () {
         return moveTo(pt, id)
             .then(function () { return wait(SPEED.hover, id); })
             .then(function () {
+                track(Motion.animate(ensureTouch(), { scale: [1, 0.82] }, { duration: SPEED.press, ease: EASE }));
+                return wait(SPEED.press, id);
+            })
+            .then(function () {
                 var t = ensureTouch(), ripple = t.firstChild;
-                track(Motion.animate(t, { scale: [1, 0.82, 1] }, { duration: SPEED.press * 2, ease: EASE }));
+                track(Motion.animate(t, { scale: [0.82, 1] }, { duration: SPEED.press, ease: EASE }));
                 track(Motion.animate(ripple, { scale: [1, 1.8], opacity: [0.9, 0] }, { duration: 0.4, ease: 'linear' }));
                 dispatchTap(el, pt);
-                return wait(SPEED.press * 2, id);
+                return wait(SPEED.press, id);
             });
     }
 
@@ -168,14 +175,67 @@ var protoAutoplay = (function () {
         });
     }
 
+    /* ── 브랜드 고르기 (누를 때마다 지금 화면 기준으로 무작위) ── */
+    function randomOf(list) { return list.length ? list[Math.floor(Math.random() * list.length)] : null; }
+    /* 아직 안 고른 칸: { button, top, bottom } — top·bottom은 스크롤 영역 기준 지금 화면 위치 */
+    function openItems() {
+        var a = scrollArea.getBoundingClientRect();
+        return [].slice.call(document.querySelectorAll('#brandPage .brand-item')).map(function (li) {
+            var r = li.getBoundingClientRect();
+            return { li: li, button: li.querySelector('.brand-button'), top: r.top - a.top, bottom: r.bottom - a.top };
+        }).filter(function (it) { return it.button && it.button.getAttribute('aria-pressed') !== 'true'; });
+    }
+    function visibleHeight() {
+        var bar = document.querySelector('#brandPage .bottom-button');
+        var a = scrollArea.getBoundingClientRect();
+        return (bar ? bar.getBoundingClientRect().top : a.bottom) - a.top;
+    }
+    function isVisible(it) { return it.top >= 0 && it.bottom <= visibleHeight(); }
+    /* 보이는 맨 아래 줄에서 첫 칸이 아닌 칸: 추천 3칸이 다음 줄(화면 밖)로 넘어가 포커싱 자동 스크롤이 일어남 */
+    function lowestRowNotFirst() {
+        var vis = openItems().filter(isVisible);
+        var all = [].slice.call(document.querySelectorAll('#brandPage .brand-item'));
+        var firstLeft = Math.min.apply(null, all.map(function (li) { return Math.round(li.getBoundingClientRect().left); }));
+        var lowest = Math.max.apply(null, vis.map(function (it) { return Math.round(it.top); }));
+        var row = vis.filter(function (it) { return Math.round(it.top) === lowest; });
+        return randomOf(row.filter(function (it) { return Math.round(it.li.getBoundingClientRect().left) > firstLeft; })) || randomOf(row);
+    }
+    /* 선택 4개 → 취소 1개 (최종 3개). 누를 때마다 지금 화면 기준으로 무작위 */
+    var PICKS = [
+        /* 1. 화면 위쪽 (첫 두 줄) */
+        function () {
+            var vis = openItems().filter(isVisible);
+            var rowTops = vis.map(function (it) { return Math.round(it.top); }).filter(function (t, i, all) { return all.indexOf(t) === i; }).sort(function (a, b) { return a - b; });
+            return randomOf(vis.filter(function (it) { return Math.round(it.top) <= (rowTops[1] != null ? rowTops[1] : rowTops[0]); }));
+        },
+        /* 2. 보이는 맨 아래 줄 (첫 칸 제외) → 추천 칸이 화면 밖에 생겨 포커싱 자동 스크롤 */
+        lowestRowNotFirst,
+        /* 3. 방금 추천으로 들어온 칸 중 하나 → 추천이 이어서 펼쳐짐 */
+        function () {
+            return randomOf(openItems().filter(function (it) { return it.li.dataset.recommended && isVisible(it); }))
+                || lowestRowNotFirst();
+        },
+        /* 4. 다시 보이는 맨 아래 줄 (첫 칸 제외) → 더 아래로 포커싱 자동 스크롤 */
+        lowestRowNotFirst
+    ];
+    /* 취소: 지금 보이는 선택된 칸 중 마지막으로 고른 것 말고 하나 (없으면 마지막 것) */
+    function cancelPick() {
+        var a = scrollArea.getBoundingClientRect();
+        var on = [].slice.call(document.querySelectorAll('#brandPage .brand-button[aria-pressed="true"]')).map(function (button) {
+            var r = button.closest('.brand-item').getBoundingClientRect();
+            return { button: button, top: r.top - a.top, bottom: r.bottom - a.top };
+        });
+        var last = window.brandSelect && brandSelect.selectedButtons ? brandSelect.selectedButtons().slice(-1)[0] : null;
+        return randomOf(on.filter(function (it) { return isVisible(it) && it.button !== last; })) || on[on.length - 1] || null;
+    }
+
     /* ── 시나리오 ── */
     function scenario(id) {
         var buttons = [].slice.call(document.querySelectorAll('.brand-button'));
-        var picks = buttons.slice(0, 3);   // 처음 화면의 앞 3개 (추천이 끼어들어도 그 버튼 그대로)
         var longTarget = buttons[3];       // 롱프레스로 바텀시트를 보여 줄 썸네일 (첫 줄 4번째)
         var sheetLayer = document.getElementById('brandSheetLayer');
         var dialogLayer = document.getElementById('skipDialogLayer');
-        return Promise.resolve()
+        return wait(SPEED.firstScroll, id)
             /* 1. 스크롤 → 다음에 할게요 → 다이얼로그 → 딤을 눌러 닫기 */
             .then(function () { return scrollTo(scrollArea.scrollHeight, id); })
             .then(function () { return tap(function () { return document.querySelector('.skip-button'); }, id); })
@@ -202,11 +262,12 @@ var protoAutoplay = (function () {
             })
             .then(function () { return wait(SPEED.afterClose, id); })
             .then(function () {
-                return picks.reduce(function (chain, button) {
+                return PICKS.concat([cancelPick]).reduce(function (chain, pick) {
+                    var button = null;
                     return chain
-                        .then(function () { return scrollIntoView(button, id); })
-                        .then(function () { return tap(function () { return button; }, id); })
-                        .then(function () { return wait(SPEED.betweenBrands, id); });
+                        .then(function () { var it = pick(); button = it && it.button; return button && scrollIntoView(button, id); })
+                        .then(function () { return button && tap(function () { return button; }, id); })
+                        .then(function () { return button && wait(SPEED.betweenBrands, id); });
                 }, Promise.resolve());
             })
             /* 4. 하단 버튼 → 로딩 → (노출 시간 뒤) 혜택 페이지 */
@@ -216,7 +277,13 @@ var protoAutoplay = (function () {
                     .then(function () { hideTouch(); return done; });
             })
             .then(function () { return wait(SPEED.landingView, id); })
-            /* 5. 혜택 페이지 홈 아이콘 → 홈 랜딩 */
+            /* 5. 혜택 페이지 홈 아이콘 → 홈 랜딩
+               원이 홈 아이콘 위에서 바로 나타나면 눈에 안 띄므로, 화면 가운데 아래쪽에서 나타나 홈 아이콘으로 이동해 누름 */
+            .then(function () {
+                var p = phone.getBoundingClientRect();
+                return moveTo({ x: p.width / 2, y: p.height * 0.62 }, id);
+            })
+            .then(function () { return wait(SPEED.hover, id); })
             .then(function () { return tap(function () { return document.getElementById('landingHome'); }, id); })
             .then(function () { hideTouch(); return wait(SPEED.homeView + 1.25, id); }); // 페이드 인 0.35 + 대기 0.5 + 스크롤 0.4
     }
