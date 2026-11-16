@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko" data-index-path="../../index.html"> <!-- AI 사진 분석: 29CM 로딩 → 결과 화면 + 옆 옵션창. 이 폴더가 AI 사진 분석 전부 (조절 값은 values.css, 명세는 interaction.md) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>AI 사진 분석</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AI 사진 분석"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261116-17">
+  <link rel="stylesheet" href="../src/common/common.css?v=20261116-17">
+  <!-- 가운데 AI 아이콘: AI 로딩 아이콘과 같은 IMG CSS Animation -->
+  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261116-17">
+  <!-- AI 사진 분석 (이 폴더) -->
+  <link rel="stylesheet" href="./values.css?v=20261116-17">    <!-- 조절 값: 수치는 여기서 -->
+  <link rel="stylesheet" href="./loading.css?v=20261116-17">   <!-- 로딩 화면 -->
+  <link rel="stylesheet" href="./result.css?v=20261116-17">    <!-- 결과 화면 -->
+  <link rel="stylesheet" href="./layout.css?v=20261116-17">    <!-- 화면 배치 · 휴대폰 -->
+  <link rel="stylesheet" href="./controls.css?v=20261116-17">  <!-- 옵션창 -->
+</head>
+<body>
+
+  <!-- 29CM 로딩 중 → (분석 시간 뒤 자동 · [로딩 완료]) → 29CM 분석 결과 · 옆에 옵션창 -->
+  <div class="phone">
+    <div class="lens-pair">
+      <!-- 로딩 화면 (390×844): loading.css -->
+      <figure class="lens-device" id="lensLoadingScreen">
+        <div class="lens-screen" aria-label="29CM AI 사진 분석 중">
+          <img class="lens-status" src="img/shared/status-bar.png" width="390" height="50" alt="">
+          <section class="Content" aria-label="사진 분석">
+            <div class="ImageVertical">
+              <div class="Image"><img src="img/loading/photo.webp" width="750" height="1000" alt="분석 중인 사진"></div>
+              <div class="Dim" aria-hidden="true"></div>
+            </div>
+            <div class="AILoading">
+              <!-- 빛(Light): 원형 창이 사진 위를 떠다니며 지나가는 자리만 원본 사진이 밝게 비침. 가로·세로를 따로 움직여 곡선으로 훑음 (모두 transform) -->
+              <div class="LensLight" aria-hidden="true"><div class="LensLightX"><div class="LensLightY">
+                <div class="LensLightMask"><div class="LensLightMaskY"><div class="LensLightMaskX"><div class="Image LensLightImage"><img src="img/loading/photo.webp" width="750" height="1000" alt=""></div></div></div></div>
+                <div class="LensOrb"></div> <!-- 빛 구체 (Radial 방식): 밝힘 마스크 위 색 빛 (같은 중심으로 같이 움직임) -->
+                <!-- 빛 구체 (Conic 방식): 사진 영역에 고정된 conic 색 바닥을 움직이는 원형 창으로 보여 줌 -->
+                <div class="LensOrbConic"><div class="LensOrbConicY"><div class="LensOrbConicX"><div class="LensOrbConicFill"></div></div></div></div>
+              </div></div></div>
+              <div class="IconAIContainer" role="status">
+                <div class="IconAI" aria-hidden="true">
+                  <div class="IconAILoading is-playing"> <!-- IconAI.svg 4장을 icon-ai-loading-img.css로 움직임 (AI 로딩 아이콘과 같은 방식) -->
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                  </div>
+                </div>
+                <div class="LoadingMsg"><p data-text="AI가 사진을 분석중입니다">AI가 사진을 분석중입니다</p></div>
+              </div>
+            </div>
+          </section>
+          <header class="AppBar" aria-label="29CM 렌즈 앱바">
+            <div class="LeftItem"><img src="img/shared/appbar-l.png" width="60" height="60" alt="뒤로"></div>
+            <div class="CenterItem"><img src="img/shared/appbar-c.png" width="110" height="60" alt="29CM 렌즈"></div>
+            <div class="RightItem"><img src="img/shared/appbar-r.png" width="60" height="60" alt="렌즈 스캔"></div>
+          </header>
+        </div>
+      </figure>
+      <!-- 결과 화면 (390×844): result.css. 처음엔 숨김 → 로딩이 끝나면 로딩 화면 대신 보이고 바텀시트가 아래에서 올라옴 (js/flow.js) -->
+      <figure class="lens-device" id="lensResultScreen" hidden>
+        <div class="lens-result is-sheet-down" id="lensResult" aria-label="29CM AI 사진 분석 결과">
+          <img class="lens-result-status" src="img/shared/status-bar.png" width="390" height="50" alt="">
+          <header class="lens-result-nav" aria-label="29CM 렌즈 앱바">
+            <div class="LeftItem"><img src="img/shared/appbar-l.png" width="60" height="60" alt="뒤로"></div>
+            <div class="CenterItem"><img src="img/shared/appbar-c.png" width="110" height="60" alt="29CM 렌즈"></div>
+            <div class="RightItem"><img src="img/shared/appbar-r.png" width="60" height="60" alt="렌즈 스캔"></div>
+            <img class="lens-result-share" src="img/result/ic-share.svg" width="24" height="24" alt="공유">
+          </header>
+
+          <!-- 사진 위 표시(밝은 창·모서리·파형 점) 위치는 아래 lensResultData 의 비율 좌표로 js/result.js가 계산함 -->
+          <section class="lens-result-photo" id="lensResultPhoto" aria-label="검색한 사진">
+            <img class="crop-photo" alt="검색한 사진">
+            <div class="crop-dim" aria-hidden="true"></div>
+            <img class="crop-photo crop-reveal" alt=""> <!-- 밝은 창: clip-path로 잘라 이동 -->
+            <div class="crop-corner is-tr"><img src="img/result/crop-corner-tr.svg" width="11" height="11" alt=""></div>
+            <div class="crop-corner is-bl"><img src="img/result/crop-corner-bl.svg" width="11" height="11" alt=""></div>
+            <div class="crop-points" id="lensResultPoints" data-dot="img/result/dot.svg"></div> <!-- 파형 점: 상품마다 하나, js/result.js가 만듦 -->
+          </section>
+
+          <section class="lens-result-sheet" aria-label="비슷한 상품">
+            <div class="lens-result-handle" aria-hidden="true"></div>
+            <img class="lens-result-title" src="img/result/sheet-title.png" width="390" height="46" alt="AI가 사진과 비슷한 상품을 찾았어요 · 다른 사진 검색">
+            <!-- 썸네일·상품 리스트: lensResultData 의 상품마다 하나씩 js/result.js가 만듦 -->
+            <div class="lens-result-thumbs" id="lensResultThumbs" role="tablist" aria-label="찾은 상품"></div>
+            <div class="lens-result-lists" id="lensResultLists"></div>
+          </section>
+        </div>
+      </figure>
+
+      <!-- 옵션창 (PC에서 폰 옆, 휴대폰에서는 숨김): controls.css · js/flow.js · js/controls.js -->
+      <div class="lens-controls">
+      <aside class="lens-control" aria-label="옵션 컨트롤">
+        <p class="lens-control-title">AI 사진 분석</p>
+        <p class="lens-control-state">상태 <strong id="lensState">로딩 중</strong></p>
+        <!-- 로딩만 보기 (기본 켬, 지금은 로딩 화면 작업 중): 켜면 분석 시간·[로딩 완료]를 끄고 로딩 화면만 계속 ([다시 로딩]만 사용) -->
+        <label class="lens-control-toggle is-first is-loading-only">
+          <span>로딩만 보기</span>
+          <input type="checkbox" id="lensLoadingOnly" checked>
+        </label>
+        <!-- 분석 시간: 이 시간이 지나면 자동으로 로딩 완료 (1~10초, 기본 6초. 슬라이더·입력창 증감 버튼 0.5초 단위, 입력창은 직접 입력도 가능) -->
+        <div class="lens-control-field" id="lensDurationField">
+          <label class="lens-control-label" for="lensDurationInput">분석 시간</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" id="lensDurationRange" type="range" min="1" max="10" step="0.5" value="6" aria-label="분석 시간 (초)">
+            <span class="lens-control-number"><input id="lensDurationInput" type="number" min="1" max="10" step="0.5" value="6" inputmode="decimal">초</span>
+          </div>
+        </div>
+        <button class="lens-control-btn is-primary" id="lensComplete" type="button">로딩 완료</button>
+        <button class="lens-control-btn" id="lensRestart" type="button">다시 로딩</button>
+      </aside>
+
+      <!-- Dim: 로딩 화면 사진 위 검정 막 진하기. 리셋 = values.css 3 -->
+      <aside class="lens-control" aria-label="Dim controls" id="lensDimControl">
+        <div class="lens-control-head">
+          <p class="lens-control-title">Dim</p>
+          <button class="lens-control-icon" type="button" data-reset aria-label="Reset to default" title="Reset to default"></button>
+        </div>
+        <div class="lens-control-field" data-glow-var="--img-dim-opacity" data-param="dimOpacity" data-unit="">
+          <label class="lens-control-label" for="dimOpacity">Opacity</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Opacity">
+            <span class="lens-control-number"><input id="dimOpacity" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Light: 사진 위를 떠다니며 밝게 비추는 빛. 리셋 = values.css 4 기본 수치 -->
+      <aside class="lens-control" aria-label="Light controls" id="lensLightControl">
+        <div class="lens-control-head">
+          <p class="lens-control-title">Light</p>
+          <button class="lens-control-icon" type="button" data-reset aria-label="Reset to default" title="Reset to default"></button>
+        </div>
+        <label class="lens-control-toggle is-first">
+          <span>On</span>
+          <input type="checkbox" data-toggle-param="light" data-off-class="is-light-off" checked>
+        </label>
+        <!-- Motion: 끄면 밝힘 마스크 · 빛 구체가 사진 가운데에 멈춤 (생김새 확인용) -->
+        <label class="lens-control-toggle is-first">
+          <span>Motion</span>
+          <input type="checkbox" data-toggle-param="lightMotion" data-off-class="is-light-still" checked>
+        </label>
+        <div class="lens-control-field" data-glow-var="--lens-light-size" data-param="lightSize" data-unit="px">
+          <label class="lens-control-label" for="lightSize">Size</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="200" max="800" step="10" aria-label="Size">
+            <span class="lens-control-number"><input id="lightSize" type="number" min="200" max="800" step="10" inputmode="decimal">px</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-light-opacity" data-param="lightOpacity" data-unit="">
+          <label class="lens-control-label" for="lightOpacity">Opacity</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.05" aria-label="Opacity">
+            <span class="lens-control-number"><input id="lightOpacity" type="number" min="0" max="1" step="0.05" inputmode="decimal"></span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-light-stop-1" data-param="lightStop1" data-unit="">
+          <label class="lens-control-label" for="lightStop1">Mask center (0%)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Mask center (0%)">
+            <span class="lens-control-number"><input id="lightStop1" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-light-stop-2" data-param="lightStop2" data-unit="">
+          <label class="lens-control-label" for="lightStop2">Mask middle (45%)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Mask middle (45%)">
+            <span class="lens-control-number"><input id="lightStop2" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-light-stop-3" data-param="lightStop3" data-unit="">
+          <label class="lens-control-label" for="lightStop3">Mask outer (75%)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Mask outer (75%)">
+            <span class="lens-control-number"><input id="lightStop3" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-light-x-duration" data-param="lightX" data-unit="s">
+          <label class="lens-control-label" for="lightX">Speed X (one way)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="1" max="12" step="0.5" aria-label="Speed X (one way)">
+            <span class="lens-control-number"><input id="lightX" type="number" min="1" max="12" step="0.5" inputmode="decimal">s</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-light-y-duration" data-param="lightY" data-unit="s">
+          <label class="lens-control-label" for="lightY">Speed Y (one way)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="1" max="12" step="0.5" aria-label="Speed Y (one way)">
+            <span class="lens-control-number"><input id="lightY" type="number" min="1" max="12" step="0.5" inputmode="decimal">s</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Orb: 빛 구체 크기 · 진하기 · 방식 (색 · 그라데이션은 Orb Gradient). 리셋 = values.css 4-2 -->
+      <aside class="lens-control" aria-label="Orb controls" id="lensOrbControl">
+        <div class="lens-control-head">
+          <p class="lens-control-title">Orb</p>
+          <button class="lens-control-icon" type="button" data-reset aria-label="Reset to default" title="Reset to default"></button>
+        </div>
+        <label class="lens-control-toggle is-first">
+          <span>On</span>
+          <input type="checkbox" data-toggle-param="orb" data-off-class="is-orb-off" checked>
+        </label>
+        <label class="lens-control-toggle is-first">
+          <span>Below Light</span>
+          <input type="checkbox" data-toggle-param="orbBelow" data-on-class="is-orb-below">
+        </label>
+        <label class="lens-control-toggle is-first">
+          <span>Conic floor</span>
+          <input type="checkbox" data-toggle-param="orbConic" data-on-class="is-orb-conic">
+        </label>
+        <div class="lens-control-field" data-glow-var="--lens-orb-size" data-param="orbSize" data-unit="px">
+          <label class="lens-control-label" for="orbSize">Size</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="200" max="800" step="10" aria-label="Size">
+            <span class="lens-control-number"><input id="orbSize" type="number" min="200" max="800" step="10" inputmode="decimal">px</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-orb-opacity" data-param="orbOpacity" data-unit="">
+          <label class="lens-control-label" for="orbOpacity">Opacity</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Opacity">
+            <span class="lens-control-number"><input id="orbOpacity" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-orb-blur" data-param="orbBlur" data-unit="px">
+          <label class="lens-control-label" for="orbBlur">Blur (Radial only)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="60" step="1" aria-label="Blur (Radial only)">
+            <span class="lens-control-number"><input id="orbBlur" type="number" min="0" max="60" step="1" inputmode="decimal">px</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-orb-angle" data-param="orbAngle" data-unit="deg">
+          <label class="lens-control-label" for="orbAngle">Start angle (Conic only)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="360" step="5" aria-label="Start angle (Conic only)">
+            <span class="lens-control-number"><input id="orbAngle" type="number" min="0" max="360" step="5" inputmode="decimal">°</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Orb Gradient: 색마다 색상 · 위치 · 진하기 + Fade end (위치는 반지름 기준 0% = 가운데, 100% = 원 끝). 리셋 = values.css 4-2 (디자이너 샘플) -->
+      <aside class="lens-control" aria-label="Orb gradient controls" id="lensOrbGradControl">
+        <div class="lens-control-head">
+          <p class="lens-control-title">Orb Gradient</p>
+          <button class="lens-control-icon" type="button" data-reset aria-label="Reset to default" title="Reset to default"></button>
+        </div>
+        <div class="lens-control-group is-first">
+          <p class="lens-control-group-title">Color 1</p>
+          <label class="lens-control-color" data-color-var="--ai-effect-color-1" data-param="orbColor1">
+            <span class="lens-control-label">Color</span>
+            <span class="lens-control-color-value"><span class="lens-control-hex">#86BAFF</span><input type="color" value="#86baff" aria-label="Color 1"></span>
+          </label>
+        <div class="lens-control-field" data-glow-var="--lens-orb-pos-1" data-param="orbPos1" data-unit="%">
+          <label class="lens-control-label" for="orbPos1">Position (100% = edge)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="100" step="1" aria-label="Position">
+            <span class="lens-control-number"><input id="orbPos1" type="number" min="0" max="100" step="1" inputmode="decimal">%</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-orb-stop-1" data-param="orbStop1" data-unit="">
+          <label class="lens-control-label" for="orbStop1">Opacity</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Opacity">
+            <span class="lens-control-number"><input id="orbStop1" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        </div>
+        <div class="lens-control-group">
+          <p class="lens-control-group-title">Color 2</p>
+          <label class="lens-control-color" data-color-var="--ai-effect-color-2" data-param="orbColor2">
+            <span class="lens-control-label">Color</span>
+            <span class="lens-control-color-value"><span class="lens-control-hex">#E476FF</span><input type="color" value="#e476ff" aria-label="Color 2"></span>
+          </label>
+        <div class="lens-control-field" data-glow-var="--lens-orb-pos-2" data-param="orbPos2" data-unit="%">
+          <label class="lens-control-label" for="orbPos2">Position</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="100" step="1" aria-label="Position">
+            <span class="lens-control-number"><input id="orbPos2" type="number" min="0" max="100" step="1" inputmode="decimal">%</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-orb-stop-2" data-param="orbStop2" data-unit="">
+          <label class="lens-control-label" for="orbStop2">Opacity</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Opacity">
+            <span class="lens-control-number"><input id="orbStop2" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        </div>
+        <div class="lens-control-group">
+          <p class="lens-control-group-title">Color 3</p>
+          <label class="lens-control-color" data-color-var="--ai-effect-color-3" data-param="orbColor3">
+            <span class="lens-control-label">Color</span>
+            <span class="lens-control-color-value"><span class="lens-control-hex">#878FFF</span><input type="color" value="#878fff" aria-label="Color 3"></span>
+          </label>
+        <div class="lens-control-field" data-glow-var="--lens-orb-pos-3" data-param="orbPos3" data-unit="%">
+          <label class="lens-control-label" for="orbPos3">Position</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="100" step="1" aria-label="Position">
+            <span class="lens-control-number"><input id="orbPos3" type="number" min="0" max="100" step="1" inputmode="decimal">%</span>
+          </div>
+        </div>
+        <div class="lens-control-field" data-glow-var="--lens-orb-stop-3" data-param="orbStop3" data-unit="">
+          <label class="lens-control-label" for="orbStop3">Opacity</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="1" step="0.01" aria-label="Opacity">
+            <span class="lens-control-number"><input id="orbStop3" type="number" min="0" max="1" step="0.01" inputmode="decimal"></span>
+          </div>
+        </div>
+        </div>
+        <div class="lens-control-group">
+          <p class="lens-control-group-title">Fade out</p>
+          <!-- Fade: 끄면 Color 3 진하기를 원 끝까지 그대로 (Fade end 안 씀) -->
+          <label class="lens-control-toggle is-first">
+            <span>Fade</span>
+            <input type="checkbox" data-toggle-param="orbFade" data-off-class="is-orb-nofade" checked>
+          </label>
+        <div class="lens-control-field" data-glow-var="--lens-orb-end" data-param="orbEnd" data-unit="%">
+          <label class="lens-control-label" for="orbEnd">Fade end (when Fade on)</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" type="range" min="0" max="120" step="1" aria-label="Fade end (after Color 3)">
+            <span class="lens-control-number"><input id="orbEnd" type="number" min="0" max="120" step="1" inputmode="decimal">%</span>
+          </div>
+        </div>
+        </div>
+      </aside>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ AI 분석 결과 데이터 (실서비스에서는 AI 응답으로 받는 값) ════
+       image: 사용자가 올린 사진
+       items: 찾은 상품. box = 사진 안 상품 영역, point = 파형 점 자리 (없으면 box 가운데)
+              좌표는 모두 사진 원본 기준 0~1 비율 (x·y = 왼쪽 위, w·h = 너비·높이) → 어떤 크기의 사진이 와도 같은 방식으로 계산
+       thumb·list: 프로토타입용 썸네일·상품 리스트 이미지 (실서비스에서는 검색 결과로 그림)
+       아래 값은 Figma 29Lens 3화면(241:59837 / 59871 / 59905)의 위치를 이 사진 기준 비율로 바꾼 것 -->
+  <script type="application/json" id="lensResultData">
+  {
+    "image": "img/result/photo-crop.webp",
+    "items": [
+      { "id": "top",    "name": "상의", "box": { "x": 0.2953, "y": 0.2821, "w": 0.4523, "h": 0.425  }, "point": { "x": 0.5667, "y": 0.3893 },
+        "thumb": "img/result/thumb-1.png", "list": "img/result/product-list-1.webp" },
+      { "id": "bottom", "name": "하의", "box": { "x": 0.2667, "y": 0.6607, "w": 0.3952, "h": 0.2464 }, "point": { "x": 0.4667, "y": 0.8107 },
+        "thumb": "img/result/thumb-2.png", "list": "img/result/product-list-2.webp" },
+      { "id": "bag",    "name": "가방", "box": { "x": 0.2048, "y": 0.2679, "w": 0.2761, "h": 0.4929 }, "point": { "x": 0.2333, "y": 0.5929 },
+        "thumb": "img/result/thumb-3.png", "list": "img/result/product-list-3.webp" }
+    ]
+  }
+  </script>
+  <script src="../src/common/common.js?v=20261116-17"></script>
+  <!-- 순서대로: 결과 화면 → 로딩·결과 흐름 → 옵션창 → QR·휴대폰 동기화 -->
+  <script src="./js/result.js?v=20261116-17"></script>
+  <script src="./js/flow.js?v=20261116-17"></script>
+  <script src="./js/controls.js?v=20261116-17"></script>
+  <script src="./js/sync.js?v=20261116-17"></script>
+</body>
+</html>

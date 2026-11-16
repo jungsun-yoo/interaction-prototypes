@@ -1,0 +1,313 @@
+/* ════════════════════════════════════════════════════
+   loading.css — 29CM 로딩 화면 (390×844)
+   위에서부터 쌓이는 순서: 사진 → 딤 → Light → AI 아이콘·로딩 문구 / 맨 위 상태바·앱바
+   값은 values.css, 가운데 AI 아이콘은 src/components/IconAILoading/img-css (AI 로딩 아이콘과 같은 파일)
+   ════════════════════════════════════════════════════ */
+
+.lens-screen {
+    --lens-appbar-h: 60px;          /* 앱바 높이 (@2x 120) */
+    --lens-appbar-side: 60px;       /* 앱바 좌우 버튼 너비 */
+    --lens-image-ratio: 375 / 500;  /* 사진 영역 비율 (390×520) */
+
+    position: relative;
+    width: 390px;
+    height: 844px;
+    overflow: hidden;
+    background: #000;
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.lens-screen *,
+.lens-screen *::before,
+.lens-screen *::after {box-sizing: border-box;}
+
+/* ---------- 상태바 50 · 앱바 60 ---------- */
+.lens-screen .lens-status {position: absolute; z-index: 2; top: 0; left: 0; width: 390px; height: 50px;}
+.lens-screen .AppBar {
+    position: absolute;
+    z-index: 2;
+    top: 50px;                      /* 상태바 아래 */
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-columns: var(--lens-appbar-side) 1fr var(--lens-appbar-side);
+    align-items: center;
+    height: var(--lens-appbar-h);
+}
+.lens-screen .AppBar img {display: block; object-fit: contain;}
+.lens-screen .CenterItem {justify-self: center;}
+
+/* ---------- 사진 영역: 화면 세로 가운데 390×520 (사진과 효과 층이 같은 자리에 겹침) ---------- */
+.lens-screen .Content {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+}
+.lens-screen .ImageVertical,
+.lens-screen .AILoading {
+    position: relative;
+    grid-area: 1 / 1;
+    width: 100%;
+    aspect-ratio: var(--lens-image-ratio);
+    overflow: hidden;
+}
+.lens-screen .Image {width: 100%; height: 100%;}
+.lens-screen .Image img {display: block; width: 100%; height: 100%; object-fit: cover;}
+
+/* ---------- 1·2. 사진 모션: 등장 줌아웃 → 숨쉬기 (values.css 1·2) ----------
+   사진 틀 안에서만, 기준점 가운데. 뒤에 적은 숨쉬기가 등장 끝 상태에 이어 시작
+   로딩 화면이 보일 때마다(처음 열 때 · [다시 로딩] · 분석 시간 변경) 처음부터 다시 재생됨 */
+.lens-screen .Image {
+    transform-origin: 50% 50%;
+    animation:
+        LensLandingZoomOut var(--lens-landing-duration) var(--lens-landing-easing) both,
+        LensBreath var(--lens-breath-duration) var(--lens-breath-easing) var(--lens-breath-delay) infinite alternate;
+}
+@keyframes LensLandingZoomOut {
+    from { transform: scale(var(--lens-landing-scale)); }
+    to { transform: scale(1); }
+}
+@keyframes LensBreath {
+    from { transform: scale(1); }
+    to { transform: scale(var(--lens-breath-scale)); }
+}
+
+/* ---------- 3. 딤 ---------- */
+.lens-screen .Dim {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgb(0 0 0 / var(--img-dim-opacity));
+    /* 등장: 투명 → 딤 진하기, 사진 줌아웃과 같이 시작해 같은 시간 · 이징 */
+    animation: LensDimIn var(--lens-landing-duration) var(--lens-landing-easing) both;
+}
+@keyframes LensDimIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ---------- 4. Light (values.css 4) ----------
+   딤 위에 원본 사진을 한 장 더 두고, 원형 마스크로 빛이 있는 자리만 보이게 함
+   - .LensLight: 나타나기 (opacity 0 → 1)
+   - .LensLightX / .LensLightY: 빛 중심을 가로·세로로 이동
+   - .LensLightMask: 빛 중심의 원형 창 (원형 그라데이션 마스크)
+   - .LensLightMaskY / .LensLightMaskX: 같은 시간·곡선으로 반대로 움직여 안의 사진을 제자리에 둠
+   - .LensLightImage: 원본 사진 (사진 모션 .Image 를 그대로 따라감)
+   움직임은 모두 transform이라 GPU가 처리 (마스크 모양은 한 번만 그림) */
+.lens-screen .LensLight {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    animation: LensLightIn var(--lens-light-in-duration) var(--lens-light-in-easing) var(--lens-light-in-delay) forwards;
+}
+/* 옵션창 끄기: display:none 이면 반대 움직임이 처음부터 다시 시작돼 어긋남 → 숨기기만 (밝힘 마스크 · 빛 구체 따로) */
+.lens-screen.is-light-off .LensLightMask {visibility: hidden;}
+.lens-screen .LensLightX,
+.lens-screen .LensLightY,
+.lens-screen .LensLightMaskX {position: absolute; left: 0; top: 0; will-change: transform;}
+/* 시작 위치: 사진 가운데. 빛이 나타나기 시작하는 순간(in-delay)에 가로 · 세로 모두 범위 한가운데
+   (지연 = in-delay - 한 방향 시간 × 1.5 → 돌아오는 구간 한가운데 → 가운데에서 왼쪽 · 위로 움직이기 시작)
+   × 0.5 로 바꾸면 오른쪽 · 아래로 출발. Speed를 바꿔도 같이 계산됨 */
+.lens-screen .LensLightX,
+.lens-screen .LensLightMaskX,
+.lens-screen .LensOrbConicX {
+    --lens-light-x-delay: calc(var(--lens-light-in-delay) - var(--lens-light-x-duration) * 1.5);
+}
+.lens-screen .LensLightY,
+.lens-screen .LensLightMaskY,
+.lens-screen .LensOrbConicY {
+    --lens-light-y-delay: calc(var(--lens-light-in-delay) - var(--lens-light-y-duration) * 1.5);
+}
+.lens-screen .LensLightX {animation: LensLightMoveX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;}
+.lens-screen .LensLightY {animation: LensLightMoveY var(--lens-light-y-duration) var(--lens-light-easing) var(--lens-light-y-delay) infinite alternate;}
+.lens-screen .LensLightMask {
+    position: absolute;
+    left: calc(var(--lens-light-size) / -2);
+    top: calc(var(--lens-light-size) / -2);
+    width: var(--lens-light-size);
+    height: var(--lens-light-size);
+    opacity: var(--lens-light-opacity);
+    -webkit-mask-image: radial-gradient(circle closest-side, rgb(0 0 0 / var(--lens-light-stop-1)) 0%, rgb(0 0 0 / var(--lens-light-stop-2)) 45%, rgb(0 0 0 / var(--lens-light-stop-3)) 75%, rgb(0 0 0 / 0) 100%);
+    mask-image: radial-gradient(circle closest-side, rgb(0 0 0 / var(--lens-light-stop-1)) 0%, rgb(0 0 0 / var(--lens-light-stop-2)) 45%, rgb(0 0 0 / var(--lens-light-stop-3)) 75%, rgb(0 0 0 / 0) 100%);
+}
+.lens-screen .LensLightMaskY {
+    position: absolute;
+    left: calc(var(--lens-light-size) / 2);
+    top: calc(var(--lens-light-size) / 2);
+    will-change: transform;
+    animation: LensLightBackY var(--lens-light-y-duration) var(--lens-light-easing) var(--lens-light-y-delay) infinite alternate;
+}
+.lens-screen .LensLightMaskX {animation: LensLightBackX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;}
+.lens-screen .LensLightImage {position: absolute; left: 0; top: 0; width: 390px; height: 520px;}
+/* 4-2. 빛 구체 (values.css 4-2): 밝힘 마스크 위, 빛 중심에 지름 --lens-orb-size 원
+   색 3개를 원형 그라데이션으로 (위치는 반지름 기준: 100% = 원 끝, 위치가 앞 지점보다 작으면 앞 지점에 맞춰짐) → 둥글게 자른 뒤 blur */
+/* 층 순서: 기본은 밝힘 마스크 위 · 옵션창 Orb 'Below Light'를 켜면 밝힘 마스크 아래 */
+.lens-screen .LensLightMask {z-index: 1;}
+.lens-screen .LensOrb {z-index: 2;}
+.lens-screen.is-orb-below .LensOrb {z-index: 0;}
+/* 옵션창 Orb Gradient 'Fade' 끄기: 마지막 지점 진하기를 Color 3과 같게 → Color 3 이후 원 끝까지 그대로 (가장자리는 원 모양 + blur) */
+.lens-screen.is-orb-nofade {--lens-orb-end-alpha: var(--lens-orb-stop-3);}
+.lens-screen .LensOrb {
+    position: absolute;
+    left: calc(var(--lens-orb-size) / -2);
+    top: calc(var(--lens-orb-size) / -2);
+    width: var(--lens-orb-size);
+    height: var(--lens-orb-size);
+    border-radius: 50%;
+    opacity: var(--lens-orb-opacity);
+    filter: blur(var(--lens-orb-blur));
+    background: radial-gradient(circle closest-side at 50% 50%,
+        rgb(from var(--ai-effect-color-1) r g b / var(--lens-orb-stop-1)) var(--lens-orb-pos-1),
+        rgb(from var(--ai-effect-color-2) r g b / var(--lens-orb-stop-2)) var(--lens-orb-pos-2),
+        rgb(from var(--ai-effect-color-3) r g b / var(--lens-orb-stop-3)) var(--lens-orb-pos-3),
+        rgb(from var(--ai-effect-color-3) r g b / var(--lens-orb-end-alpha)) var(--lens-orb-end));
+    will-change: transform;
+}
+
+/* 4-2. 빛 구체 · Conic 방식 (옵션창 Orb 'Conic floor'): 색은 사진 영역에 고정으로 깔고, 오브는 그 색을 보여 주는 창
+   - .LensOrbConic: 빛 중심의 원형 창 (Radial 방식과 같은 크기 · 진하기 · 단계 알파 · Fade end 를 마스크로)
+   - .LensOrbConicY / X: 밝힘 마스크처럼 반대로 움직여 안의 색 바닥을 제자리에 둠
+   - .LensOrbConicFill: 사진 영역(390×520) conic 그라데이션 — 돌리지 않음 (시작 각도만 옵션창에서, 값을 바꿀 때만 다시 그림)
+   움직임은 모두 transform → GPU. 매 프레임 다시 그리는 부분 없음 */
+.lens-screen .LensOrbConic {
+    position: absolute;
+    z-index: 2;
+    left: calc(var(--lens-orb-size) / -2);
+    top: calc(var(--lens-orb-size) / -2);
+    width: var(--lens-orb-size);
+    height: var(--lens-orb-size);
+    border-radius: 50%;
+    opacity: var(--lens-orb-opacity);
+    visibility: hidden;
+    -webkit-mask-image: radial-gradient(circle closest-side at 50% 50%, rgb(0 0 0 / var(--lens-orb-stop-1)) var(--lens-orb-pos-1), rgb(0 0 0 / var(--lens-orb-stop-2)) var(--lens-orb-pos-2), rgb(0 0 0 / var(--lens-orb-stop-3)) var(--lens-orb-pos-3), rgb(0 0 0 / var(--lens-orb-end-alpha)) var(--lens-orb-end));
+    mask-image: radial-gradient(circle closest-side at 50% 50%, rgb(0 0 0 / var(--lens-orb-stop-1)) var(--lens-orb-pos-1), rgb(0 0 0 / var(--lens-orb-stop-2)) var(--lens-orb-pos-2), rgb(0 0 0 / var(--lens-orb-stop-3)) var(--lens-orb-pos-3), rgb(0 0 0 / var(--lens-orb-end-alpha)) var(--lens-orb-end));
+}
+.lens-screen .LensOrbConicY {
+    position: absolute;
+    left: calc(var(--lens-orb-size) / 2);
+    top: calc(var(--lens-orb-size) / 2);
+    will-change: transform;
+    animation: LensLightBackY var(--lens-light-y-duration) var(--lens-light-easing) var(--lens-light-y-delay) infinite alternate;
+}
+.lens-screen .LensOrbConicX {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+    animation: LensLightBackX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;
+}
+.lens-screen .LensOrbConicFill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 390px;
+    height: 520px;
+    background: conic-gradient(from var(--lens-orb-angle) at 50% 50%,
+        var(--ai-effect-color-1) 0deg, var(--ai-effect-color-2) 90deg,
+        var(--ai-effect-color-3) 225deg, var(--ai-effect-color-1) 360deg);
+}
+/* 옵션창 Light 'Motion' 끄기: 밝힘 마스크 · 빛 구체가 사진 가운데(이동 범위 한가운데)에 멈춤
+   빛 중심은 가운데로, 안쪽 사진 · 색 바닥은 그만큼 반대로 → 겹침은 그대로 */
+.lens-screen.is-light-still {
+    --lens-light-cx: calc((var(--lens-light-x-from) + var(--lens-light-x-to)) / 2);
+    --lens-light-cy: calc((var(--lens-light-y-from) + var(--lens-light-y-to)) / 2);
+}
+.lens-screen.is-light-still .LensLightX {animation: none; transform: translateX(var(--lens-light-cx));}
+.lens-screen.is-light-still .LensLightY {animation: none; transform: translateY(var(--lens-light-cy));}
+.lens-screen.is-light-still .LensLightMaskX,
+.lens-screen.is-light-still .LensOrbConicX {animation: none; transform: translateX(calc(var(--lens-light-cx) * -1));}
+.lens-screen.is-light-still .LensLightMaskY,
+.lens-screen.is-light-still .LensOrbConicY {animation: none; transform: translateY(calc(var(--lens-light-cy) * -1));}
+
+/* 방식 전환 · 끄기 · 층 순서 (숨기기만: 반대 움직임이 계속 돌아야 어긋나지 않음) */
+.lens-screen.is-orb-conic .LensOrb {visibility: hidden;}
+.lens-screen.is-orb-conic .LensOrbConic {visibility: visible;}
+.lens-screen.is-orb-off .LensOrb,
+.lens-screen.is-orb-off .LensOrbConic {visibility: hidden;}
+.lens-screen.is-orb-below .LensOrbConic {z-index: 0;}
+@keyframes LensLightIn {
+    to { opacity: 1; }
+}
+@keyframes LensLightMoveX {
+    from { transform: translateX(var(--lens-light-x-from)); }
+    to { transform: translateX(var(--lens-light-x-to)); }
+}
+@keyframes LensLightMoveY {
+    from { transform: translateY(var(--lens-light-y-from)); }
+    to { transform: translateY(var(--lens-light-y-to)); }
+}
+@keyframes LensLightBackX {
+    from { transform: translateX(calc(var(--lens-light-x-from) * -1)); }
+    to { transform: translateX(calc(var(--lens-light-x-to) * -1)); }
+}
+@keyframes LensLightBackY {
+    from { transform: translateY(calc(var(--lens-light-y-from) * -1)); }
+    to { transform: translateY(calc(var(--lens-light-y-to) * -1)); }
+}
+
+/* ---------- 5. AI 아이콘 + 로딩 문구 (values.css 5) ---------- */
+.lens-screen .IconAIContainer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.lens-screen .IconAI {position: relative; z-index: 2; width: 32px; height: 32px; flex: none;}
+
+/* 문구 글꼴: 29CM Editorial (29cm.co.kr과 같은 CDN 웹폰트, 쓰는 굵기 500만) */
+@font-face {
+    font-family: "29CM Editorial";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("https://d13fzx7h5ezopb.cloudfront.net/fonts/29cm-editorial/29cm-editorial-500.woff2") format("woff2");
+}
+.lens-screen .LoadingMsg {position: relative; z-index: 1; text-align: center;}
+.lens-screen .LoadingMsg p {
+    position: relative;
+    margin: 0;
+    font-family: "29CM Editorial", Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--loading-msg-white);
+}
+.lens-screen .LoadingMsg p[data-text]::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    color: transparent;
+    background-image: linear-gradient(var(--loading-msg-angle), transparent 0%, var(--loading-msg-highlight-color) 50%, transparent 100%);
+    background-size: var(--loading-msg-width) 100%;
+    background-repeat: no-repeat;
+    background-position: -100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+@supports (animation-timing-function: linear(0, 1)) and (width: calc(1px * (1s / 1s))) {
+    .lens-screen .LoadingMsg p[data-text]::after {
+        animation: LoadingMsgShimmer var(--loading-msg-cycle) var(--loading-msg-easing) infinite;
+    }
+}
+@keyframes LoadingMsgShimmer {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ---------- 동작 줄이기 설정 ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .lens-screen .Image,
+    .lens-screen .Dim,
+    .lens-screen .LensLightX,
+    .lens-screen .LensLightY,
+    .lens-screen .LensLightMaskX,
+    .lens-screen .LensLightMaskY,
+    .lens-screen .LensOrbConicX,
+    .lens-screen .LensOrbConicY {animation: none;}
+}

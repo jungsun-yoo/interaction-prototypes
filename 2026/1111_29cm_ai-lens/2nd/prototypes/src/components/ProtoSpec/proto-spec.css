@@ -1,0 +1,127 @@
+/* ════════════════════════════════════════════════════
+   proto-spec.css — 폰 화면 오른쪽 "개발 전달용 설명창" (핵심 사항 + 파일 다운로드)
+   여러 프로토타입이 같이 씀. 사용법:
+   1) <main class="phone has-spec"> 안을 .proto-layout > .proto-screen(폰 화면) + .proto-spec(설명창)으로 나눔
+   2) 타입 CSS :root 에 --phone-w(폰 + 간격 + 설명창), --phone-screen-w(폰 화면 너비) 지정
+      → index 툴바(새 창·다시 재생)는 폰 화면 오른쪽에 붙고, 설명창은 그 툴바 바로 아래에 놓임
+   3) 휴대폰(QR)으로 열면 설명창은 숨기고 폰 화면만 보임
+   ════════════════════════════════════════════════════ */
+
+:root {
+  --spec-w: 280px;        /* 설명창 너비 */
+  --spec-gap: 12px;       /* 폰 ↔ 설명창 (index 툴바 간격과 같음) */
+  --spec-top: 100px;      /* index 툴바(버튼 2개 = 92) 아래 8px */
+}
+
+/* 폰 틀은 투명하게 두고, 안의 .proto-screen 이 폰 모양(모서리·그림자)을 가짐 */
+.phone.has-spec {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none !important;
+  overflow: visible;
+}
+.proto-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spec-gap);
+}
+.proto-screen {
+  position: relative;
+  flex: none;
+  width: var(--phone-screen-w);
+  height: var(--phone-h);
+  overflow: hidden;
+  border-radius: 48px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+}
+
+/* ---------- 설명창 ---------- */
+.proto-spec {
+  flex: none;
+  box-sizing: border-box;
+  width: var(--spec-w);
+  max-height: calc(var(--phone-h) - var(--spec-top));
+  margin-top: var(--spec-top);
+  padding: 20px;
+  overflow-y: auto;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+  color: #1f1f1f;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  line-height: 19px;
+  -webkit-font-smoothing: antialiased;
+}
+.proto-spec-title {margin: 0 0 12px; font-size: 15px; font-weight: 700; line-height: 22px;}
+.proto-spec-title + .proto-spec-files {margin-bottom: 12px;}   /* 타이틀 바로 밑 다운로드 버튼 */
+.proto-spec-desc {margin: 0 0 16px; color: #8a8a8a; font-size: 12px; line-height: 17px;}
+.proto-spec h3 {margin: 16px 0 8px; color: #8a8a8a; font-size: 12px; font-weight: 600; line-height: 16px;}
+.proto-spec h3:first-of-type {margin-top: 0;}
+
+/* 항목: 이름(위) · 값(아래) */
+.proto-spec dl {margin: 0;}
+.proto-spec dt {color: #8a8a8a; font-size: 12px; line-height: 17px;}
+.proto-spec dt:not(:first-child) {margin-top: 8px;}
+.proto-spec dd {margin: 2px 0 0; word-break: keep-all; overflow-wrap: anywhere;}
+.proto-spec code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: #f2f2f2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
+}
+
+/* 순서 설명 */
+.proto-spec ol {margin: 0; padding-left: 18px;}
+.proto-spec li + li {margin-top: 4px;}
+
+/* 주의 메모 */
+.proto-spec-note {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f7f7f7;
+  color: #555;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+/* 파일 다운로드 */
+.proto-spec-files {display: grid; gap: 8px; margin: 0;}
+.proto-spec-file {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #000;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.proto-spec-file small {min-width: 0; overflow: hidden; text-overflow: ellipsis; color: rgba(255, 255, 255, 0.6); font-size: 11px; font-weight: 400;}
+.proto-spec-file:hover {background: #333;}
+/* 다운로드 아이콘 (버튼 오른쪽 끝, 글자색을 따라감) */
+.proto-spec-file::after {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v11'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M5 20h14'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v11'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M5 20h14'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- 휴대폰(QR)으로 열 때: 설명창 숨김, 폰 화면만 ---------- */
+@media (hover: none), (pointer: coarse) {
+  .phone.has-spec {width: 100%; max-width: none;}
+  .proto-spec {display: none;}
+  .proto-layout {justify-content: center;}
+  .proto-screen {border-radius: 0; box-shadow: none;}
+}
