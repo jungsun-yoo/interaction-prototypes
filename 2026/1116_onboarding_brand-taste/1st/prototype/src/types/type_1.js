@@ -666,3 +666,29 @@ var brandSheet = (function () {
 
     return { show: show, hide: hide };
 })();
+
+/* 11. 하단 인포 문구 "길게 누르면 브랜드 정보를 확인할 수 있습니다"
+   처음엔 없음 → 화면(브랜드 목록)을 스크롤하면 제자리에서 페이드 인 (opacity 0 → 1, 0.2s ease), 한 번 뜨면 유지
+   'brandpage:reset'(처음 상태로)이면 다시 숨김 */
+(function () {
+    var info = document.querySelector('#brandPage .cta-info');
+    var scrollArea = document.querySelector('#brandPage .scroll-area');
+    if (!info || !scrollArea || !window.Motion) return;
+
+    var FADE_IN = { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }; // CSS ease
+    var shown = false;
+    var run = null;
+
+    scrollArea.addEventListener('scroll', function () {
+        if (shown || scrollArea.scrollTop <= 0) return;
+        shown = true;
+        run = Motion.animate(info, { opacity: [0, 1] }, FADE_IN);
+    }, { passive: true });
+
+    document.addEventListener('brandpage:reset', function () {
+        if (run && run.stop) run.stop();
+        run = null;
+        shown = false;
+        info.style.opacity = '';
+    });
+})();

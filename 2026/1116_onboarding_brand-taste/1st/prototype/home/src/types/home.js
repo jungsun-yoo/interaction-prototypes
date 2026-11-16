@@ -157,11 +157,13 @@
    - 조건 (명세 필수): 자동 스크롤 중에는 상단 헤더 고정 (<html class="is-header-hold">, storeheader.js가 접힘을 건너뜀)
                       자동 스크롤이 끝나면 원래 홈처럼: 사용자가 내리면 그 자리부터 헤더가 접히고 탭은 스티키
                       바텀 네비게이션 · FAB은 자동 스크롤이 시작되면 사라짐 (아래로 스크롤할 때와 같은 상태)
-   - 자동 스크롤 중 사용자가 만지거나 휠을 굴리면 멈춤
+   - 모듈 포커싱이 끝나고 1.3초 뒤 같은 모션(0.4초 power3.easeInOut)으로 맨 위로 자동 스크롤, 맨 위에 닿으면 헤더 고정을 풂
+   - 자동 스크롤 진행 중(대기 · 이동 · 1.3초 머묾 포함) 사용자가 화면을 만지거나(터치 · 클릭) 휠을 굴리면 남은 자동 스크롤은 모두 취소
    필요: common.js (pageScroll), Motion (CDN) */
 (function () {
   var DELAY = 500;    /* 페이지 랜딩(페이드 인 끝) 후 대기 (ms) */
-  var DURATION = 0.4; /* 이동 시간 (s) */
+  var DURATION = 0.4; /* 이동 시간 (s), 내려갈 때 · 올라올 때 같음 */
+  var RETURN_DELAY = 1300; /* 모듈 포커싱이 끝난 뒤 맨 위로 돌아가기까지 대기 (ms) */
   var EASE = [0.33, 0, 0.2, 1]; /* mds power3.easeInOut */
   var moduleEl = document.querySelector('.taste-brand');
   var header = document.querySelector('.header');
@@ -211,27 +213,42 @@
     setBottomVisible(true);   /* 랜딩: 맨 위라 보임 */
   };
 
-  /* 랜딩(페이드 인 끝)부터 0.5초 뒤 자동 스크롤 */
+  /* 자동 스크롤 한 구간: 지금 위치 → to (0.4초 power3.easeInOut) */
+  function scrollTo(to, done) {
+    run = Motion.animate(pageScroll.get(), to, {
+      duration: DURATION,
+      ease: EASE,
+      onUpdate: pageScroll.set
+    });
+    run.then(function () {
+      run = null;
+      done();
+    });
+  }
+
+  /* 랜딩(페이드 인 끝)부터 0.5초 뒤 모듈로 자동 스크롤 → 1.3초 머문 뒤 맨 위로 자동 스크롤
+     헤더는 처음부터 맨 위로 돌아올 때까지 고정. 중간에 사용자가 화면을 만지면 남은 자동 스크롤은 모두 취소 */
   window.homeFocus = function () {
     window.homeReset();
     timer = setTimeout(function () {
       timer = null;
       setBottomVisible(false); /* 자동 스크롤 시작 → 바텀 네비게이션 사라짐 */
       root.classList.add('is-header-hold'); /* 자동 스크롤 동안 헤더 고정 */
-      run = Motion.animate(pageScroll.get(), Math.max(0, targetScroll()), {
-        duration: DURATION,
-        ease: EASE,
-        onUpdate: pageScroll.set
-      });
-      run.then(function () {
-        run = null;
-        requestAnimationFrame(function () { requestAnimationFrame(releaseHeader); }); /* 마지막 스크롤 이벤트가 지나간 뒤 */
+      scrollTo(Math.max(0, targetScroll()), function () {
+        timer = setTimeout(function () {
+          timer = null;
+          scrollTo(0, function () { /* 올라오는 동안 바텀 네비 · FAB은 위로 스크롤할 때처럼 다시 보임 */
+            setBottomVisible(true);
+            requestAnimationFrame(function () { requestAnimationFrame(releaseHeader); }); /* 마지막 스크롤 이벤트가 지나간 뒤 */
+          });
+        }, RETURN_DELAY);
       });
     }, DELAY);
   };
 
   pageScroll.target.addEventListener('touchstart', stop, { passive: true });
   pageScroll.target.addEventListener('wheel', stop, { passive: true });
+  pageScroll.target.addEventListener('pointerdown', stop, { passive: true }); /* PC 클릭 · 스크롤바 잡기 */
   window.addEventListener('pagescroll:wheel', stop);
 })();
 

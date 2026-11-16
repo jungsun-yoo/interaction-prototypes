@@ -81,6 +81,10 @@
     .panel-download.is-locked {opacity: 0.3; cursor: not-allowed;}
     .panel-download.is-locked:hover {background: #fff;}
     .panel-download--sub.is-locked:hover {background: rgba(255, 255, 255, 0.1);}
+    .panel-download-note {display: flex; align-items: flex-start; gap: 5px; margin: 8px 2px 0; color: var(--panel-sub); font-size: 11px; line-height: 15px;}
+    .panel-download-note svg {flex-shrink: 0; display: block; margin-top: 1px; color: #ffb020;} /* 강조 아이콘 (주의) */
+    .panel-download-note b {color: #fff; font-weight: 600;}
+    .panel-download-note.is-hidden {display: none;}
     .panel-download.is-hidden, .panel-download-wrap:not(:has(.panel-download:not(.is-hidden))) {display: none;}
 
     .panel [hidden] {display: none;} /* 타입 1개일 때 목록 숨김 (display: flex보다 우선) */
@@ -236,6 +240,8 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
           <span>Prototype (.zip)</span>
         </a>
+        <!-- zip 버튼 아래 안내 (CONFIG.downloadNote, zip 버튼이 보이고 잠기지 않았을 때만) -->
+        <p class="panel-download-note is-hidden" id="downloadNote"></p>
       </div>
       <!-- 타입 목록·키보드 안내: 타입이 2개 이상일 때만 보임 (script) -->
       <p class="panel-label" id="typeLabel" data-config="label"></p>
@@ -313,20 +319,20 @@
       title: '[온보딩] 브랜드 취향 선택',
       sub: '26-1116 · Prototype',
       label: 'TYPES',
-      version: '20261115-37',
+      version: '20261116-3',
       qrHost: '192.168.0.184', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
-      figma: '',
+      figma: 'https://www.figma.com/design/QPXTMyV6kwAg0aV9car2fr/%EC%98%A8%EB%B3%B4%EB%94%A9-2.0?node-id=62057-47959&t=vSe21ivC81TaReIr-4', // 온보딩 2.0 (최종)
       jira: '',
-      spec: 'prototype/interaction.md', // 인터랙션 명세 (1차: 브랜드 선택 화면)
-      download: 'download/prototype.zip', // 최종 결정 후 이 이름으로 넣고 locked에서 'download' 빼기
-      locked: ['spec', 'download'], // 아직 내려받기 전: 버튼만 보이고 흐리게
+      spec: '', // 명세 단독 버튼 없음 — 명세(interaction.md)는 Prototype (.zip) 안에 들어 있음
+      download: 'download/prototype.zip', // 최종 프로토타입 (2026-11-16 확정, prototype/ 폴더 압축)
+      downloadNote: '압축 파일 안의 <b>interaction.md</b>를 확인해 주세요.', // zip 버튼 아래 안내 (비우면 숨김)
+      locked: [], // 내려받기 잠금 (예: ['spec', 'download'] 면 버튼만 보이고 흐리게)
       /* 화면 1개면 prototype/, 여러 개면 prototypes/ 폴더 */
       options: [
-        { id: 'glow', label: 'AI Glow 높이 키우기', on: 'tall', off: 'original', default: 'original' }, /* 끄면 원본 (덮개 0·20, 글로우 48) */
         { id: 'loading-preview', label: '로딩 화면 바로보기', on: 'on', off: 'off', default: 'off', group: 'preview' }, /* 켜면 첫 화면 대신 로딩 화면만 */
         { id: 'thumb-count', label: '로딩 썸네일 개수', default: '3', when: { id: 'loading-preview', value: 'on' }, /* 바로보기 켰을 때만 */
           choices: [{ value: '1', label: '1개' }, { value: '2', label: '2개' }, { value: '3', label: '3개' }] },
-        { id: 'loading-hold', label: '로딩 화면 노출 시간', range: { min: 3, max: 8, step: 0.5, scale: 1000, unit: '초' }, default: '5000',
+        { id: 'loading-hold', label: '로딩 화면 노출 시간', range: { min: 3, max: 8, step: 0.5, scale: 1000, unit: '초' }, default: '3000',
           note: '최소 3초 노출' }, /* 하단 버튼 → 로딩 → 이 시간 뒤 혜택 페이지. 저장값 ms */
         { id: 'landing-preview', label: '혜택페이지 바로보기', on: 'on', off: 'off', default: 'off', group: 'preview' }, /* 켜면 진입 모션으로 랜딩 페이지 */
         { id: 'home-preview', label: '홈 화면 바로보기', on: 'on', off: 'off', default: 'off', group: 'preview' } /* 켜면 바로 무신사 홈 */
@@ -476,8 +482,10 @@
       /* 다운로드 버튼(md·zip): 항목 값 → 공통 CONFIG 값 순서, 없으면 숨김. 받는 파일 이름은 원래 이름 그대로 */
       function renderDownload(type) {
         var locked = type.locked || CONFIG.locked || [];
+        var zip = type.download || CONFIG.download;
         renderFile(document.getElementById('specLink'), type.spec || CONFIG.spec, locked.indexOf('spec') !== -1);
-        renderFile(document.getElementById('downloadLink'), type.download || CONFIG.download, locked.indexOf('download') !== -1);
+        renderFile(document.getElementById('downloadLink'), zip, locked.indexOf('download') !== -1);
+        renderDownloadNote(zip && locked.indexOf('download') === -1 ? (type.downloadNote || CONFIG.downloadNote || '') : '');
       }
       function renderFile(link, file, locked) {
         if (file && !locked) {
@@ -488,6 +496,14 @@
         link.classList.toggle('is-locked', !!file && !!locked);
         link.setAttribute('aria-disabled', String(!!locked));
         link.title = !file ? '' : locked ? '아직 내려받을 수 없습니다 (준비 중)' : file.split('/').pop() + ' 내려받기';
+      }
+      /* zip 아래 안내: 주의 아이콘(주황 원 + 느낌표, 느낌표는 패널 바탕색으로 뚫음) + 문구 */
+      function renderDownloadNote(text) {
+        var note = document.getElementById('downloadNote');
+        note.innerHTML = text ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="11"/>'
+          + '<path d="M12 6.5v7" style="stroke: var(--panel-bg)" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.5" style="fill: var(--panel-bg)"/></svg>'
+          + '<span>' + text + '</span>' : '';
+        note.classList.toggle('is-hidden', !text);
       }
 
       function select(id) {

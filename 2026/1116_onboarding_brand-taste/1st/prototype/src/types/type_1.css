@@ -95,11 +95,11 @@
     var(--glow-periwinkle) 0deg, var(--glow-pink) 90deg, var(--glow-sky) 180deg,
     var(--glow-lavender) 270deg, var(--glow-periwinkle) 360deg);
 }
-.ambient-glow::after { /* 배경 가림 (고정). 원본 top 0 → 16 (보이는 띠를 넓힘) */
+.ambient-glow::after { /* 배경 가림 (고정) */
   content: '';
   position: absolute;
   z-index: 10;
-  top: 16px;
+  top: 0;
   left: 50%;
   width: 150%;
   height: 150%;
@@ -122,11 +122,11 @@
   overflow: hidden;
   opacity: 0;
 }
-.entrance-glow::after { /* 배경 가림 (고정). 원본 top 20 → 32 */
+.entrance-glow::after { /* 배경 가림 (고정) */
   content: '';
   position: absolute;
   z-index: 10;
-  top: 32px;
+  top: 20px;
   left: 50%;
   width: 120%;
   height: 150%;
@@ -163,13 +163,13 @@
 .gradient-effect.is-active .entrance-glow {animation: glowFadeOut 6s cubic-bezier(0, 0, 0.2, 1) forwards;}
 .gradient-effect.is-active .entrance-glow-spinner {animation: glowSpin 4s cubic-bezier(0, 0, 0.2, 1) forwards;}
 
-/* 03 고정 SVG 글로우: 1초 대기 후 2초 페이드 인. 세로 48 → 80 (앱바 전체, scaleY 약 1.67) */
+/* 03 고정 SVG 글로우: 1초 대기 후 2초 페이드 인. 세로 48 (원본) */
 .static-glow {
   display: block;
   position: relative;
   z-index: 3;
   width: 360px;
-  height: 100%;
+  height: 48px;
   opacity: 0;
 }
 @keyframes glowFadeIn {
@@ -177,11 +177,6 @@
   100% {opacity: 1;}
 }
 .gradient-effect.is-active .static-glow {animation: glowFadeIn 2s ease 1s forwards;}
-
-/* 옵션 '글로우 세로' 끔 = 원본 값 (인덱스 오른쪽 옵션 컨트롤, <html data-glow="original">) */
-:root[data-glow="original"] .ambient-glow::after {top: 0;}
-:root[data-glow="original"] .entrance-glow::after {top: 20px;}
-:root[data-glow="original"] .static-glow {height: 48px;}
 
 /* 모션 줄이기: 섬광 없이 안정된 배경 */
 @media (prefers-reduced-motion: reduce) {
@@ -451,6 +446,7 @@
   line-height: 18px;
   color: var(--mds-color-gray600);
   text-align: center;
+  opacity: 0; /* 처음엔 숨김 → 화면을 스크롤하면 제자리에서 페이드 인 (type_1.js 11) */
 }
 .cta-area {
   width: 100%;

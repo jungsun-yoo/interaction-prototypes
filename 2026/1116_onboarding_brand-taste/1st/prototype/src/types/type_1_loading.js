@@ -168,7 +168,7 @@ var loadingScreen = (function () {
 
     /* 첫 화면에서 이어지는 흐름: 1개 이상 선택하고 하단 버튼 → 로딩 → 랜딩 페이지 */
     var LOADING_HOLD_MIN = 3000;     // 조건: 로딩 화면은 최소 3초 노출 (ms). 실제로는 3초가 지나고 추천 결과가 오면 넘어감
-    var LOADING_HOLD_DEFAULT = 5000; // 옵션 값이 없을 때 (인덱스 옵션 기본값과 같게)
+    var LOADING_HOLD_DEFAULT = 3000; // 옵션 값이 없을 때 (인덱스 옵션 기본값과 같게)
     function loadingHold() {
         var ms = parseInt(document.documentElement.getAttribute('data-loading-hold'), 10);
         return Math.max(LOADING_HOLD_MIN, isFinite(ms) ? ms : LOADING_HOLD_DEFAULT);
