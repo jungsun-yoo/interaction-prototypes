@@ -3,12 +3,12 @@
 > 개발 전달용 인터랙션 명세입니다. 값은 MDS 모션 토큰(`src/common/mds-motion.css`) 기준입니다.
 > 모션 라이브러리: **Motion** (motion.dev) — 웹 `motion`, React `motion/react`. 스프링 값은 두 환경 공통입니다.
 
-- 프로토타입: `Type_1.html` (코드 블록 기준 버전 `20261116-3`, 홈 `20261116-2`)
+- 프로토타입: `Type_1.html` (코드 블록 기준 버전 `20261116-4`, 홈 `20261116-2`)
 - Figma (최종): [온보딩 2.0](https://www.figma.com/design/QPXTMyV6kwAg0aV9car2fr/%EC%98%A8%EB%B3%B4%EB%94%A9-2.0?node-id=62057-47959&t=vSe21ivC81TaReIr-4)
 - Figma (작업 파일, 아래 노드 번호 기준): [작업-26-11](https://www.figma.com/design/C0XR68hLZmVbjQEOOqKCd0) — 브랜드 선택 284:148309 · 썸네일 284:148873 · 다이얼로그 295:151182 · 바텀시트 290:150996 · 로딩 299:151314 · 혜택 페이지 302:198803 · 취향 브랜드 모듈 304:201941
-- 수정일: 2026-11-16 (하단 인포 문구 스크롤 시 페이드 인 · 로딩 기본 3초 · 홈 자동 스크롤 후 1.3초 뒤 맨 위 복귀 · AI Glow 원본 사이즈 확정) · 2026-11-15 (로딩 썸네일 간격 · 타이틀 글자 모션 · 홈 헤더 접힘 · 추천 브랜드 화면 포커싱 확정 반영)
+- 수정일: 2026-11-16 (하단 인포 문구 스크롤 시 페이드 인 · 로딩 기본 3초 · 홈 자동 스크롤 후 1.3초 뒤 맨 위 복귀 · AI Glow 원본 사이즈 확정 · 최종 확정 후 전체 재검토) · 2026-11-15 (로딩 썸네일 간격 · 타이틀 글자 모션 · 홈 헤더 접힘 · 추천 브랜드 화면 포커싱 확정 반영)
 - 진행: 1차 브랜드 선택 화면 · 2차 로딩 화면 · **3차 혜택 페이지 · 무신사 홈** (전체 흐름 1차 정리 완료)
-- ⚠️ **초안**: 프로토타입이 최종 확정되면 명세 전체(표 · 코드 블록)를 다시 검토하고 고칩니다.
+- ✅ **최종**: 2026-11-16 프로토타입 최종 확정 후 명세 전체(표 · 코드 블록)를 프로토타입 코드와 대조해 고쳤습니다.
 
 ### 읽는 법
 
@@ -23,25 +23,25 @@
 | 항목 | 규칙 |
 |---|---|
 | 스프링 | **mass 1 · 시작 속도 0** 기준의 stiffness · damping (Motion `type: 'spring'`). duration 없음 — 끝나는 시점은 스프링 값으로 정해짐 |
-| 플랫폼 변환 | iOS `UISpringTimingParameters(mass: 1, stiffness:, damping:, initialVelocity: .zero)` / Android Compose `spring()`은 dampingRatio · stiffness 방식이라 `dampingRatio = damping ÷ (2√stiffness)` 로 환산 |
+| 플랫폼 변환 | 웹은 stiffness · damping 그대로. **iOS · Android는 MDS 토큰에 정해진 플랫폼 값**을 씀 (아래 표, `mds-motion.css`의 `-ios-duration` / `-ios-dampingRatio`, `-aos-stiffness` / `-aos-dampingRatio`). 공식으로 환산하지 않음 |
 | 중간에 끊길 때 | 진행 중인 모션이 있으면 **지금 값에서 이어서** 새 목표로 감 (처음 값으로 되돌리지 않음) |
 | 기준점 | 따로 적지 않으면 **가운데** |
 | 단위 | pt (375 기준) |
 | 키프레임 이징 | 구간 이징은 **그 키프레임에서 다음 키프레임까지**에 적용 (예: "0%: A" = 0→다음 구간이 A) |
-| 모션 줄이기 | OS 접근성 '동작 줄이기' 켜짐 → 반복 · 장식 모션(AI 아이콘, 배경 효과)은 정지 |
+| 모션 줄이기 | OS 접근성 '동작 줄이기' 켜짐 → 반복 · 장식 모션(AI 아이콘, 배경 효과)은 정지. 단 로딩 화면의 AI 로딩 아이콘(2-4)은 진행 표시라 그대로 재생 |
 
 ### 사용한 MDS 토큰
 
-| 토큰 | 값 |
-|---|---|
-| `spring.normal` | stiffness 815 · damping 54 |
-| `spring.bouncy` | stiffness 322 · damping 26 |
-| `spring.elastic` | stiffness 550 · damping 24 |
-| `spring.gentle` | stiffness 438 · damping 40 |
-| `power3.easeOut` | cubic-bezier(0.22, 1, 0.36, 1) |
-| `power2.easeInOut` | cubic-bezier(0.6, 0, 0.4, 1) |
-| `power1.easeInOut` | cubic-bezier(0.33, 0, 0.67, 1) |
-| `power3.easeInOut` | cubic-bezier(0.33, 0, 0.2, 1) |
+| 토큰 | 웹 (stiffness · damping) | iOS (duration · dampingRatio) | Android (stiffness · dampingRatio) |
+|---|---|---|---|
+| `spring.normal` | 815 · 54 | 0.3s · 1 | 1200 · 1 |
+| `spring.bouncy` | 322 · 26 | 0.5s · 0.75 | 600 · 0.75 |
+| `spring.elastic` | 550 · 24 | 0.6s · 0.5 | 400 · 0.5 |
+| `spring.gentle` | 438 · 40 | 0.45s · 1 | 700 · 1 |
+| `power3.easeOut` | cubic-bezier(0.22, 1, 0.36, 1) | | |
+| `power2.easeInOut` | cubic-bezier(0.6, 0, 0.4, 1) | | |
+| `power1.easeInOut` | cubic-bezier(0.33, 0, 0.67, 1) | | |
+| `power3.easeInOut` | cubic-bezier(0.33, 0, 0.2, 1) | | |
 
 ```js
 // 프로토타입: type_1.js — 모든 스프링 모션이 이 값을 씀
@@ -62,7 +62,7 @@ var MDS_SPRING = {
 | 롱프레스 툴팁 | `src/img/tooltip_longPress.png` | 129 × 48 | 이미지 |
 | 고정 글로우 | 마크업 인라인 SVG (1-2 코드) | 360 × 48 | 그라디언트 + blur 12.5 |
 | 썸네일 | `src/img/thumb/` | 79 원 (로딩 64) | 프로토타입용 |
-| AI 로딩 아이콘 | `src/components/IconAILoading/img-css/` (CSS + `IconAI.svg` 4장) | 32 | AI 렌즈와 같은 컴포넌트 원본 |
+| AI 로딩 아이콘 | `src/components/IconAILoading/img-css/` (CSS + `IconAI.svg` 1장, 4번 겹쳐 씀) | 32 | AI 렌즈와 같은 컴포넌트 원본 |
 
 ---
 
@@ -348,7 +348,7 @@ icon.addEventListener('animationend', function (e) {
 | 다운 | 손가락(또는 마우스 왼쪽)을 댐 |
 | 탭 (클릭) | 짧게 누르고 뗌 → 선택 / 해제 (1-5) |
 | 롱프레스 | **0.5s** 이상 누름 → 바텀시트 (1-11). 이후 떼도 탭으로 처리하지 않음 |
-| 취소 | **10px** 넘게 움직임 (스크롤로 판단) · 스크롤 시작 · 손가락이 버튼 밖으로 나감 → 탭·롱프레스 모두 아님 |
+| 취소 | **10px** 넘게 움직임 (스크롤로 판단) · 스크롤 시작 · (마우스) 버튼 밖으로 나감 → 탭·롱프레스 모두 아님 |
 
 **누름 스케일**
 
@@ -386,7 +386,8 @@ function end(e, isUp) {
     emit('release', done.button, e);
     if (isUp && !done.long) emit('click', done.button, e);
 }
-// pointerdown → onDown, pointermove → onMove, pointerup → end(e, true), pointercancel → end(e, false)
+// pointerdown → onDown, pointermove → onMove, pointerup → end(e, true), pointercancel → end(e, false),
+// pointerleave → end(e, false), contextmenu → preventDefault (롱프레스 기본 메뉴 막기)
 
 // 누름 스케일
 thumbPress.on('down', function (button) {
@@ -498,7 +499,7 @@ thumbPress.on('release', function (button) {
 | 등장 시점 | 랜딩 **0.5s** 후 |
 | 등장 | scale 0.75 → 1 · `spring.elastic` + 투명도 0 → 1 **0.1s linear** (동시) |
 | 기준점 | 하단 가운데 (말꼬리 끝) |
-| 유지 | 등장 후 **5s** |
+| 유지 | 페이드 인(0.1s)이 끝난 뒤 **5s** |
 | 퇴장 | scale 1 → 0.75 · `spring.elastic` + 투명도 1 → 0 **0.1s linear** |
 
 **사라지는 조건** (먼저 일어난 것 하나, 한 번 사라지면 다시 나오지 않음)
@@ -507,6 +508,8 @@ thumbPress.on('release', function (button) {
 - 스크롤해서 툴팁 윗선이 상태바 아래 **85** 안으로 들어옴
 - 아무 썸네일이나 롱프레스
 - 아무 썸네일이나 선택 (해제는 해당 없음)
+
+등장(0.5s) 전에 롱프레스 · 선택이 일어나거나, 등장 시점에 툴팁이 이미 상단 85 안에 있으면 툴팁을 띄우지 않음.
 
 ```css
 .longpress-tooltip {
@@ -517,7 +520,9 @@ thumbPress.on('release', function (button) {
   transform-origin: 50% 100%;
   opacity: 0;
   transform: scale(0.75);
+  pointer-events: none;    /* 숨은 툴팁이 썸네일 탭을 가로채지 않게 */
 }
+.longpress-tooltip.is-visible {pointer-events: auto;} /* 보일 때만 탭으로 닫기 (등장 때 붙이고 사라질 때 뗌) */
 ```
 
 ```js
@@ -526,7 +531,7 @@ function play(scaleTo, opacityTo) {
     Motion.animate(tooltip, { scale: scaleTo }, MDS_SPRING.elastic);
     Motion.animate(tooltip, { opacity: opacityTo }, { duration: 0.1, ease: 'linear' });
 }
-// 등장: 랜딩 0.5초 후 play(1, 1) → 5초 후 play(0.75, 0)
+// 등장: 랜딩 0.5초 후 play(1, 1) → 페이드 0.1초 + 5초 후 play(0.75, 0)
 ```
 
 ---
@@ -806,11 +811,13 @@ function addThumb(item, isLast) {
 }
 function playThumbs(items) {
     items.forEach(function (item, i) {
-        setTimeout(function () { addThumb(item, i === items.length - 1); }, STAGGER * i * 1000);
+        var isLast = i === items.length - 1;
+        if (i === 0) addThumb(item, isLast);  // 첫 썸네일은 화면이 나오는 순간 바로
+        else setTimeout(function () { addThumb(item, isLast); }, STAGGER * i * 1000);
     });
 }
 
-/* 타이틀: 글자마다 span (공백도 한 칸). 글자는 Y 위치(bouncy) + 페이드 인, "!"만 스케일(elastic) */
+/* 타이틀: 글자마다 span (공백도 한 칸, NBSP로 넣음). 글자는 Y 위치(bouncy) + 페이드 인, "!"만 스케일(elastic) */
 function playTitle(count) {
     title.classList.add('is-rise');
     var rise = CHAR_RISE;                                         // 6 아래에서
@@ -818,7 +825,7 @@ function playTitle(count) {
     var delay = lastThumbAt + TITLE_GAP;
     chars.forEach(function (span, i) {
         var isBang = i === chars.length - 1;
-        var isSpace = span.textContent === ' ';
+        var isSpace = span.textContent === '\u00A0'; // 공백(NBSP)
         if (i > 0 && !isSpace) delay += isBang ? BANG_GAP : CHAR_STAGGER; // 공백은 간격 없음
         if (isBang) {
             span.style.transform = 'scale(0)';
@@ -981,7 +988,7 @@ Figma 302:198803. 웹뷰 페이지입니다. 이 페이지 자체에는 모션�
 |---|---|
 | 동작 | 앱바 뒤로가기 → 이전 페이지로 이동 (OS 기본 pop) |
 | 돌아온 화면 | **로딩 화면이 아니라 처음 상태의 브랜드 선택 화면** |
-| 초기화 시점 | 혜택 페이지가 다 들어온 순간 (뒤에 가려진 화면을 미리 초기화 → 돌아올 때 보이는 변화 없음) |
+| 초기화 시점 | 혜택 페이지가 다 들어온 순간 (뒤에 가려진 화면을 미리 초기화 → 돌아올 때 보이는 변화 없음). 이동이 끝나기 전에 뒤로 가면 초기화하지 않음 |
 | 초기화 내용 | 로딩 화면 숨김 · 선택 모두 해제 · 추천으로 들어온 브랜드 삭제 (다시 선택하면 다시 들어옴) · 타이틀 · 하단 버튼 문구 처음으로 · 하단 인포 문구 숨김 · 스크롤 맨 위 |
 
 ```js
@@ -991,7 +998,7 @@ function resetBrandPage() {
     brandPage.querySelector('.scroll-area').scrollTop = 0;
     document.dispatchEvent(new CustomEvent('brandpage:reset')); // 선택 해제 · 추천 삭제 · 타이틀/버튼 문구 처음으로 (type_1.js)
 }
-protoPage.push(brandPage, page).then(resetBrandPage);          // 새 페이지 이동이 끝난 뒤
+protoPage.push(brandPage, page).then(function () { if (isOpen) resetBrandPage(); }); // 새 페이지 이동이 끝난 뒤 (그 사이 뒤로 갔으면 안 함)
 ```
 
 ```js
@@ -1068,13 +1075,14 @@ document.addEventListener('brandpage:reset', function () {
 | 위로 | 접힌 채 유지 |
 | 맨 위 근처 (스크롤 위치 88 안) | 스크롤 위치만큼만 접힘 → 맨 위에서 다 펼쳐짐 |
 
-- 자동 스크롤 뒤(스크롤 위치 약 376)에 손을 대도 헤더가 한 번에 접히지 않음 — 그 자리부터 내린 만큼 접힘
+- 자동 스크롤이 모듈 위치(스크롤 위치 약 376)에 머무는 중에 손을 대 멈춰도 헤더가 한 번에 접히지 않음 — 그 자리부터 내린 만큼 접힘
+- 자동 스크롤이 끝까지 돌면 맨 위(0)에서 끝나므로 기존 규칙(접힘 = 스크롤 위치)과 같음
 - 맨 위에서 시작하면 "접힘 = 스크롤 위치"인 기존 규칙과 같은 결과
 - 접힘 기준 위치는 **자동 스크롤이 끝나는(또는 멈추는) 순간 한 번만** 지금 위치로 맞춤. 평소 스크롤 중에 다시 맞추면 내린 거리가 쌓이지 않아 헤더가 거의 접히지 않음 (PC 휠에서 확인된 문제, 2026-11-15 수정)
 
 | 예시 (375 × 812, PC 휠) | 스크롤 위치 | 헤더 접힘 |
 |---|---|---|
-| 자동 스크롤 끝 | 약 376 | 0 (펼침) |
+| 머묾 중 사용자 조작으로 취소 | 약 376 | 0 (펼침) |
 | 아래로 스크롤 | 576 | −88 (탭만 스티키) |
 | 위로 조금 | 476 | −88 유지 |
 | 맨 위까지 | 0 | 0 (다 펼쳐짐) |
@@ -1090,7 +1098,7 @@ document.addEventListener('brandpage:reset', function () {
 ```js
 // 프로토타입: type_1_pages.js (요약) — 홈 진입: 바로 가리고 → 맨 위 상태로 0.35s 페이드 인 → 끝나면 랜딩 → 자동 스크롤
 frame.style.opacity = '0';                 // 빈 화면부터 (배경 #F5F5F5)
-home.homeReset();                          // 맨 위 · 헤더 고정 · 바텀 네비 보임
+home.homeReset();                          // 맨 위 · 헤더 펼침 · 바텀 네비 보임
 Motion.animate(frame, { opacity: [0, 1] }, { duration: 0.35, ease: 'linear' })
     .then(function () { home.homeFocus(); }); // 페이드 인 끝 = 랜딩
 ```
@@ -1120,13 +1128,15 @@ function homeReset() {            // 처음 상태: 맨 위 · 헤더 펼침 · 
 function homeFocus() {
     homeReset();
     timer = setTimeout(function () {
+        timer = null;             // 비워 둬야 끝난 뒤 평소 휠에서 stop()이 헤더 기준을 다시 맞추지 않음
         setBottomVisible(false);  // 자동 스크롤 시작 → 바텀 네비게이션 · FAB 사라짐
         headerHold = true;        // 자동 스크롤 동안 헤더 고정 (맨 위 복귀까지)
         scrollTo(Math.max(0, targetScroll()), function () {       // ① 모듈로
             timer = setTimeout(function () {                      // ② 1.3초 머묾
+                timer = null;
                 scrollTo(0, function () {                         // ③ 맨 위로
                     setBottomVisible(true);
-                    releaseHeader();                              // 끝나면 원래 홈 규칙으로
+                    requestAnimationFrame(function () { requestAnimationFrame(releaseHeader); }); // 마지막 스크롤 이벤트가 지나간 뒤(2프레임) 원래 홈 규칙으로
                 });
             }, RETURN_DELAY);
         });
@@ -1194,4 +1204,4 @@ Figma 304:201941. 퀵메뉴 아래 · 캠페인 섹션 위. 이 모듈 자체에
 
 ## 남은 일
 
-- 최종 확정 후: 명세 전체 재검토 (표 값 · 코드 블록이 프로토타입과 같은지)
+- 없음 (2026-11-16 최종 확정 · 전체 재검토 완료)

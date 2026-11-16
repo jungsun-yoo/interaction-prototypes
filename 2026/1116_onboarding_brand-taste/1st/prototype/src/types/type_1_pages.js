@@ -86,7 +86,7 @@ var homePage = (function () {
         if (fadeRun) fadeRun.stop();
         frame.style.opacity = '0'; // 빈 화면부터 (첫 프레임 번쩍임 없음)
         whenReady(function (win) {
-            if (win.homeReset) win.homeReset(); // 맨 위 · 헤더 고정 · 바텀 네비 보임
+            if (win.homeReset) win.homeReset(); // 맨 위 · 헤더 펼침 · 바텀 네비 보임
             if (!window.Motion) { frame.style.opacity = ''; if (win.homeFocus) win.homeFocus(); return; }
             fadeRun = Motion.animate(frame, { opacity: [0, 1] }, { duration: HOME_FADE, ease: 'linear' });
             fadeRun.then(function () { if (!page.hidden && win.homeFocus) win.homeFocus(); });
