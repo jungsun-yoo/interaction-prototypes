@@ -77,6 +77,10 @@
     .panel-download--sub {height: 32px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600;}
     .panel-download--sub:hover {background: rgba(255, 255, 255, 0.16);}
     /* 숨김: 버튼 각각, 둘 다 숨으면 묶음(위 여백)까지 */
+    /* 잠금(아직 내려받을 수 없음): 자리만 보이고 흐리게 · 누를 수 없음 (href 없음) */
+    .panel-download.is-locked {opacity: 0.3; cursor: not-allowed;}
+    .panel-download.is-locked:hover {background: #fff;}
+    .panel-download--sub.is-locked:hover {background: rgba(255, 255, 255, 0.1);}
     .panel-download.is-hidden, .panel-download-wrap:not(:has(.panel-download:not(.is-hidden))) {display: none;}
 
     .panel [hidden] {display: none;} /* 타입 1개일 때 목록 숨김 (display: flex보다 우선) */
@@ -230,7 +234,7 @@
         </a>
         <a class="panel-download is-hidden" id="downloadLink" download>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-          <span>Download (.zip)</span>
+          <span>Prototype (.zip)</span>
         </a>
       </div>
       <!-- 타입 목록·키보드 안내: 타입이 2개 이상일 때만 보임 (script) -->
@@ -283,6 +287,7 @@
         jira: 프로젝트 공통 Jira 링크 / 항목별로 다르면 items의 jira에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
         spec: 인터랙션 명세 md (Type_N.html 옆 interaction.md를 그대로 연결, 복사본 만들지 않음). 비우면 버튼 숨김
         download: 내려받을 zip. 최종 결정된 프로토타입만 마지막에 넣음 (비우면 버튼 숨김)
+        locked: 버튼은 보이되 아직 못 내려받게 흐리게 할 것 ['spec', 'download']. 준비되면 배열에서 빼기 (zip은 그때 download/ 에 넣기)
                   download/ 폴더에 prototype(s) 폴더를 통째로 압축. 항목별로 다르면 items의 download
                   zip을 넣은 뒤 prototype(s) 안 파일을 고치면 zip도 다시 만들고 version 올리기
         items가 1개면 타입 목록·TYPES 제목·키보드 안내를 숨김
@@ -313,7 +318,8 @@
       figma: '',
       jira: '',
       spec: 'prototype/interaction.md', // 인터랙션 명세 (1차: 브랜드 선택 화면)
-      download: '', // 예: 'download/prototype.zip'
+      download: 'download/prototype.zip', // 최종 결정 후 이 이름으로 넣고 locked에서 'download' 빼기
+      locked: ['spec', 'download'], // 아직 내려받기 전: 버튼만 보이고 흐리게
       /* 화면 1개면 prototype/, 여러 개면 prototypes/ 폴더 */
       options: [
         { id: 'glow', label: 'AI Glow 높이 키우기', on: 'tall', off: 'original', default: 'original' }, /* 끄면 원본 (덮개 0·20, 글로우 48) */
@@ -469,16 +475,19 @@
 
       /* 다운로드 버튼(md·zip): 항목 값 → 공통 CONFIG 값 순서, 없으면 숨김. 받는 파일 이름은 원래 이름 그대로 */
       function renderDownload(type) {
-        renderFile(document.getElementById('specLink'), type.spec || CONFIG.spec);
-        renderFile(document.getElementById('downloadLink'), type.download || CONFIG.download);
+        var locked = type.locked || CONFIG.locked || [];
+        renderFile(document.getElementById('specLink'), type.spec || CONFIG.spec, locked.indexOf('spec') !== -1);
+        renderFile(document.getElementById('downloadLink'), type.download || CONFIG.download, locked.indexOf('download') !== -1);
       }
-      function renderFile(link, file) {
-        if (file) {
+      function renderFile(link, file, locked) {
+        if (file && !locked) {
           link.href = file + '?v=' + CONFIG.version;
           link.setAttribute('download', file.split('/').pop());
         } else link.removeAttribute('href');
         link.classList.toggle('is-hidden', !file);
-        link.title = file ? file.split('/').pop() + ' 내려받기' : '';
+        link.classList.toggle('is-locked', !!file && !!locked);
+        link.setAttribute('aria-disabled', String(!!locked));
+        link.title = !file ? '' : locked ? '아직 내려받을 수 없습니다 (준비 중)' : file.split('/').pop() + ' 내려받기';
       }
 
       function select(id) {
