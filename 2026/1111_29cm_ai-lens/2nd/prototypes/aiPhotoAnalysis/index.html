@@ -10,16 +10,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="AI 사진 분석"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261116-20">
-  <link rel="stylesheet" href="../src/common/common.css?v=20261116-20">
+  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261116-21">
+  <link rel="stylesheet" href="../src/common/common.css?v=20261116-21">
   <!-- 가운데 AI 아이콘: AI 로딩 아이콘과 같은 IMG CSS Animation -->
-  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261116-20">
+  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261116-21">
   <!-- AI 사진 분석 (이 폴더) -->
-  <link rel="stylesheet" href="./values.css?v=20261116-20">    <!-- 조절 값: 수치는 여기서 -->
-  <link rel="stylesheet" href="./loading.css?v=20261116-20">   <!-- 로딩 화면 -->
-  <link rel="stylesheet" href="./result.css?v=20261116-20">    <!-- 결과 화면 -->
-  <link rel="stylesheet" href="./layout.css?v=20261116-20">    <!-- 화면 배치 · 휴대폰 -->
-  <link rel="stylesheet" href="./controls.css?v=20261116-20">  <!-- 옵션창 -->
+  <link rel="stylesheet" href="./values.css?v=20261116-21">    <!-- 조절 값: 수치는 여기서 -->
+  <link rel="stylesheet" href="./loading.css?v=20261116-21">   <!-- 로딩 화면 -->
+  <link rel="stylesheet" href="./result.css?v=20261116-21">    <!-- 결과 화면 -->
+  <link rel="stylesheet" href="./layout.css?v=20261116-21">    <!-- 화면 배치 · 휴대폰 -->
+  <link rel="stylesheet" href="./controls.css?v=20261116-21">  <!-- 옵션창 -->
 </head>
 <body>
 
@@ -39,9 +39,7 @@
               <!-- 빛(Light): 원형 창이 사진 위를 떠다니며 지나가는 자리만 원본 사진이 밝게 비침. 가로·세로를 따로 움직여 곡선으로 훑음 (모두 transform) -->
               <div class="LensLight" aria-hidden="true"><div class="LensLightX"><div class="LensLightY">
                 <div class="LensLightMask"><div class="LensLightMaskY"><div class="LensLightMaskX"><div class="Image LensLightImage"><img src="img/loading/photo.webp" width="750" height="1000" alt=""></div></div></div></div>
-                <div class="LensOrb"></div> <!-- 빛 구체 (Radial 방식): 밝힘 마스크 위 색 빛 (같은 중심으로 같이 움직임) -->
-                <!-- 빛 구체 (Conic 방식): 사진 영역에 고정된 conic 색 바닥을 움직이는 원형 창으로 보여 줌 -->
-                <div class="LensOrbConic"><div class="LensOrbConicY"><div class="LensOrbConicX"><div class="LensOrbConicFill"></div></div></div></div>
+                <div class="LensOrb"></div> <!-- 빛 구체: 밝힘 마스크 위 색 빛 (같은 중심으로 같이 움직임) -->
               </div></div></div>
               <div class="IconAIContainer" role="status">
                 <div class="IconAI" aria-hidden="true">
@@ -211,10 +209,6 @@
           <span>Below Light</span>
           <input type="checkbox" data-toggle-param="orbBelow" data-on-class="is-orb-below">
         </label>
-        <label class="lens-control-toggle is-first">
-          <span>Conic floor</span>
-          <input type="checkbox" data-toggle-param="orbConic" data-on-class="is-orb-conic">
-        </label>
         <div class="lens-control-field" data-glow-var="--lens-orb-size" data-param="orbSize" data-unit="px">
           <label class="lens-control-label" for="orbSize">Size</label>
           <div class="lens-control-duration">
@@ -230,17 +224,10 @@
           </div>
         </div>
         <div class="lens-control-field" data-glow-var="--lens-orb-blur" data-param="orbBlur" data-unit="px">
-          <label class="lens-control-label" for="orbBlur">Blur (Radial only)</label>
+          <label class="lens-control-label" for="orbBlur">Blur</label>
           <div class="lens-control-duration">
-            <input class="lens-control-range" type="range" min="0" max="60" step="1" aria-label="Blur (Radial only)">
+            <input class="lens-control-range" type="range" min="0" max="60" step="1" aria-label="Blur">
             <span class="lens-control-number"><input id="orbBlur" type="number" min="0" max="60" step="1" inputmode="decimal">px</span>
-          </div>
-        </div>
-        <div class="lens-control-field" data-glow-var="--lens-orb-angle" data-param="orbAngle" data-unit="deg">
-          <label class="lens-control-label" for="orbAngle">Start angle (Conic only)</label>
-          <div class="lens-control-duration">
-            <input class="lens-control-range" type="range" min="0" max="360" step="5" aria-label="Start angle (Conic only)">
-            <span class="lens-control-number"><input id="orbAngle" type="number" min="0" max="360" step="5" inputmode="decimal">°</span>
           </div>
         </div>
       </aside>
@@ -354,11 +341,11 @@
     ]
   }
   </script>
-  <script src="../src/common/common.js?v=20261116-20"></script>
+  <script src="../src/common/common.js?v=20261116-21"></script>
   <!-- 순서대로: 결과 화면 → 로딩·결과 흐름 → 옵션창 → QR·휴대폰 동기화 -->
-  <script src="./js/result.js?v=20261116-20"></script>
-  <script src="./js/flow.js?v=20261116-20"></script>
-  <script src="./js/controls.js?v=20261116-20"></script>
-  <script src="./js/sync.js?v=20261116-20"></script>
+  <script src="./js/result.js?v=20261116-21"></script>
+  <script src="./js/flow.js?v=20261116-21"></script>
+  <script src="./js/controls.js?v=20261116-21"></script>
+  <script src="./js/sync.js?v=20261116-21"></script>
 </body>
 </html>

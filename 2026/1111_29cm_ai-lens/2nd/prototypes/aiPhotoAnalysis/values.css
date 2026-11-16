@@ -60,8 +60,6 @@
     --lens-orb-stop-3: 0.4;               /* 색 3 진하기 */
     --lens-orb-end: 110%;                 /* Fade end: 색이 다 사라지는 지점 (100% 넘으면 원 끝에 조금 남아 blur로 번짐) */
     --lens-orb-end-alpha: 0;              /* Fade end 진하기: 0 = 다 사라짐. 옵션창 Fade 끄기 → Color 3 진하기 그대로 (loading.css) */
-    /* Conic 방식 (옵션창 Orb 'Conic floor'): 사진 영역에 고정으로 까는 conic 색 바닥, 위 크기 · 진하기 · 단계 · Fade end 를 창 마스크로 씀 */
-    --lens-orb-angle: 0deg;               /* 색 바닥 시작 각도 (돌리지 않음) */
 
     /* ---------- 5. 로딩 문구 "AI가 사진을 분석중입니다": 흰 하이라이트가 왼→오로 지나감 ---------- */
     --loading-msg-white: rgb(255 255 255 / 0.7);        /* 글자 기본색 */

@@ -111,13 +111,11 @@
    (지연 = in-delay - 한 방향 시간 × 1.5 → 돌아오는 구간 한가운데 → 가운데에서 왼쪽 · 위로 움직이기 시작)
    × 0.5 로 바꾸면 오른쪽 · 아래로 출발. Speed를 바꿔도 같이 계산됨 */
 .lens-screen .LensLightX,
-.lens-screen .LensLightMaskX,
-.lens-screen .LensOrbConicX {
+.lens-screen .LensLightMaskX {
     --lens-light-x-delay: calc(var(--lens-light-in-delay) - var(--lens-light-x-duration) * 1.5);
 }
 .lens-screen .LensLightY,
-.lens-screen .LensLightMaskY,
-.lens-screen .LensOrbConicY {
+.lens-screen .LensLightMaskY {
     --lens-light-y-delay: calc(var(--lens-light-in-delay) - var(--lens-light-y-duration) * 1.5);
 }
 .lens-screen .LensLightX {animation: LensLightMoveX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;}
@@ -166,67 +164,19 @@
     will-change: transform;
 }
 
-/* 4-2. 빛 구체 · Conic 방식 (옵션창 Orb 'Conic floor'): 색은 사진 영역에 고정으로 깔고, 오브는 그 색을 보여 주는 창
-   - .LensOrbConic: 빛 중심의 원형 창 (Radial 방식과 같은 크기 · 진하기 · 단계 알파 · Fade end 를 마스크로)
-   - .LensOrbConicY / X: 밝힘 마스크처럼 반대로 움직여 안의 색 바닥을 제자리에 둠
-   - .LensOrbConicFill: 사진 영역(390×520) conic 그라데이션 — 돌리지 않음 (시작 각도만 옵션창에서, 값을 바꿀 때만 다시 그림)
-   움직임은 모두 transform → GPU. 매 프레임 다시 그리는 부분 없음 */
-.lens-screen .LensOrbConic {
-    position: absolute;
-    z-index: 2;
-    left: calc(var(--lens-orb-size) / -2);
-    top: calc(var(--lens-orb-size) / -2);
-    width: var(--lens-orb-size);
-    height: var(--lens-orb-size);
-    border-radius: 50%;
-    opacity: var(--lens-orb-opacity);
-    visibility: hidden;
-    -webkit-mask-image: radial-gradient(circle closest-side at 50% 50%, rgb(0 0 0 / var(--lens-orb-stop-1)) var(--lens-orb-pos-1), rgb(0 0 0 / var(--lens-orb-stop-2)) var(--lens-orb-pos-2), rgb(0 0 0 / var(--lens-orb-stop-3)) var(--lens-orb-pos-3), rgb(0 0 0 / var(--lens-orb-end-alpha)) var(--lens-orb-end));
-    mask-image: radial-gradient(circle closest-side at 50% 50%, rgb(0 0 0 / var(--lens-orb-stop-1)) var(--lens-orb-pos-1), rgb(0 0 0 / var(--lens-orb-stop-2)) var(--lens-orb-pos-2), rgb(0 0 0 / var(--lens-orb-stop-3)) var(--lens-orb-pos-3), rgb(0 0 0 / var(--lens-orb-end-alpha)) var(--lens-orb-end));
-}
-.lens-screen .LensOrbConicY {
-    position: absolute;
-    left: calc(var(--lens-orb-size) / 2);
-    top: calc(var(--lens-orb-size) / 2);
-    will-change: transform;
-    animation: LensLightBackY var(--lens-light-y-duration) var(--lens-light-easing) var(--lens-light-y-delay) infinite alternate;
-}
-.lens-screen .LensOrbConicX {
-    position: absolute;
-    left: 0;
-    top: 0;
-    will-change: transform;
-    animation: LensLightBackX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;
-}
-.lens-screen .LensOrbConicFill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 390px;
-    height: 520px;
-    background: conic-gradient(from var(--lens-orb-angle) at 50% 50%,
-        var(--ai-effect-color-1) 0deg, var(--ai-effect-color-2) 90deg,
-        var(--ai-effect-color-3) 225deg, var(--ai-effect-color-1) 360deg);
-}
 /* 옵션창 Light 'Motion' 끄기: 밝힘 마스크 · 빛 구체가 사진 가운데(이동 범위 한가운데)에 멈춤
-   빛 중심은 가운데로, 안쪽 사진 · 색 바닥은 그만큼 반대로 → 겹침은 그대로 */
+   빛 중심은 가운데로, 안쪽 사진은 그만큼 반대로 → 겹침은 그대로 */
 .lens-screen.is-light-still {
     --lens-light-cx: calc((var(--lens-light-x-from) + var(--lens-light-x-to)) / 2);
     --lens-light-cy: calc((var(--lens-light-y-from) + var(--lens-light-y-to)) / 2);
 }
 .lens-screen.is-light-still .LensLightX {animation: none; transform: translateX(var(--lens-light-cx));}
 .lens-screen.is-light-still .LensLightY {animation: none; transform: translateY(var(--lens-light-cy));}
-.lens-screen.is-light-still .LensLightMaskX,
-.lens-screen.is-light-still .LensOrbConicX {animation: none; transform: translateX(calc(var(--lens-light-cx) * -1));}
-.lens-screen.is-light-still .LensLightMaskY,
-.lens-screen.is-light-still .LensOrbConicY {animation: none; transform: translateY(calc(var(--lens-light-cy) * -1));}
+.lens-screen.is-light-still .LensLightMaskX {animation: none; transform: translateX(calc(var(--lens-light-cx) * -1));}
+.lens-screen.is-light-still .LensLightMaskY {animation: none; transform: translateY(calc(var(--lens-light-cy) * -1));}
 
-/* 방식 전환 · 끄기 · 층 순서 (숨기기만: 반대 움직임이 계속 돌아야 어긋나지 않음) */
-.lens-screen.is-orb-conic .LensOrb {visibility: hidden;}
-.lens-screen.is-orb-conic .LensOrbConic {visibility: visible;}
-.lens-screen.is-orb-off .LensOrb,
-.lens-screen.is-orb-off .LensOrbConic {visibility: hidden;}
-.lens-screen.is-orb-below .LensOrbConic {z-index: 0;}
+/* 옵션창 Orb 끄기 */
+.lens-screen.is-orb-off .LensOrb {visibility: hidden;}
 @keyframes LensLightIn {
     to { opacity: 1; }
 }
@@ -307,7 +257,5 @@
     .lens-screen .LensLightX,
     .lens-screen .LensLightY,
     .lens-screen .LensLightMaskX,
-    .lens-screen .LensLightMaskY,
-    .lens-screen .LensOrbConicX,
-    .lens-screen .LensOrbConicY {animation: none;}
+    .lens-screen .LensLightMaskY {animation: none;}
 }
