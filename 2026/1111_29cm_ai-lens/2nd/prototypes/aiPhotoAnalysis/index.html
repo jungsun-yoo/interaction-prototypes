@@ -10,16 +10,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="AI 사진 분석"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261116-19">
-  <link rel="stylesheet" href="../src/common/common.css?v=20261116-19">
+  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261116-20">
+  <link rel="stylesheet" href="../src/common/common.css?v=20261116-20">
   <!-- 가운데 AI 아이콘: AI 로딩 아이콘과 같은 IMG CSS Animation -->
-  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261116-19">
+  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261116-20">
   <!-- AI 사진 분석 (이 폴더) -->
-  <link rel="stylesheet" href="./values.css?v=20261116-19">    <!-- 조절 값: 수치는 여기서 -->
-  <link rel="stylesheet" href="./loading.css?v=20261116-19">   <!-- 로딩 화면 -->
-  <link rel="stylesheet" href="./result.css?v=20261116-19">    <!-- 결과 화면 -->
-  <link rel="stylesheet" href="./layout.css?v=20261116-19">    <!-- 화면 배치 · 휴대폰 -->
-  <link rel="stylesheet" href="./controls.css?v=20261116-19">  <!-- 옵션창 -->
+  <link rel="stylesheet" href="./values.css?v=20261116-20">    <!-- 조절 값: 수치는 여기서 -->
+  <link rel="stylesheet" href="./loading.css?v=20261116-20">   <!-- 로딩 화면 -->
+  <link rel="stylesheet" href="./result.css?v=20261116-20">    <!-- 결과 화면 -->
+  <link rel="stylesheet" href="./layout.css?v=20261116-20">    <!-- 화면 배치 · 휴대폰 -->
+  <link rel="stylesheet" href="./controls.css?v=20261116-20">  <!-- 옵션창 -->
 </head>
 <body>
 
@@ -99,10 +99,10 @@
       <aside class="lens-control" aria-label="옵션 컨트롤">
         <p class="lens-control-title">AI 사진 분석</p>
         <p class="lens-control-state">상태 <strong id="lensState">로딩 중</strong></p>
-        <!-- 로딩만 보기 (기본 켬, 지금은 로딩 화면 작업 중): 켜면 분석 시간·[로딩 완료]를 끄고 로딩 화면만 계속 ([다시 로딩]만 사용) -->
+        <!-- 로딩만 보기 (기본 끔): 켜면 분석 시간·[로딩 완료]를 끄고 로딩 화면만 계속 ([다시 로딩]만 사용) -->
         <label class="lens-control-toggle is-first is-loading-only">
           <span>로딩만 보기</span>
-          <input type="checkbox" id="lensLoadingOnly" checked>
+          <input type="checkbox" id="lensLoadingOnly">
         </label>
         <!-- 분석 시간: 이 시간이 지나면 자동으로 로딩 완료 (1~10초, 기본 6초. 슬라이더·입력창 증감 버튼 0.5초 단위, 입력창은 직접 입력도 가능) -->
         <div class="lens-control-field" id="lensDurationField">
@@ -354,11 +354,11 @@
     ]
   }
   </script>
-  <script src="../src/common/common.js?v=20261116-19"></script>
+  <script src="../src/common/common.js?v=20261116-20"></script>
   <!-- 순서대로: 결과 화면 → 로딩·결과 흐름 → 옵션창 → QR·휴대폰 동기화 -->
-  <script src="./js/result.js?v=20261116-19"></script>
-  <script src="./js/flow.js?v=20261116-19"></script>
-  <script src="./js/controls.js?v=20261116-19"></script>
-  <script src="./js/sync.js?v=20261116-19"></script>
+  <script src="./js/result.js?v=20261116-20"></script>
+  <script src="./js/flow.js?v=20261116-20"></script>
+  <script src="./js/controls.js?v=20261116-20"></script>
+  <script src="./js/sync.js?v=20261116-20"></script>
 </body>
 </html>

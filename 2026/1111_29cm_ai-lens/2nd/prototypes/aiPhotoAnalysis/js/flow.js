@@ -26,7 +26,7 @@
     var DEFAULT_TIME = 6;       /* 분석 시간 기본값 (초) */
     var analysisSec = DEFAULT_TIME;
     var analysisTimer = null;
-    var LOADING_ONLY_DEFAULT = true;   /* 로딩만 보기 기본값: 지금은 로딩 화면 작업 중이라 켬 */
+    var LOADING_ONLY_DEFAULT = false;  /* 로딩만 보기 기본값: 끔 (분석 시간 뒤 결과 화면으로) */
     var loadingOnly = LOADING_ONLY_DEFAULT;
 
     function emit(action) {     /* 사람이 바꾼 동작 알림: complete · restart · time · loadingOnly */
