@@ -2,7 +2,7 @@
 
 > 개발 전달용 인터랙션 명세입니다. 이징은 MDS 모션 토큰(`../src/common/mds-motion.css`) 기준입니다.
 
-- 프로토타입: `aiPhotoAnalysis/index.html` (버전 `20261116-17`)
+- 프로토타입: `aiPhotoAnalysis/index.html` (버전 `20261116-19`)
 - Figma: [[26-4Q] 29CM 렌즈](https://www.figma.com/design/8fTes280dXd8VYDwwLf8x8/-26-4Q--29CM-%EB%A0%8C%EC%A6%88?node-id=578-147386) · 결과 화면 29Lens 241:59837 / 59871 / 59905
 - 수정일: 2026-11-16 (Inner Glow 효과 삭제, Light 크기 · 진하기를 디자이너 샘플 값으로, 빛 구체(Orb) · 딤 조절 추가)
 - 진행: 로딩 화면 → 결과 화면 전환 → 결과 화면 상품 선택 (전체 흐름 1차 정리)
