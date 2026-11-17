@@ -31,15 +31,15 @@
 | | 마스크 단계 · 가운데 0% (Mask center) | **0.62** | 0 ~ 1 | 1-3 |
 | | 마스크 단계 · 45% (Mask middle) | **0.34** | 0 ~ 1 | 1-3 |
 | | 마스크 단계 · 75% (Mask outer) | **0.10** | 0 ~ 1 | 1-3 |
-| Orb | 지름 (Size) | **520** | 200 ~ 800 | 1-3-2 |
+| Orb | 지름 (Size) | **560** | 200 ~ 800 | 1-3-2 |
 | | 진하기 (Opacity) | **0.40** | 0 ~ 1 | 1-3-2 |
 | | 흐림 (Blur) | **30** | 0 ~ 60 | 1-3-2 |
-| Orb Gradient · Color 1 | 색상 · 위치 · 진하기 | **`#86BAFF`** · **15%** · **0.25** | 색 자유 · 0 ~ 100% · 0 ~ 1 | 1-3-2 |
-| Orb Gradient · Color 2 | 색상 · 위치 · 진하기 | **`#E476FF`** · **45%** · **0.50** | 〃 | 1-3-2 |
-| Orb Gradient · Color 3 | 색상 · 위치(= Fade start) · 진하기 | **`#878FFF`** · **85%** · **0.40** | 〃 | 1-3-2 |
+| Orb Gradient · Color 1 | 색상 · 위치 · 진하기 | **`#FFFFFF`** · **15%** · **0.50** | 색 자유 · 0 ~ 100% · 0 ~ 1 | 1-3-2 |
+| Orb Gradient · Color 2 | 색상 · 위치 · 진하기 | **`#FFE8CE`** · **45%** · **0.50** | 〃 | 1-3-2 |
+| Orb Gradient · Color 3 | 색상 · 위치(= Fade start) · 진하기 | **`#C4DAFF`** · **85%** · **0.50** | 〃 | 1-3-2 |
 | Orb Gradient · Fade out | 페이드 켜기 (Fade) | **켬** | 켬 / 끔 (끄면 Color 3 진하기를 원 끝까지 유지) | 1-3-2 |
-| | 색이 다 사라지는 지점 (Fade end, Fade 켬일 때) | **110%** | 0 ~ 120% | 1-3-2 |
-| | 층 순서 (Below Light) | **밝힘 마스크 위** | 위 / 아래 | 1-3-2 |
+| | 색이 다 사라지는 지점 (Fade end, Fade 켬일 때) | **90%** | 0 ~ 120% | 1-3-2 |
+| | 층 순서 (Below Light) | **밝힘 마스크 아래** | 위 / 아래 | 1-3-2 |
 | | 가로 한 방향 시간 (Speed X) | **2.0s** | 1 ~ 12s | 1-3 |
 | | 세로 한 방향 시간 (Speed Y) | **3.0s** | 1 ~ 12s | 1-3 |
 
@@ -79,7 +79,7 @@
 | 로딩 문구 글꼴 | 29CM Editorial 500 | 13 / 18 | 29cm.co.kr과 같은 CDN 웹폰트 |
 | 사진 · 썸네일 · 상품 리스트 | `img/loading/` · `img/result/` | | 프로토타입용 (실서비스는 사용자 사진 · 검색 결과) |
 
-> AI 효과 색 `#86BAFF` · `#E476FF` · `#878FFF` 는 빛 구체(1-3-2)에 씀 (Inner Glow에 쓰던 색).
+> 무신사 AI 효과 색 `#86BAFF` · `#E476FF` · `#878FFF` (Inner Glow에 쓰던 색)는 지금 화면에 쓰지 않고 values.css에 보관. 빛 구체(1-3-2)는 29CM 렌즈 펄 톤을 씀.
 
 ---
 
@@ -260,42 +260,42 @@
 
 | 항목 | 값 |
 |---|---|
-| 색 🧪 | 가운데 `#86BAFF` → 중간 `#E476FF` → 바깥 `#878FFF` (디자이너 샘플 · Inner Glow에 쓰던 AI 효과 색, 옵션창에서 색마다 바꿔 볼 수 있음) |
+| 색 🧪 | 가운데 `#FFFFFF` → 중간 `#FFE8CE` → 바깥 `#C4DAFF` (29CM 렌즈 펄 톤 · 디자이너 샘플과 같은 색, 옵션창에서 색마다 바꿔 볼 수 있음) |
 | 그라데이션 🧪 | 원형, **위치는 반지름 기준 (0% = 가운데, 100% = 원 끝)** |
 
 | 색 | 색상 | 위치 | 진하기 (알파) |
 |---|---|---|---|
-| Color 1 | `#86BAFF` | 15% | 0.25 |
-| Color 2 | `#E476FF` | 45% | 0.50 |
-| Color 3 | `#878FFF` | 85% (= Fade start) | 0.40 |
-| Fade end | Color 3 | 110% | 0 (Fade 끔이면 Color 3 진하기 그대로) |
+| Color 1 | `#FFFFFF` | 15% | 0.50 |
+| Color 2 | `#FFE8CE` | 45% | 0.50 |
+| Color 3 | `#C4DAFF` | 85% (= Fade start) | 0.50 |
+| Fade end | Color 3 | 90% | 0 (Fade 끔이면 Color 3 진하기 그대로) |
 
 | 항목 | 값 |
 |---|---|
 | 위치 환산 | 디자이너 샘플은 상자 모서리 기준 0 · 32 · 58 · 78% → 반지름 기준으로 × √2 = 0 · 45 · 82 · 110% (보이는 모습 같음). 위치가 앞 지점보다 작으면 앞 지점에 맞춰짐 |
-| 지름 🧪 | **520** (원형으로 자름 — Fade end가 100%를 넘으면 원 끝에 조금 남은 색이 blur로 번짐) |
+| 지름 🧪 | **560** (원형으로 자름 — Fade end가 100%를 넘으면 원 끝에 조금 남은 색이 blur로 번짐) |
 | 진하기 🧪 | **0.40** (층 전체) |
 | 흐림 🧪 | blur **30** |
 | 블렌드 | Normal |
-| 층 순서 🧪 | 기본 **밝힘 마스크 위** (디자이너 샘플과 같음). 옵션창 Below Light를 켜면 아래 |
+| 층 순서 🧪 | 기본 **밝힘 마스크 아래** (옵션창 Below Light 켬). 끄면 위 (디자이너 샘플 순서) |
 | 이동 · 등장 | 밝힘 마스크와 같은 중심 · 같은 등장 (1-3 표) |
 
 ```css
 /* 프로토타입: loading.css · 값은 values.css 4-2 */
 :root {
-  --ai-effect-color-1: #86baff;
-  --ai-effect-color-2: #e476ff;
-  --ai-effect-color-3: #878fff;
-  --lens-orb-size: 520px;
+  --lens-orb-color-1: #ffffff;
+  --lens-orb-color-2: #ffe8ce;
+  --lens-orb-color-3: #c4daff;
+  --lens-orb-size: 560px;
   --lens-orb-opacity: 0.4;
   --lens-orb-blur: 30px;
   --lens-orb-pos-1: 15%;     /* 색 1 위치 */
-  --lens-orb-stop-1: 0.25;   /* 색 1 진하기 */
+  --lens-orb-stop-1: 0.5;    /* 색 1 진하기 */
   --lens-orb-stop-2: 0.5;    /* 색 2 진하기 */
   --lens-orb-pos-2: 45%;     /* 색 2 위치 (반지름 기준) */
-  --lens-orb-stop-3: 0.4;    /* 색 3 진하기 */
+  --lens-orb-stop-3: 0.5;    /* 색 3 진하기 */
   --lens-orb-pos-3: 85%;     /* 색 3 위치 = Fade start */
-  --lens-orb-end: 110%;      /* Fade end */
+  --lens-orb-end: 90%;       /* Fade end */
 }
 /* .LensLightY(빛 중심) 안, .LensLightMask 다음 */
 .lens-screen .LensOrb {
@@ -308,10 +308,10 @@
   opacity: var(--lens-orb-opacity);
   filter: blur(var(--lens-orb-blur));
   background: radial-gradient(circle closest-side at 50% 50%,   /* closest-side: 100% = 원 끝 */
-    rgb(from var(--ai-effect-color-1) r g b / var(--lens-orb-stop-1)) var(--lens-orb-pos-1),
-    rgb(from var(--ai-effect-color-2) r g b / var(--lens-orb-stop-2)) var(--lens-orb-pos-2),
-    rgb(from var(--ai-effect-color-3) r g b / var(--lens-orb-stop-3)) var(--lens-orb-pos-3),
-    rgb(from var(--ai-effect-color-3) r g b / 0) var(--lens-orb-end));
+    rgb(from var(--lens-orb-color-1) r g b / var(--lens-orb-stop-1)) var(--lens-orb-pos-1),
+    rgb(from var(--lens-orb-color-2) r g b / var(--lens-orb-stop-2)) var(--lens-orb-pos-2),
+    rgb(from var(--lens-orb-color-3) r g b / var(--lens-orb-stop-3)) var(--lens-orb-pos-3),
+    rgb(from var(--lens-orb-color-3) r g b / 0) var(--lens-orb-end));
   will-change: transform;
 }
 ```

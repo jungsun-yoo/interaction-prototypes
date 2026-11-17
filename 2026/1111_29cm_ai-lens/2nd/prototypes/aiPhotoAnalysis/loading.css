@@ -157,10 +157,10 @@
     opacity: var(--lens-orb-opacity);
     filter: blur(var(--lens-orb-blur));
     background: radial-gradient(circle closest-side at 50% 50%,
-        rgb(from var(--ai-effect-color-1) r g b / var(--lens-orb-stop-1)) var(--lens-orb-pos-1),
-        rgb(from var(--ai-effect-color-2) r g b / var(--lens-orb-stop-2)) var(--lens-orb-pos-2),
-        rgb(from var(--ai-effect-color-3) r g b / var(--lens-orb-stop-3)) var(--lens-orb-pos-3),
-        rgb(from var(--ai-effect-color-3) r g b / var(--lens-orb-end-alpha)) var(--lens-orb-end));
+        rgb(from var(--lens-orb-color-1) r g b / var(--lens-orb-stop-1)) var(--lens-orb-pos-1),
+        rgb(from var(--lens-orb-color-2) r g b / var(--lens-orb-stop-2)) var(--lens-orb-pos-2),
+        rgb(from var(--lens-orb-color-3) r g b / var(--lens-orb-stop-3)) var(--lens-orb-pos-3),
+        rgb(from var(--lens-orb-color-3) r g b / var(--lens-orb-end-alpha)) var(--lens-orb-end));
     will-change: transform;
 }
 

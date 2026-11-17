@@ -42,24 +42,29 @@
 
 
     /* ---------- 4-2. 빛 구체 (Orb): 밝힘 마스크 위에 얹는 색 빛, 같은 중심으로 같이 움직임 (옵션창 Orb) ----------
-       디자이너 샘플 '무신사 렌즈 분석'과 같은 구조 · 색. 원형 그라데이션을 둥글게 자른 뒤 blur */
-    --lens-orb-size: 520px;               /* 지름 */
+       디자이너 샘플과 같은 구조, 색은 29CM 렌즈 펄 톤. 원형 그라데이션을 둥글게 자른 뒤 blur */
+    --lens-orb-size: 560px;               /* 지름 */
     --lens-orb-opacity: 0.4;              /* 층 전체 진하기 */
     --lens-orb-blur: 30px;                /* 흐림 */
-    /* 그라데이션: 색마다 색상 · 위치 · 진하기 (옵션창 Orb Gradient). 기본값은 2026-11-16 조정값 (색은 디자이너 샘플 '무신사 렌즈 분석')
+    /* 그라데이션: 색마다 색상 · 위치 · 진하기 (옵션창 Orb Gradient). 기본값은 2026-11-17 29CM 렌즈 펄 톤 조정값
        위치는 원의 반지름 기준: 0% = 가운데, 100% = 오브 원 끝
        (참고: 샘플은 상자 모서리 기준 0 · 32 · 58 · 78% = 반지름 기준 0 · 45 · 82 · 110%, 크기 560 · 진하기 0.68 · blur 30 · 알파 0.34 · 0.2 · 0.1) */
-    --ai-effect-color-1: #86baff;         /* 색 1 색상 (Inner Glow에 쓰던 AI 효과 색) */
+    --lens-orb-color-1: #ffffff;          /* 색 1 색상 (29CM 펄 톤) */
     --lens-orb-pos-1: 15%;                /* 색 1 위치 */
-    --lens-orb-stop-1: 0.25;              /* 색 1 진하기 */
-    --ai-effect-color-2: #e476ff;         /* 색 2 색상 */
+    --lens-orb-stop-1: 0.5;               /* 색 1 진하기 */
+    --lens-orb-color-2: #ffe8ce;          /* 색 2 색상 */
     --lens-orb-pos-2: 45%;                /* 색 2 위치 */
     --lens-orb-stop-2: 0.5;               /* 색 2 진하기 */
-    --ai-effect-color-3: #878fff;         /* 색 3 색상 */
+    --lens-orb-color-3: #c4daff;          /* 색 3 색상 */
     --lens-orb-pos-3: 85%;                /* 색 3 위치 = Fade start (여기서부터 마지막 페이드) */
-    --lens-orb-stop-3: 0.4;               /* 색 3 진하기 */
-    --lens-orb-end: 110%;                 /* Fade end: 색이 다 사라지는 지점 (100% 넘으면 원 끝에 조금 남아 blur로 번짐) */
+    --lens-orb-stop-3: 0.5;               /* 색 3 진하기 */
+    --lens-orb-end: 90%;                  /* Fade end: 색이 다 사라지는 지점 (100% 넘으면 원 끝에 조금 남아 blur로 번짐) */
     --lens-orb-end-alpha: 0;              /* Fade end 진하기: 0 = 다 사라짐. 옵션창 Fade 끄기 → Color 3 진하기 그대로 (loading.css) */
+
+    /* 무신사 AI 효과 색 (Inner Glow에 쓰던 색, 지금 화면에는 안 씀 · 다른 곳에 쓰려고 보관) */
+    --ai-effect-color-1: #86baff;
+    --ai-effect-color-2: #e476ff;
+    --ai-effect-color-3: #878fff;
 
     /* ---------- 5. 로딩 문구 "AI가 사진을 분석중입니다": 흰 하이라이트가 왼→오로 지나감 ---------- */
     --loading-msg-white: rgb(255 255 255 / 0.7);        /* 글자 기본색 */
