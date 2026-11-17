@@ -9,8 +9,8 @@
  1) prototypes/<이름>/ 폴더를 통째로 담음 (interaction.md 포함)
  2) index.html 이 쓰는 ../src/… 공용 파일(common · components)만 찾아 zip 안 shared/ 에 넣고 경로를 고침
     → 압축을 풀고 index.html 을 바로 열면 됨
- 3) 기본은 프로토타입 전용 장치를 뺌: 옵션창(controls.css) · QR/휴대폰 동기화(js/sync.js)
-    빼면 폰 화면만 가운데 보이도록 layout.css 의 --phone-w 를 폰 너비로 바꿈
+ 3) 기본은 프로토타입 전용 장치를 뺌: 옵션창(css/controls.css) · QR/휴대폰 동기화(js/sync.js)
+    빼면 폰 화면만 가운데 보이도록 css/layout.css 의 --phone-w 를 폰 너비로 바꿈
 표준 라이브러리만 사용
 """
 import argparse
@@ -21,7 +21,7 @@ import sys
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PROTO_ONLY = ['controls.css', 'js/sync.js']   # 옵션창 · 동기화 (테스트용)
+PROTO_ONLY = ['css/controls.css', 'js/sync.js']   # 옵션창 · 동기화 (테스트용)
 SKIP_NAMES = {'.DS_Store'}
 SKIP_DIRS = {'.omc'}
 
@@ -87,7 +87,7 @@ def main():
                         text = re.sub(r'\sdata-index-path="[^"]*"', ' data-index-path=""', text)   # zip 에는 인덱스가 없음 → 제목 읽기 생략
                         if not args.with_controls:
                             text = strip_controls(text)
-                    if rel == 'layout.css' and not args.with_controls:
+                    if rel == 'css/layout.css' and not args.with_controls:
                         text = re.sub(r'--phone-w:\s*\d+px;', '--phone-w: 390px;', text, count=1)
                     if not rel.endswith('.md'):          # 명세 안 경로 글자는 파일 참조가 아님
                         needed.update(shared_refs(text))
@@ -118,7 +118,7 @@ def main():
                    'AI 렌즈 프로토타입 — %s\n만든 날: %s\n\n'
                    '- index.html 을 브라우저로 열면 됩니다 (Chrome · Safari).\n'
                    '- 인터랙션 명세: interaction.md\n'
-                   '- 조절 값: values.css (명세 절 순서와 같음)\n'
+                   '- 조절 값: css/values.css (명세 절 순서와 같음)\n'
                    '- shared/: 다른 프로토타입과 같이 쓰는 공용 파일 (MDS 모션 토큰, AI 로딩 아이콘)\n%s'
                    % (args.name, datetime.date.today().isoformat(),
                       '' if args.with_controls else '- 옵션창 · QR 동기화(프로토타입 전용)는 뺐습니다. 새로고침하면 처음부터 다시 재생됩니다.\n'))
