@@ -2,14 +2,14 @@
 
 사용 (이 파일이 있는 _html/1st 에서):
     python3 pack.py                     # prototypes/aiPhotoAnalysis → download/aiPhotoAnalysis.zip
-    python3 pack.py aiPhotoAnalysis --with-controls   # 옵션창·QR 동기화까지 넣기
+    python3 pack.py aiPhotoAnalysis --with-controls   # 옵션창(분석 시간 · 로딩만 보기)·QR 동기화까지 넣기
     python3 pack.py aiPhotoAnalysis --out ~/Desktop   # 다른 곳에 만들기
 
 하는 일
  1) prototypes/<이름>/ 폴더를 통째로 담음 (interaction.md 포함)
  2) index.html 이 쓰는 ../src/… 공용 파일(common · components)만 찾아 zip 안 shared/ 에 넣고 경로를 고침
     → 압축을 풀고 index.html 을 바로 열면 됨
- 3) 기본은 프로토타입 전용 장치를 뺌: 옵션창(controls.css · js/controls.js) · QR/휴대폰 동기화(js/sync.js)
+ 3) 기본은 프로토타입 전용 장치를 뺌: 옵션창(controls.css) · QR/휴대폰 동기화(js/sync.js)
     빼면 폰 화면만 가운데 보이도록 layout.css 의 --phone-w 를 폰 너비로 바꿈
 표준 라이브러리만 사용
 """
@@ -21,7 +21,7 @@ import sys
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PROTO_ONLY = ['controls.css', 'js/controls.js', 'js/sync.js']   # 옵션창 · 동기화 (테스트용)
+PROTO_ONLY = ['controls.css', 'js/sync.js']   # 옵션창 · 동기화 (테스트용)
 SKIP_NAMES = {'.DS_Store'}
 SKIP_DIRS = {'.omc'}
 

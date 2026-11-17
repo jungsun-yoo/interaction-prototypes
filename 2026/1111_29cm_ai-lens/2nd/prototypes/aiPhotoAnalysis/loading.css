@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════
    loading.css — 29CM 로딩 화면 (390×844)
-   위에서부터 쌓이는 순서: 사진 → 딤 → Light → AI 아이콘·로딩 문구 / 맨 위 상태바·앱바
+   아래에서부터 쌓이는 순서: 사진 → 딤 → 밝힘 마스크 → 빛 구체(Orb) → AI 아이콘·로딩 문구 / 맨 위 상태바·앱바
    값은 values.css, 가운데 AI 아이콘은 src/components/IconAILoading/img-css (AI 로딩 아이콘과 같은 파일)
    ════════════════════════════════════════════════════ */
 
@@ -102,14 +102,12 @@
     opacity: 0;
     animation: LensLightIn var(--lens-light-in-duration) var(--lens-light-in-easing) var(--lens-light-in-delay) forwards;
 }
-/* 옵션창 끄기: display:none 이면 반대 움직임이 처음부터 다시 시작돼 어긋남 → 숨기기만 (밝힘 마스크 · 빛 구체 따로) */
-.lens-screen.is-light-off .LensLightMask {visibility: hidden;}
 .lens-screen .LensLightX,
 .lens-screen .LensLightY,
 .lens-screen .LensLightMaskX {position: absolute; left: 0; top: 0; will-change: transform;}
 /* 시작 위치: 사진 가운데. 빛이 나타나기 시작하는 순간(in-delay)에 가로 · 세로 모두 범위 한가운데
    (지연 = in-delay - 한 방향 시간 × 1.5 → 돌아오는 구간 한가운데 → 가운데에서 왼쪽 · 위로 움직이기 시작)
-   × 0.5 로 바꾸면 오른쪽 · 아래로 출발. Speed를 바꿔도 같이 계산됨 */
+   × 0.5 로 바꾸면 오른쪽 · 아래로 출발. 한 방향 시간을 바꿔도 같이 계산됨 */
 .lens-screen .LensLightX,
 .lens-screen .LensLightMaskX {
     --lens-light-x-delay: calc(var(--lens-light-in-delay) - var(--lens-light-x-duration) * 1.5);
@@ -140,13 +138,9 @@
 .lens-screen .LensLightMaskX {animation: LensLightBackX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;}
 .lens-screen .LensLightImage {position: absolute; left: 0; top: 0; width: 390px; height: 520px;}
 /* 4-2. 빛 구체 (values.css 4-2): 밝힘 마스크 위, 빛 중심에 지름 --lens-orb-size 원
-   색 3개를 원형 그라데이션으로 (위치는 반지름 기준: 100% = 원 끝, 위치가 앞 지점보다 작으면 앞 지점에 맞춰짐) → 둥글게 자른 뒤 blur */
-/* 층 순서: 기본은 밝힘 마스크 위 · 옵션창 Orb 'Below Light'를 켜면 밝힘 마스크 아래 */
+   색 3개를 원형 그라데이션으로 (위치는 반지름 기준: 100% = 원 끝) → Fade end에서 투명 → 둥글게 자른 뒤 blur */
 .lens-screen .LensLightMask {z-index: 1;}
 .lens-screen .LensOrb {z-index: 2;}
-.lens-screen.is-orb-below .LensOrb {z-index: 0;}
-/* 옵션창 Orb Gradient 'Fade' 끄기: 마지막 지점 진하기를 Color 3과 같게 → Color 3 이후 원 끝까지 그대로 (가장자리는 원 모양 + blur) */
-.lens-screen.is-orb-nofade {--lens-orb-end-alpha: var(--lens-orb-stop-3);}
 .lens-screen .LensOrb {
     position: absolute;
     left: calc(var(--lens-orb-size) / -2);
@@ -160,23 +154,10 @@
         rgb(from var(--lens-orb-color-1) r g b / var(--lens-orb-stop-1)) var(--lens-orb-pos-1),
         rgb(from var(--lens-orb-color-2) r g b / var(--lens-orb-stop-2)) var(--lens-orb-pos-2),
         rgb(from var(--lens-orb-color-3) r g b / var(--lens-orb-stop-3)) var(--lens-orb-pos-3),
-        rgb(from var(--lens-orb-color-3) r g b / var(--lens-orb-end-alpha)) var(--lens-orb-end));
+        rgb(from var(--lens-orb-color-3) r g b / 0) var(--lens-orb-end));
     will-change: transform;
 }
 
-/* 옵션창 Light 'Motion' 끄기: 밝힘 마스크 · 빛 구체가 사진 가운데(이동 범위 한가운데)에 멈춤
-   빛 중심은 가운데로, 안쪽 사진은 그만큼 반대로 → 겹침은 그대로 */
-.lens-screen.is-light-still {
-    --lens-light-cx: calc((var(--lens-light-x-from) + var(--lens-light-x-to)) / 2);
-    --lens-light-cy: calc((var(--lens-light-y-from) + var(--lens-light-y-to)) / 2);
-}
-.lens-screen.is-light-still .LensLightX {animation: none; transform: translateX(var(--lens-light-cx));}
-.lens-screen.is-light-still .LensLightY {animation: none; transform: translateY(var(--lens-light-cy));}
-.lens-screen.is-light-still .LensLightMaskX {animation: none; transform: translateX(calc(var(--lens-light-cx) * -1));}
-.lens-screen.is-light-still .LensLightMaskY {animation: none; transform: translateY(calc(var(--lens-light-cy) * -1));}
-
-/* 옵션창 Orb 끄기 */
-.lens-screen.is-orb-off .LensOrb {visibility: hidden;}
 @keyframes LensLightIn {
     to { opacity: 1; }
 }
@@ -253,9 +234,14 @@
 /* ---------- 동작 줄이기 설정 ---------- */
 @media (prefers-reduced-motion: reduce) {
     .lens-screen .Image,
-    .lens-screen .Dim,
-    .lens-screen .LensLightX,
-    .lens-screen .LensLightY,
-    .lens-screen .LensLightMaskX,
-    .lens-screen .LensLightMaskY {animation: none;}
+    .lens-screen .Dim {animation: none;}
+    /* 빛: 이동 없이 사진 가운데(이동 범위 한가운데)에 멈춤. 빛 중심은 가운데로, 안쪽 사진은 그만큼 반대로 → 겹침은 그대로 */
+    .lens-screen {
+        --lens-light-cx: calc((var(--lens-light-x-from) + var(--lens-light-x-to)) / 2);
+        --lens-light-cy: calc((var(--lens-light-y-from) + var(--lens-light-y-to)) / 2);
+    }
+    .lens-screen .LensLightX {animation: none; transform: translateX(var(--lens-light-cx));}
+    .lens-screen .LensLightY {animation: none; transform: translateY(var(--lens-light-cy));}
+    .lens-screen .LensLightMaskX {animation: none; transform: translateX(calc(var(--lens-light-cx) * -1));}
+    .lens-screen .LensLightMaskY {animation: none; transform: translateY(calc(var(--lens-light-cy) * -1));}
 }
