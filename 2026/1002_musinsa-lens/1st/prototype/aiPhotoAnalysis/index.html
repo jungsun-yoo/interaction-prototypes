@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko" data-index-path="../../index.html"> <!-- AI 사진 분석: 무신사 렌즈 로딩 → 결과 화면 + 옆 옵션창 (375×812). 이 폴더가 AI 사진 분석 전부 (확정 값은 css/values.css, 명세는 interaction.md) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>AI 사진 분석</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AI 사진 분석"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261117-7">
+  <link rel="stylesheet" href="../src/common/common.css?v=20261117-7">
+  <!-- 가운데 AI 아이콘: AI 로딩 아이콘과 같은 IMG CSS Animation -->
+  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261117-7">
+  <!-- AI 사진 분석 (이 폴더) -->
+  <link rel="stylesheet" href="./css/values.css?v=20261117-7">    <!-- 조절 값: 수치는 여기서 -->
+  <link rel="stylesheet" href="./css/loading.css?v=20261117-7">   <!-- 로딩 화면 -->
+  <link rel="stylesheet" href="./css/result.css?v=20261117-7">    <!-- 결과 화면 -->
+  <link rel="stylesheet" href="./css/layout.css?v=20261117-7">    <!-- 화면 배치 · 휴대폰 -->
+  <link rel="stylesheet" href="./css/controls.css?v=20261117-7">  <!-- 옵션창 -->
+</head>
+<body>
+
+  <!-- 무신사 렌즈 로딩 중 → (분석 시간 뒤 자동 · [로딩 완료]) → 분석 결과 · 옆에 옵션창 -->
+  <div class="phone">
+    <div class="lens-pair">
+      <!-- 로딩 화면 (375×812): css/loading.css -->
+      <figure class="lens-device" id="lensLoadingScreen">
+        <div class="lens-screen" aria-label="무신사 AI 사진 분석 중">
+          <div class="status-bar is-light lens-status" aria-hidden="true"> <!-- 상태바: 공유 틀(common.css .status-bar) 375×45, 검정 바탕 · 흰 글자 -->
+          <!-- Figma: 1_디자인 싱크 > StatusBar / iPhone 14 (node 30120-64398). 색만 currentColor로 바꿈 -->
+          <span class="status-bar-time">9:41</span>
+          <svg class="status-bar-icons" width="51.4012" height="13" viewBox="26 0 51.4012 13" fill="none">
+          <!-- wifi -->
+          <path d="M32.1152 10.085C33.535 8.85937 35.6144 8.8595 37.0342 10.085C37.1056 10.1509 37.1474 10.2445 37.1494 10.3428C37.1514 10.441 37.1136 10.5357 37.0449 10.6045L34.8213 12.8945C34.7562 12.9617 34.6678 12.9999 34.5752 13C34.4825 13 34.3933 12.9618 34.3281 12.8945L32.1045 10.6045C32.0359 10.5356 31.998 10.441 32 10.3428C32.002 10.2445 32.0437 10.1508 32.1152 10.085ZM29.1094 7.26172C32.1685 4.35713 36.9058 4.35713 39.9648 7.26172C40.0339 7.32982 40.0732 7.42351 40.0742 7.52148C40.0751 7.61935 40.0373 7.71377 39.9697 7.7832L38.6846 9.1084C38.5521 9.24367 38.338 9.24698 38.2021 9.11523C37.1977 8.1868 35.8912 7.67185 34.5361 7.67188C33.1818 7.67245 31.876 8.18733 30.8721 9.11523C30.7362 9.24697 30.5221 9.24374 30.3896 9.1084L29.1045 7.7832C29.0367 7.71385 28.9992 7.61941 29 7.52148C29.0009 7.42352 29.0404 7.32981 29.1094 7.26172ZM26.1074 4.44238C30.7993 -0.147226 38.2007 -0.147163 42.8926 4.44238C42.9605 4.51057 42.9994 4.60393 43 4.70117C43.0005 4.79826 42.9625 4.89204 42.8955 4.96094L41.6094 6.28613C41.4768 6.42211 41.2616 6.42382 41.127 6.29004C39.3393 4.55527 36.9666 3.588 34.5 3.58789C32.0334 3.58801 29.6608 4.55527 27.873 6.29004C27.7385 6.42393 27.523 6.42228 27.3906 6.28613L26.1035 4.96094C26.0365 4.89201 25.9995 4.79823 26 4.70117C26.0006 4.60393 26.0395 4.51052 26.1074 4.44238Z" fill="currentColor"/>
+          <!-- battery -->
+          <mask id="statusBarBatteryMask" fill="white">
+          <path d="M50 4C50 1.79086 51.7909 0 54 0H71C73.2091 0 75 1.79086 75 4V9C75 11.2091 73.2091 13 71 13H54C51.7909 13 50 11.2091 50 9V4Z" fill-rule="evenodd" clip-rule="evenodd"/>
+          </mask>
+          <path opacity="0.35" d="M54 13H71C73.2091 13 75 11.2091 75 9V4C75 1.79086 73.2091 0 71 0H54C51.7909 0 50 1.79086 50 4V9C50 11.2091 51.7909 13 54 13Z" stroke-width="2.11017" stroke="currentColor" mask="url(#statusBarBatteryMask)"/>
+          <path opacity="0.4" d="M76 5V9.22034C76.8491 8.86291 77.4012 8.0314 77.4012 7.11017C77.4012 6.18894 76.8491 5.35744 76 5" fill="currentColor"/>
+          <path d="M52 4C52 2.89543 52.8954 2 54 2H71C72.1046 2 73 2.89543 73 4V9C73 10.1046 72.1046 11 71 11H54C52.8954 11 52 10.1046 52 9V4Z" fill="currentColor"/>
+          </svg>
+          </div>
+          <section class="Content" aria-label="사진 분석">
+            <div class="ImageVertical">
+              <div class="Image"><img src="img/loading/photo.webp" width="750" height="1124" alt="분석 중인 사진"></div>
+              <div class="Dim" aria-hidden="true"></div>
+            </div>
+            <div class="AILoading">
+              <!-- 빛(Light): 원형 창이 사진 위를 떠다니며 지나가는 자리만 원본 사진이 밝게 비침. 가로·세로를 따로 움직여 곡선으로 훑음 (모두 transform) -->
+              <div class="LensLight" aria-hidden="true"><div class="LensLightX"><div class="LensLightY">
+                <div class="LensLightMask"><div class="LensLightMaskY"><div class="LensLightMaskX"><div class="Image LensLightImage"><img src="img/loading/photo.webp" width="750" height="1124" alt=""></div></div></div></div>
+                <div class="LensOrb"></div> <!-- 빛 구체: 밝힘 마스크 위 무신사 AI 색 빛 (같은 중심으로 같이 움직임) -->
+              </div></div></div>
+              <div class="IconAIContainer" role="status">
+                <div class="IconAI" aria-hidden="true">
+                  <div class="IconAILoading is-playing"> <!-- IconAI.svg 4장을 icon-ai-loading-img.css로 움직임 (AI 로딩 아이콘과 같은 방식) -->
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                    <span><img src="../src/components/IconAILoading/img-css/IconAI.svg" width="32" height="32" alt=""></span>
+                  </div>
+                </div>
+                <div class="LoadingMsg"><p data-text="AI가 사진을 분석중입니다">AI가 사진을 분석중입니다</p></div>
+              </div>
+            </div>
+          </section>
+          <header class="AppBar" aria-label="무신사 렌즈 앱바"> <!-- Figma 인터랙션 가이드 2.0 AppBar 11890:119540 (375×52) -->
+            <img class="AppBarBack" src="img/shared/appbar-back.svg" width="28" height="28" alt="뒤로">
+            <img class="AppBarLogo" src="img/shared/appbar-logo.svg" width="141" height="17" alt="MUSINSA LENS beta">
+            <img class="AppBarScan" src="img/shared/appbar-scan.svg" width="28" height="28" alt="렌즈 스캔">
+          </header>
+        </div>
+      </figure>
+      <!-- 결과 화면 (375×812): css/result.css. 처음엔 숨김 → 로딩이 끝나면 로딩 화면 대신 보이고 바텀시트가 아래에서 올라옴 (js/flow.js) -->
+      <figure class="lens-device" id="lensResultScreen" hidden>
+        <div class="lens-result is-sheet-down" id="lensResult" aria-label="무신사 AI 사진 분석 결과">
+          <div class="status-bar is-light lens-status" aria-hidden="true"> <!-- 상태바: 공유 틀(common.css .status-bar) 375×45, 검정 바탕 · 흰 글자 -->
+          <!-- Figma: 1_디자인 싱크 > StatusBar / iPhone 14 (node 30120-64398). 색만 currentColor로 바꿈 -->
+          <span class="status-bar-time">9:41</span>
+          <svg class="status-bar-icons" width="51.4012" height="13" viewBox="26 0 51.4012 13" fill="none">
+          <!-- wifi -->
+          <path d="M32.1152 10.085C33.535 8.85937 35.6144 8.8595 37.0342 10.085C37.1056 10.1509 37.1474 10.2445 37.1494 10.3428C37.1514 10.441 37.1136 10.5357 37.0449 10.6045L34.8213 12.8945C34.7562 12.9617 34.6678 12.9999 34.5752 13C34.4825 13 34.3933 12.9618 34.3281 12.8945L32.1045 10.6045C32.0359 10.5356 31.998 10.441 32 10.3428C32.002 10.2445 32.0437 10.1508 32.1152 10.085ZM29.1094 7.26172C32.1685 4.35713 36.9058 4.35713 39.9648 7.26172C40.0339 7.32982 40.0732 7.42351 40.0742 7.52148C40.0751 7.61935 40.0373 7.71377 39.9697 7.7832L38.6846 9.1084C38.5521 9.24367 38.338 9.24698 38.2021 9.11523C37.1977 8.1868 35.8912 7.67185 34.5361 7.67188C33.1818 7.67245 31.876 8.18733 30.8721 9.11523C30.7362 9.24697 30.5221 9.24374 30.3896 9.1084L29.1045 7.7832C29.0367 7.71385 28.9992 7.61941 29 7.52148C29.0009 7.42352 29.0404 7.32981 29.1094 7.26172ZM26.1074 4.44238C30.7993 -0.147226 38.2007 -0.147163 42.8926 4.44238C42.9605 4.51057 42.9994 4.60393 43 4.70117C43.0005 4.79826 42.9625 4.89204 42.8955 4.96094L41.6094 6.28613C41.4768 6.42211 41.2616 6.42382 41.127 6.29004C39.3393 4.55527 36.9666 3.588 34.5 3.58789C32.0334 3.58801 29.6608 4.55527 27.873 6.29004C27.7385 6.42393 27.523 6.42228 27.3906 6.28613L26.1035 4.96094C26.0365 4.89201 25.9995 4.79823 26 4.70117C26.0006 4.60393 26.0395 4.51052 26.1074 4.44238Z" fill="currentColor"/>
+          <!-- battery -->
+          <mask id="statusBarBatteryMaskResult" fill="white">
+          <path d="M50 4C50 1.79086 51.7909 0 54 0H71C73.2091 0 75 1.79086 75 4V9C75 11.2091 73.2091 13 71 13H54C51.7909 13 50 11.2091 50 9V4Z" fill-rule="evenodd" clip-rule="evenodd"/>
+          </mask>
+          <path opacity="0.35" d="M54 13H71C73.2091 13 75 11.2091 75 9V4C75 1.79086 73.2091 0 71 0H54C51.7909 0 50 1.79086 50 4V9C50 11.2091 51.7909 13 54 13Z" stroke-width="2.11017" stroke="currentColor" mask="url(#statusBarBatteryMaskResult)"/>
+          <path opacity="0.4" d="M76 5V9.22034C76.8491 8.86291 77.4012 8.0314 77.4012 7.11017C77.4012 6.18894 76.8491 5.35744 76 5" fill="currentColor"/>
+          <path d="M52 4C52 2.89543 52.8954 2 54 2H71C72.1046 2 73 2.89543 73 4V9C73 10.1046 72.1046 11 71 11H54C52.8954 11 52 10.1046 52 9V4Z" fill="currentColor"/>
+          </svg>
+          </div>
+          <header class="AppBar lens-result-nav" aria-label="무신사 렌즈 앱바"> <!-- 로딩 화면과 같은 앱바 -->
+            <img class="AppBarBack" src="img/shared/appbar-back.svg" width="28" height="28" alt="뒤로">
+            <img class="AppBarLogo" src="img/shared/appbar-logo.svg" width="141" height="17" alt="MUSINSA LENS beta">
+            <img class="AppBarScan" src="img/shared/appbar-scan.svg" width="28" height="28" alt="렌즈 스캔">
+          </header>
+
+          <!-- 사진 위 표시(밝은 창·모서리·파형 점) 위치는 아래 lensResultData 의 비율 좌표로 js/result.js가 계산함 -->
+          <section class="lens-result-photo" id="lensResultPhoto" aria-label="검색한 사진">
+            <img class="crop-photo" alt="검색한 사진">
+            <div class="crop-dim" aria-hidden="true"></div>
+            <img class="crop-photo crop-reveal" alt=""> <!-- 밝은 창: clip-path로 잘라 이동 -->
+            <!-- 모서리 4개: 9×9 선 하나(왼쪽 위 모양)를 뒤집어 씀. 선 안쪽이 밝은 창 테두리에 맞닿음 (Figma box 11890:117380) -->
+            <div class="crop-corner is-tl"><img src="img/result/crop-corner.svg" width="9" height="9" alt=""></div>
+            <div class="crop-corner is-tr"><img src="img/result/crop-corner.svg" width="9" height="9" alt=""></div>
+            <div class="crop-corner is-bl"><img src="img/result/crop-corner.svg" width="9" height="9" alt=""></div>
+            <div class="crop-corner is-br"><img src="img/result/crop-corner.svg" width="9" height="9" alt=""></div>
+            <div class="crop-points" id="lensResultPoints" data-dot="img/result/dot.svg"></div> <!-- 파형 점: 상품마다 하나, js/result.js가 만듦 -->
+          </section>
+
+          <!-- 바텀시트 375×395 (Figma BottomSheet 11890:117383): 손잡이 20 → 제목 39 → 썸네일 탭 66 → 상품 리스트 270 -->
+          <section class="lens-result-sheet" aria-label="비슷한 상품">
+            <div class="lens-result-handle" aria-hidden="true"></div>
+            <div class="lens-result-title">
+              <img class="lens-result-title-icon ai-icon" src="img/result/ic-ai.svg" width="18" height="18" alt=""> <!-- IconAI: 결과 화면이 나올 때 등장 → 루프 (css/result.css .ai-icon, js/result.js) -->
+              <p>AI가 이미지와 비슷한 상품을 찾았어요</p>
+            </div>
+            <div class="lens-result-tab">
+              <!-- 썸네일: lensResultData 의 상품마다 하나씩 js/result.js가 만듦 -->
+              <div class="lens-result-thumbs" id="lensResultThumbs" role="tablist" aria-label="찾은 상품"></div>
+              <img class="lens-result-sorting" src="img/result/sorting.png" width="63" height="18" alt="전체 성별"> <!-- 전체 성별 + 화살표: 동작 없는 이미지 -->
+            </div>
+            <div class="lens-result-lists" id="lensResultLists"></div>
+          </section>
+        </div>
+      </figure>
+
+      <!-- 옵션창 (PC에서 폰 옆, 휴대폰에서는 숨김): css/controls.css · js/flow.js — 로딩·결과 흐름 확인용 -->
+      <div class="lens-controls">
+      <aside class="lens-control" aria-label="옵션 컨트롤">
+        <p class="lens-control-title">AI 사진 분석</p>
+        <p class="lens-control-state">상태 <strong id="lensState">로딩 중</strong></p>
+        <!-- 로딩만 보기 (기본 끔): 켜면 분석 시간·[로딩 완료]를 끄고 로딩 화면만 계속 ([다시 로딩]만 사용) -->
+        <label class="lens-control-toggle is-first is-loading-only">
+          <span>로딩만 보기</span>
+          <input type="checkbox" id="lensLoadingOnly">
+        </label>
+        <!-- 분석 시간: 이 시간이 지나면 자동으로 로딩 완료 (1~10초, 기본 6초. 슬라이더·입력창 증감 버튼 0.5초 단위, 입력창은 직접 입력도 가능) -->
+        <div class="lens-control-field" id="lensDurationField">
+          <label class="lens-control-label" for="lensDurationInput">분석 시간</label>
+          <div class="lens-control-duration">
+            <input class="lens-control-range" id="lensDurationRange" type="range" min="1" max="10" step="0.5" value="6" aria-label="분석 시간 (초)">
+            <span class="lens-control-number"><input id="lensDurationInput" type="number" min="1" max="10" step="0.5" value="6" inputmode="decimal">초</span>
+          </div>
+        </div>
+        <button class="lens-control-btn is-primary" id="lensComplete" type="button">로딩 완료</button>
+        <button class="lens-control-btn" id="lensRestart" type="button">다시 로딩</button>
+      </aside>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════ AI 분석 결과 데이터 (실서비스에서는 AI 응답으로 받는 값) ════
+       image: 사용자가 올린 사진
+       items: 찾은 상품. box = 사진 안 상품 영역, point = 파형 점 자리 (없으면 box 가운데)
+              좌표는 모두 사진 원본 기준 0~1 비율 (x·y = 왼쪽 위, w·h = 너비·높이) → 어떤 크기의 사진이 와도 같은 방식으로 계산
+       thumb·list: 프로토타입용 썸네일·상품 리스트 이미지 (실서비스에서는 검색 결과로 그림)
+       아래 값: 상의 box·하의/모자 point 는 Figma 인터랙션 가이드 2.0 결과 화면(11890:117373) 위치를 사진 비율로 바꾼 것, 하의·모자 box 는 사진에서 잰 값 -->
+  <script type="application/json" id="lensResultData">
+  {
+    "image": "img/result/photo.webp",
+    "items": [
+      { "id": "top",    "name": "상의", "box": { "x": 0.2575, "y": 0.163,  "w": 0.485, "h": 0.38  },
+        "thumb": "img/result/thumb-1.png", "list": "img/result/product-list-1.webp" },
+      { "id": "bottom", "name": "하의", "box": { "x": 0.349,  "y": 0.503,  "w": 0.298, "h": 0.418 }, "point": { "x": 0.4975, "y": 0.72 },
+        "thumb": "img/result/thumb-2.png", "list": "img/result/product-list-2.webp" },
+      { "id": "cap",    "name": "모자", "box": { "x": 0.44,   "y": 0.0445, "w": 0.153, "h": 0.093 }, "point": { "x": 0.5225, "y": 0.0767 },
+        "thumb": "img/result/thumb-3.png", "list": "img/result/product-list-3.webp" }
+    ]
+  }
+  </script>
+  <script src="../src/common/common.js?v=20261117-7"></script>
+  <!-- 순서대로: 결과 화면 → 로딩·결과 흐름 → QR·휴대폰 동기화 -->
+  <script src="./js/result.js?v=20261117-7"></script>
+  <script src="./js/flow.js?v=20261117-7"></script>
+  <script src="./js/sync.js?v=20261117-7"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* ════════════════════════════════════════════════════
+   layout.css — 화면 배치
+   PC: 폰 화면(375×812) 오른쪽에 옵션창 (index 툴바는 폰 화면 오른쪽 12px, 옵션창은 그 아래)
+   휴대폰(QR로 열기): 폰 화면만 꽉 차게, 옵션창·상태바 이미지 숨김
+   ════════════════════════════════════════════════════ */
+
+:root {
+  --phone-w: 587px;         /* 폰 375 + 간격 12 + 옵션창 200. index.html이 읽어 프레임 크기를 맞춤 */
+  --phone-screen-w: 375px;  /* index 툴바를 붙일 폰 화면 너비 (index.html이 읽음) */
+  --phone-h: 812px;
+  --phone-radius: 0px;
+  --lens-gap: 12px;         /* 폰 ↔ 옵션창 (index 툴바와 같은 12px) */
+}
+
+body {-webkit-font-smoothing: antialiased;}
+
+/* 폰 틀은 투명하게 두고, 안의 화면이 폰 모양(모서리·그림자)을 가짐 */
+.phone {
+  width: var(--phone-w);
+  min-width: 0;
+  max-width: var(--phone-w);
+  height: var(--phone-h);
+  background: transparent;
+  box-shadow: none !important;
+  overflow: visible;
+}
+.lens-pair {
+  display: flex;
+  gap: var(--lens-gap);
+}
+.lens-device {margin: 0;}
+.lens-device[hidden] {display: none;}
+.lens-device .lens-screen,
+.lens-device .lens-result {
+  border-radius: 48px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+}
+
+/* ---------- 휴대폰에서 볼 때 (QR로 열기) ---------- */
+@media (hover: none), (pointer: coarse) {
+  body {background: #000;}
+  .phone {width: 100%; max-width: none; height: auto; min-height: 100svh; background: #000; overflow: hidden;}
+  .lens-pair {justify-content: center;}
+  .lens-pair .lens-controls {display: none;}   /* controls.css(PC)보다 우선 → 빈 상자가 폰 화면을 밀지 않게 */
+  .lens-device .lens-screen,
+  .lens-device .lens-result {border-radius: 0; box-shadow: none;}
+
+  /* 상태바: 휴대폰은 브라우저 상단이 상태바 역할 → common.css가 .status-bar 를 숨기고 --status-bar-h 를 0으로
+     로딩·결과 화면 높이·위치가 모두 --status-bar-h 기준이라 같이 45 위로 올라가 두 화면 사진 위치가 그대로 이어짐 */
+}

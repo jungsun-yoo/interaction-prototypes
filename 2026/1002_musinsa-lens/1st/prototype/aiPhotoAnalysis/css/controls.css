@@ -1,0 +1,76 @@
+/* ════════════════════════════════════════════════════
+   controls.css — 옵션창 (PC에서 폰 화면 옆, 로딩·결과 흐름 확인용. 휴대폰에서는 숨김)
+   ════════════════════════════════════════════════════ */
+
+/* 옵션창: index 툴바(새 창 · 다시 재생 · QR 버튼 3개 = 138) 아래 8px부터 */
+.lens-controls {
+  align-self: flex-start;
+  margin-top: 146px;
+}
+.lens-control {
+  box-sizing: border-box;
+  width: 200px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1f1f1f;
+}
+.lens-control-title {margin: 0 0 12px; font-size: 15px; font-weight: 700; line-height: 22px;}
+.lens-control-state {margin: 0 0 16px; color: #8a8a8a; font-size: 13px; line-height: 18px;}
+.lens-control-state strong {margin-left: 4px; color: #1f1f1f; font-weight: 600;}
+.lens-control-field {margin: 0 0 16px;}
+.lens-control-label {display: block; margin: 0 0 8px; color: #8a8a8a; font-size: 13px; line-height: 18px;}
+.lens-control-duration {display: flex; align-items: center; gap: 8px;}
+/* 켜기/끄기 줄 (로딩만 보기): 다른 자리에 두면 위에 구분선 */
+.lens-control-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 10px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+  color: #1f1f1f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  cursor: pointer;
+}
+.lens-control-toggle input {width: 16px; height: 16px; margin: 0; accent-color: #000; cursor: pointer;}
+.lens-control-toggle.is-first {margin-top: 0; padding-top: 0; border-top: 0;}   /* 옵션창 맨 위 체크박스는 구분선 없이 */
+.lens-control-toggle.is-loading-only {margin-bottom: 16px;}
+/* 로딩만 보기를 켜면 분석 시간은 흐리게 (조작 불가) */
+.lens-control-field.is-disabled {opacity: 0.35; pointer-events: none;}
+.lens-control-range {flex: 1; min-width: 0; margin: 0; accent-color: #000; cursor: pointer;}
+.lens-control-number {display: flex; align-items: center; gap: 4px; color: #1f1f1f; font-size: 13px;}
+.lens-control-number input {
+  box-sizing: border-box;
+  width: 60px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #1f1f1f;
+  font: inherit;
+  font-size: 13px;
+  text-align: right;
+}
+.lens-control-number input:focus {border-color: #000; outline: none;}
+.lens-control-btn {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f1f1f;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lens-control-btn + .lens-control-btn {margin-top: 8px;}
+.lens-control-btn.is-primary {border-color: #000; background: #000; color: #fff;}
+.lens-control-btn:disabled {border-color: #eee; background: #f5f5f5; color: #bbb; cursor: default;}
