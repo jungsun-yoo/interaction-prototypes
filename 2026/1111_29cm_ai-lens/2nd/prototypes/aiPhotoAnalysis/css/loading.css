@@ -7,7 +7,8 @@
 .lens-screen {
     --lens-appbar-h: 60px;          /* 앱바 높이 (@2x 120) */
     --lens-appbar-side: 60px;       /* 앱바 좌우 버튼 너비 */
-    --lens-image-ratio: 375 / 500;  /* 사진 영역 비율 (390×520) */
+    --lens-image-w: 390px;          /* 사진 영역 390×520 — 밝힘 마스크 안 사진(.LensLightImage)과 같은 크기여야 두 사진이 겹침 */
+    --lens-image-h: 520px;
 
     position: relative;
     width: 390px;
@@ -43,12 +44,14 @@
     width: 100%;
     height: 100%;
 }
+/* 크기는 비율(aspect-ratio)이 아니라 px로 고정: iOS 사파리는 grid 안 aspect-ratio 상자를 줄 높이에 맞춰 늘려
+   cover 사진이 커짐 → 밝힘 마스크 안 사진(390×520)과 크기가 달라 두 겹으로 보였음 */
 .lens-screen .ImageVertical,
 .lens-screen .AILoading {
     position: relative;
     grid-area: 1 / 1;
-    width: 100%;
-    aspect-ratio: var(--lens-image-ratio);
+    width: var(--lens-image-w);
+    height: var(--lens-image-h);
     overflow: hidden;
 }
 .lens-screen .Image {width: 100%; height: 100%;}
@@ -136,7 +139,7 @@
     animation: LensLightBackY var(--lens-light-y-duration) var(--lens-light-easing) var(--lens-light-y-delay) infinite alternate;
 }
 .lens-screen .LensLightMaskX {animation: LensLightBackX var(--lens-light-x-duration) var(--lens-light-easing) var(--lens-light-x-delay) infinite alternate;}
-.lens-screen .LensLightImage {position: absolute; left: 0; top: 0; width: 390px; height: 520px;}
+.lens-screen .LensLightImage {position: absolute; left: 0; top: 0; width: var(--lens-image-w); height: var(--lens-image-h);}   /* 아래 사진 영역과 같은 크기 */
 /* 4-2. 빛 구체 (values.css 4-2): 밝힘 마스크 위, 빛 중심에 지름 --lens-orb-size 원
    색 3개를 원형 그라데이션으로 (위치는 반지름 기준: 100% = 원 끝) → Fade end에서 투명 → 둥글게 자른 뒤 blur */
 .lens-screen .LensLightMask {z-index: 1;}
