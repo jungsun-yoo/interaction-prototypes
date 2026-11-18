@@ -9,7 +9,7 @@
   --store-bg: #1A1B1F;    /* 무신사 스토어 헤더색 */
   --store-icon: #fff;
 
-  /* 이벤트 배지 등장 모션 (index 모션 컨트롤 패널이 이 값을 바꿈) */
+  /* 이벤트 배지 등장 모션 (타이밍은 인덱스 옵션 카드 값이 있으면 그 값을 씀 · type_1.js) */
   --checkin-badge-fade: 0.15;                                                   /* 페이드인 (초, linear) */
   --checkin-badge-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness);  /* mds.spring.bouncy 322 */
   --checkin-badge-spring-damping: var(--mds-motion-spring-bouncy-damping);      /* mds.spring.bouncy 26 */

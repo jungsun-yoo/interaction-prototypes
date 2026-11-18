@@ -18,7 +18,7 @@
    퇴장: 같은 이징으로 반대로 (페이드아웃 + 스케일 1 → 0 동시 시작)
    최초 1초 딜레이 → 등장 완료 → 3초 노출 → 퇴장 완료 → 6초 대기 → 다시 등장 … 무한 반복
    페이지 로드 시 시작, 체크인 아이콘을 누르면 처음(딜레이)부터 다시
-   값은 매 단계마다 CSS 변수에서 다시 읽으므로 index 모션 컨트롤 패널 변경이 다음 단계부터 바로 반영됨 */
+   값은 매 단계마다 다시 읽으므로 인덱스 옵션 카드 변경이 다음 단계부터 바로 반영됨 */
 (function () {
     var badge = document.getElementById('checkinBadge');
     var checkin = document.querySelector('.appbar-icon--checkin');
@@ -29,6 +29,12 @@
 
     function cssNumber(name) {
         return parseFloat(getComputedStyle(badge).getPropertyValue(name));
+    }
+
+    /* 타이밍(초): 인덱스 옵션 카드 값(--opt-badge-*, ms)이 있으면 그 값, 없으면 type_1.css 기본값 */
+    function timing(key) {
+        var ms = cssNumber('--opt-badge-' + key);
+        return isFinite(ms) ? ms / 1000 : cssNumber('--checkin-badge-' + key);
     }
 
     /* from → to 로 페이드(linear) + 스케일(spring) 동시 진행 */
@@ -50,15 +56,15 @@
 
     async function loop() {
         var id = ++runId;
-        await wait(cssNumber('--checkin-badge-delay'));  /* 최초 딜레이 */
+        await wait(timing('delay'));  /* 최초 딜레이 */
         while (id === runId) {
             await animateBadge(0, 1);                    /* 등장 */
             if (id !== runId) return;
-            await wait(cssNumber('--checkin-badge-hold'));
+            await wait(timing('hold'));
             if (id !== runId) return;
             await animateBadge(1, 0);                    /* 퇴장 */
             if (id !== runId) return;
-            await wait(cssNumber('--checkin-badge-rest'));
+            await wait(timing('rest'));
         }
     }
 
@@ -70,7 +76,7 @@
         loop();
     }
 
-    window.playCheckinBadge = restart; /* index 모션 컨트롤 패널에서 호출 */
+    window.playCheckinBadge = restart;
     checkin.addEventListener('click', restart);
     document.fonts.ready.then(restart); /* 폰트 적용 후 시작해 배지 폭이 바뀌지 않게 */
 })();
