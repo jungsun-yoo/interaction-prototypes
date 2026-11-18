@@ -640,6 +640,8 @@
         renderFiles(current);
         renderMotion(current);
         document.title = CONFIG.title + ' · ' + current.title;
+        /* 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 있으면 지금 타입을 알림 → 그 사이트의 링크 복사·새 창이 #타입 주소로 */
+        if (window.parent !== window) window.parent.postMessage({ type: 'proto-index:select', id: current.id }, '*');
         [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
           button.classList.toggle('is-active', button.dataset.id === current.id);
         });
