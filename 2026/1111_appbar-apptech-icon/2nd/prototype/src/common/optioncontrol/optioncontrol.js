@@ -39,6 +39,18 @@
     setCheckin: function (on) { window.setCheckin(on); }
   };
 
+  /* 인덱스 옵션 카드(CONFIG.options) · 주소 ?opt-store=값 · ?opt-checkin=on|off → common.js protoOptions가 <html data-store · data-checkin>에 넣음
+     그 값이 바뀌면 전문관 · 체크인 아이콘에 반영. 타입 js(setCheckin)는 이 파일 뒤에 실행되므로 문서가 다 읽힌 뒤 처음 값을 맞춤 */
+  var root = document.documentElement;
+  function syncFromOptions() {
+    var store = root.getAttribute('data-store');
+    if (store && STORES.some(function (s) { return s.id === store; })) window.setStore(store);
+    var checkin = root.getAttribute('data-checkin');
+    if (checkin && typeof window.setCheckin === 'function') window.setCheckin(checkin !== 'off');
+  }
+  new MutationObserver(syncFromOptions).observe(root, { attributes: true, attributeFilter: ['data-store', 'data-checkin'] });
+  document.addEventListener('DOMContentLoaded', syncFromOptions);
+
   var isTouch = window.pageScroll ? pageScroll.isTouch : window.matchMedia('(hover: none), (pointer: coarse)').matches;
   var inIndex = !isTouch && window.frameElement !== null && window.parent !== window;
   if (inIndex) return; /* 데스크탑 인덱스: 인덱스가 폰 오른쪽에 창을 그림 */

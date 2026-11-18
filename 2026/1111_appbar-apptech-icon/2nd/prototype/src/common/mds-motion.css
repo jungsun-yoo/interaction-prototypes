@@ -1,6 +1,20 @@
 /* MDS Motion System
 * figma : https://www.figma.com/design/oSeWgRf3JXSk6AvrceXTUN/MDS-2.0-Specimen?node-id=18455-38812&t=LOl93nbeDbKT41Wh-4
-
+*
+* 이징(cubic-bezier) 토큰: CSS transition·animation에 바로 사용
+*   transition: transform .3s var(--mds-motion-power2-easeOut);
+*
+* 스프링 토큰: CSS로는 재현 불가 → 모션 라이브러리로 적용
+*   라이브러리: Motion (motion.dev, 구 Framer Motion + Motion One 통합. Motion One 단독 패키지는 쓰지 않음)
+*   - 웹(바닐라): motion  CDN https://cdn.jsdelivr.net/npm/motion@14.1.0/dist/motion.js → window.Motion
+*   - React     : motion/react  (구 framer-motion)
+*   - 두 환경 모두 같은 엔진이라 Web stiffness·damping 값을 그대로 씀
+*   예) bouncy
+*     Motion.animate(el, { y: [16, 0] }, { type: 'spring', stiffness: 322, damping: 26 });
+*     <motion.div animate={{ y: 0 }} transition={{ type: 'spring', stiffness: 322, damping: 26 }} />
+*   JS에서 토큰 읽기
+*     var root = getComputedStyle(document.documentElement);
+*     var stiffness = Number(root.getPropertyValue('--mds-motion-spring-bouncy-stiffness'));
 */
 :root {
     --mds-motion-linear: cubic-bezier(0, 0, 1, 1);

@@ -106,7 +106,7 @@
     kids: 'kids'
   };
   var DEFAULT_FILE = 'white';
-  var VERSION = '?v=20261111-27';
+  var VERSION = '?v=20261118-01';
   var phone = document.querySelector('.phone');
   var container = document.getElementById('rewardLottie');
   if (!container || !window.lottie) return;
