@@ -1,0 +1,145 @@
+/* ════════════════════════════════════════════════════
+   type_1.css — Type 1 전용 스타일
+   세일판 무배당발 탭 / 랭킹판 무배당발 띠배너 이미지를 화면 가운데에 위아래로
+   ════════════════════════════════════════════════════ */
+
+.mbdb-stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+  min-height: 100%;
+}
+/* 위: 로티 버전 / 아래: CSS animation 버전 */
+.mbdb-variant {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.mbdb-variant-title {
+  padding: 0 16px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 22px;
+  color: var(--mds-color-black);
+}
+.mbdb-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mbdb-title {
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  color: var(--mds-color-gray600);
+}
+.mbdb-block .proto-img {
+  width: 100%;
+}
+
+/* 이미지 + 그 위에 올린 코드 (이미지 속 자리와 맞추려고 375 고정) */
+.mbdb-shot {
+  position: relative;
+  width: 375px;
+}
+
+/* ─────────────────────────────
+    TabOutlinedItem - 무배당발 (Figma 9424-28730 / 9424-28732)
+───────────────────────────── */
+.mbdb-tab {
+  position: absolute;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  width: 81px;
+  height: 32px;
+  padding: 7px 6px;
+  border: 1px solid var(--mds-color-gray400); /* unselected #CCCCCC */
+  border-radius: 4px;
+  background: var(--mds-color-gray100); /* 미선택은 투명이지만 아래 이미지 칩을 가리려고 화면 배경색(#F5F5F5)으로 */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mbdb-tab[aria-pressed="true"] {
+  border-color: var(--mds-color-black);
+  background: var(--mds-color-white);
+}
+/* 심볼 20×18 · 로고타입 49×18: on/off 이미지를 같은 자리에 겹침 */
+.mbdb-tab-symbol,
+.mbdb-tab-logotype {
+  position: relative;
+  display: block;
+  flex: none;
+  height: 18px;
+}
+.mbdb-tab-symbol {width: 20px;}
+.mbdb-tab-logotype {width: 49px;}
+.mbdb-tab-symbol img,
+.mbdb-tab-logotype img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 심볼 칸의 on/off 는 무배당발 아이콘 모션 상자 (트럭 2장, overflow hidden) — 칸을 꽉 채움 */
+.mbdb-tab-symbol > .mbdb-icon-motion,
+.mbdb-banner-symbol > .mbdb-icon-motion {
+  position: absolute;
+  inset: 0;
+}
+.mbdb-tab .is-on {opacity: 0;}
+.mbdb-tab[aria-pressed="true"] .is-on {opacity: 1;}
+.mbdb-tab[aria-pressed="true"] .is-off {opacity: 0;}
+
+/* ─────────────────────────────
+    무배당발 띠배너 로고 (Figma 9424-38139 unselected / 9424-38197 selected)
+    로고 62×16 = 심볼 18×16 + 로고타입 44×16
+    이미지: 디자이너 전달 3배 PNG 원본 (압축 안 함) — on 흰색 *_white_h16 / off 파랑·남색 *_h16
+───────────────────────────── */
+.mbdb-banner-logo {
+  position: absolute;
+  display: block;
+  width: 62px;
+  height: 16px;
+  background: var(--mds-color-gray200); /* 미체크 띠배너 #EBEBEB */
+}
+.mbdb-banner-logo[data-checked="true"] {
+  background: #00216D; /* 체크 띠배너 (Figma 무배당발 띠배너 체크) */
+}
+.mbdb-banner-symbol,
+.mbdb-banner-logotype {
+  position: absolute;
+  display: block;
+}
+.mbdb-banner-symbol {left: 0; top: 0; width: 18px; height: 16px;}
+.mbdb-banner-logotype {left: 18px; top: 0; width: 44px; height: 16px;}
+.mbdb-banner-symbol img,
+.mbdb-banner-logotype img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mbdb-banner-logo .is-on {opacity: 0;}
+.mbdb-banner-logo[data-checked="true"] .is-on {opacity: 1;}
+.mbdb-banner-logo[data-checked="true"] .is-off {opacity: 0;}
+
+/* ─────────────────────────────
+    로티 버전: 로티 한 파일(심볼+로고타입 69×18)을 칸에 넣음
+    탭은 69×18 그대로, 띠배너는 h16 으로 축소 (69×18 → 61.33×16, 비율 유지)
+───────────────────────────── */
+.mbdb-tab-lottie,
+.mbdb-banner-lottie {
+  position: relative;
+  display: block;
+  flex: none;
+}
+.mbdb-tab-lottie {width: 69px; height: 18px;}
+.mbdb-banner-lottie {width: 61.33px; height: 16px;}
+.mbdb-lottie {
+  position: absolute;
+  inset: 0;
+}
+.mbdb-lottie svg {display: block;}
