@@ -19,6 +19,7 @@
     var durationInput = document.getElementById('lensDurationInput');
     var durationField = document.getElementById('lensDurationField');
     var loadingOnlyBox = document.getElementById('lensLoadingOnly');
+    var stepButtons = durationField ? durationField.querySelectorAll('.lens-control-step button') : [];   /* ▲ 올리기 · ▼ 내리기 */
 
     var AUTO_COMPLETE = true;   /* 켜 두면 분석 시간 뒤 자동으로 결과 화면 (false면 [로딩 완료]를 눌러야 넘어감) */
     var TIME_MIN = 1;
@@ -43,6 +44,7 @@
         if (durationRange) durationRange.disabled = loadingOnly;
         if (durationInput) durationInput.disabled = loadingOnly;
         if (durationField) durationField.classList.toggle('is-disabled', loadingOnly);
+        showSec();   /* ▲▼ 켜기/끄기 */
     }
 
     /* ---------- 분석 시간 (1~10초, 0.5초 단위, 입력창 직접 입력 가능) ---------- */
@@ -51,9 +53,20 @@
         if (isNaN(n)) return analysisSec;                              /* 잘못 입력하면 이전 값 유지 */
         return Math.round(Math.min(TIME_MAX, Math.max(TIME_MIN, n)) * 10) / 10;
     }
+    var TIME_STEP = 0.5;
     function showSec() {
-        if (durationRange) durationRange.value = analysisSec;
-        if (durationInput) durationInput.value = analysisSec.toFixed(1);
+        if (durationRange) {
+            durationRange.value = analysisSec;
+            durationRange.style.setProperty('--fill', (analysisSec - TIME_MIN) / (TIME_MAX - TIME_MIN) * 100 + '%');   /* 슬라이더 채운 부분 (파랑) */
+        }
+        if (durationInput) {
+            durationInput.value = String(analysisSec);                                  /* 6 · 6.5 (틀 숫자 칸처럼 끝 0 없이) */
+            durationInput.style.width = Math.max(String(analysisSec).length, 1) * 0.62 + 0.3 + 'em';   /* 숫자 길이만큼 → 단위 '초'와 붙어서 가운데 */
+        }
+        if (stepButtons.length) {
+            stepButtons[0].disabled = loadingOnly || analysisSec >= TIME_MAX;
+            stepButtons[1].disabled = loadingOnly || analysisSec <= TIME_MIN;
+        }
     }
     function armTimer() {
         clearTimeout(analysisTimer);
@@ -135,6 +148,11 @@
         emit('time');
     }
     if (durationRange) durationRange.addEventListener('input', onTimeInput);
+    Array.prototype.forEach.call(stepButtons, function (btn) {   /* ▲▼: 0.5초씩 */
+        btn.addEventListener('click', function () {
+            onTimeInput({ target: { value: analysisSec + Number(btn.dataset.step) * TIME_STEP } });
+        });
+    });
     if (durationInput) durationInput.addEventListener('change', onTimeInput);   /* 입력 후 Enter·포커스 이동 때 */
     if (loadingOnlyBox) loadingOnlyBox.addEventListener('change', function () {
         setLoadingOnly(loadingOnlyBox.checked);

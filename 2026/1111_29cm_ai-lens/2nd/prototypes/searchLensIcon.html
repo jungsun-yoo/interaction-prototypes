@@ -11,9 +11,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="[검색] 검색창 렌즈아이콘"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261118-1">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261118-1">
-  <link rel="stylesheet" href="./src/components/ProtoSpec/proto-spec.css?v=20261118-1"> <!-- 폰 오른쪽 개발 전달용 설명창 -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261118-2">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261118-2">
+  <link rel="stylesheet" href="./src/components/ProtoSpec/proto-spec.css?v=20261118-2"> <!-- 폰 오른쪽 개발 전달용 설명창 -->
   <style>
     /* ════════════════════════════════════════════════════
        화면 스타일 — [검색] 검색창 렌즈아이콘 (화면 이미지 + 렌즈 아이콘 로티 + 툴팁)
@@ -23,7 +23,7 @@
     :root {
       /* 폰 크기: 폰 화면 390×844 + 오른쪽 설명창 (index가 --phone-w·--phone-h를 읽어 프레임을 맞추고, 툴바는 --phone-screen-w 오른쪽에 붙임) */
       --phone-screen-w: 390px;
-      --phone-w: 682px;   /* 폰 390 + 간격 12 + 설명창 280 (index가 숫자로 읽어서 calc 대신 값으로 적음) */
+      --phone-w: 642px;   /* 폰 390 + 간격 12 + 설명창 240 (틀 카드 너비) (index가 숫자로 읽어서 calc 대신 값으로 적음) */
       --phone-h: 844px;
       --phone-radius: 0px;
     }
@@ -134,7 +134,7 @@
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
-  <script src="./src/common/common.js?v=20261118-1"></script>
+  <script src="./src/common/common.js?v=20261118-2"></script>
   <script>
     /* 화면 동작 — [검색] 검색창 렌즈아이콘 툴팁 + 로티
        툴팁: 홈 검색아이콘과 같음. 화면 진입 0.4초 뒤 등장, 4초 노출 후 사라짐

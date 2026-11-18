@@ -1,76 +1,103 @@
 /* ════════════════════════════════════════════════════
    controls.css — 옵션창 (PC에서 폰 화면 옆, 로딩·결과 흐름 확인용. 휴대폰에서는 숨김)
+   디자인은 공유 틀 인덱스 오른쪽 카드와 같음 (index.html .option-card · .option-row · .option-switch · .option-range · .option-number)
+   글자 단계 · 색은 틀의 --ui-* 토큰 값 그대로 (MDS 2.0)
    ════════════════════════════════════════════════════ */
 
 /* 옵션창: index 툴바 아래 8px부터 */
 .lens-controls {
   align-self: flex-start;
+  display: grid;
+  gap: 12px;             /* 카드끼리 (틀 오른쪽 카드 묶음과 같음) */
   margin-top: calc(var(--index-tools-h, 92px) + 8px);   /* index 툴바 아래 8px (툴바 높이는 index가 --index-tools-h 로 알려 줌) */
 }
+
+/* ---------- 틀 카드 토큰 (index.html :root 와 같은 값) ---------- */
 .lens-control {
+  --ui-font: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --ui-card-title: 600 11px/16px var(--ui-font);
+  --ui-label: 600 13px/18px var(--ui-font);
+  --ui-value: 600 12px/16px var(--ui-font);
+  --ui-note: 400 11px/15px var(--ui-font);
+  --ui-text: #000000;   /* MDS black */
+  --ui-sub: #8A8A8A;    /* MDS gray500 */
+  --ui-muted: #666666;  /* MDS gray600 */
+  --ui-line: #EBEBEB;   /* MDS gray200 */
+  --ui-off: #E0E0E0;    /* MDS gray300 */
+  --ui-accent: #245EFF; /* MDS blue */
+
   box-sizing: border-box;
-  width: 200px;
-  padding: 20px;
+  width: 240px;          /* 틀 카드 너비 */
+  padding: 14px 16px;
   border-radius: 16px;
   background: #fff;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
-  color: #1f1f1f;
+  font-family: var(--ui-font);
+  color: var(--ui-text);
 }
-.lens-control-title {margin: 0 0 12px; font-size: 15px; font-weight: 700; line-height: 22px;}
-.lens-control-state {margin: 0 0 16px; color: #8a8a8a; font-size: 13px; line-height: 18px;}
-.lens-control-state strong {margin-left: 4px; color: #1f1f1f; font-weight: 600;}
-.lens-control-field {margin: 0 0 16px;}
-.lens-control-label {display: block; margin: 0 0 8px; color: #8a8a8a; font-size: 13px; line-height: 18px;}
-.lens-control-duration {display: flex; align-items: center; gap: 8px;}
-/* 켜기/끄기 줄 (로딩만 보기): 다른 자리에 두면 위에 구분선 */
-.lens-control-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 14px 0 10px;
-  padding-top: 14px;
-  border-top: 1px solid #eee;
-  color: #1f1f1f;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 18px;
-  cursor: pointer;
-}
-.lens-control-toggle input {width: 16px; height: 16px; margin: 0; accent-color: #000; cursor: pointer;}
-.lens-control-toggle.is-first {margin-top: 0; padding-top: 0; border-top: 0;}   /* 옵션창 맨 위 체크박스는 구분선 없이 */
-.lens-control-toggle.is-loading-only {margin-bottom: 16px;}
-/* 로딩만 보기를 켜면 분석 시간은 흐리게 (조작 불가) */
-.lens-control-field.is-disabled {opacity: 0.35; pointer-events: none;}
-.lens-control-range {flex: 1; min-width: 0; margin: 0; accent-color: #000; cursor: pointer;}
-.lens-control-number {display: flex; align-items: center; gap: 4px; color: #1f1f1f; font-size: 13px;}
-.lens-control-number input {
-  box-sizing: border-box;
-  width: 60px;
-  height: 32px;
-  padding: 0 6px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  color: #1f1f1f;
-  font: inherit;
-  font-size: 13px;
-  text-align: right;
-}
-.lens-control-number input:focus {border-color: #000; outline: none;}
-.lens-control-btn {
-  display: block;
-  width: 100%;
-  height: 40px;
-  margin: 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-  color: #1f1f1f;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.lens-control-btn + .lens-control-btn {margin-top: 8px;}
-.lens-control-btn.is-primary {border-color: #000; background: #000; color: #fff;}
-.lens-control-btn:disabled {border-color: #eee; background: #f5f5f5; color: #bbb; cursor: default;}
+.lens-control *, .lens-control *::before, .lens-control *::after {box-sizing: border-box;}
+
+/* 카드 제목: 틀 .option-title */
+.lens-control-title {margin: 0 0 4px; font: var(--ui-card-title); text-transform: uppercase; color: var(--ui-sub);}
+
+/* 한 줄: 이름(왼쪽) + 값·스위치(오른쪽), 줄 사이 구분선 — 틀 .option-row */
+.lens-control-row {display: flex; align-items: center; gap: 12px; padding: 8px 0;}
+.lens-control-row + .lens-control-row {border-top: 1px solid var(--ui-line);}
+label.lens-control-row {cursor: pointer;}
+.lens-control-label {flex: 1; min-width: 0; font: var(--ui-label); color: var(--ui-text);}
+.lens-control-value {flex: none; font: var(--ui-value); color: var(--ui-accent);}   /* 상태: 로딩 중 · 로딩 완료 */
+.lens-control-row.is-disabled {opacity: 0.35;}
+.lens-control-row.is-disabled .lens-control-range,
+.lens-control-row.is-disabled .lens-control-number {pointer-events: none;}
+
+/* 스위치 — 틀 .option-switch */
+.lens-control-switch {flex-shrink: 0; position: relative; width: 36px; height: 20px; margin: 0; border-radius: 10px; background: var(--ui-off); appearance: none; -webkit-appearance: none; cursor: pointer; transition: background 0.15s linear;}
+.lens-control-switch::after {content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);}
+.lens-control-switch:checked {background: var(--ui-accent);}
+.lens-control-switch:checked::after {transform: translateX(16px);}
+.lens-control-switch:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
+
+/* 슬라이더 + 숫자 칸(▲▼) — 틀 .option-row.is-slider · .option-range · .option-number */
+.lens-control-row.is-slider {flex-direction: column; align-items: stretch; gap: 8px;}
+.lens-control-slider-line {display: flex; align-items: center; gap: 10px;}
+.lens-control-range {flex: 1; min-width: 0; height: 20px; margin: 0; background: transparent; appearance: none; -webkit-appearance: none; cursor: pointer;}
+.lens-control-range::-webkit-slider-runnable-track {height: 4px; border-radius: 2px;
+  background: linear-gradient(to right, var(--ui-accent) var(--fill, 0%), var(--ui-line) var(--fill, 0%));}
+.lens-control-range::-moz-range-track {height: 4px; border-radius: 2px; background: var(--ui-line);}
+.lens-control-range::-moz-range-progress {height: 4px; border-radius: 2px; background: var(--ui-accent);}
+.lens-control-range::-webkit-slider-thumb {width: 16px; height: 16px; margin-top: -6px; border: 0; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); appearance: none; -webkit-appearance: none;}
+.lens-control-range::-moz-range-thumb {width: 16px; height: 16px; border: 0; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);}
+.lens-control-range:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px; border-radius: 4px;}
+.lens-control-number {flex: none; display: flex; align-items: stretch; width: 84px; height: 28px; border-radius: 8px; background: var(--ui-line);}
+/* 흰 칸: 숫자 + 단위(회색)를 가운데에 같이 둠 */
+.lens-control-field {flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; margin: 2px 0 2px 2px; padding: 0 4px; border-radius: 6px; background: #FFFFFF; cursor: text;}
+.lens-control-field:focus-within {outline: 2px solid var(--ui-accent); outline-offset: 0;}
+.lens-control-number input {flex: none; max-width: 100%; min-width: 0; padding: 0; border: 0; background: transparent; font: var(--ui-value); color: var(--ui-text); text-align: right; outline: none; -moz-appearance: textfield;}
+.lens-control-number input::-webkit-inner-spin-button, .lens-control-number input::-webkit-outer-spin-button {margin: 0; -webkit-appearance: none;}
+.lens-control-unit {flex: none; margin-left: 2px; font: var(--ui-note); color: var(--ui-sub);}
+.lens-control-step {display: flex; flex-direction: column; width: 18px;}
+.lens-control-step button {flex: 1; padding: 0; border: 0; background: transparent; color: var(--ui-muted); cursor: pointer;}
+.lens-control-step button::before {content: ''; display: block; width: 8px; height: 5px; margin: auto; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M4 0 8 5H0z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M4 0 8 5H0z'/%3E%3C/svg%3E") center / contain no-repeat;}
+.lens-control-step button + button::before {transform: rotate(180deg);}
+.lens-control-step button:hover {color: var(--ui-text);}
+.lens-control-step button:disabled {opacity: 0.3; cursor: default;}
+
+/* 버튼: 로딩 완료(검정) · 다시 로딩(흰 바탕 + 검정 테두리) — 틀 FLOW 카드 .autoplay-button 과 같은 모양 */
+.lens-control-actions {display: grid; gap: 6px; margin-top: 8px;}
+.lens-control-btn {display: flex; align-items: center; justify-content: center; width: 100%; height: 36px; margin: 0; border: 0; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px #000; font: var(--ui-label); color: #000; cursor: pointer;}
+.lens-control-btn.is-primary {background: #000; box-shadow: none; color: #fff;}
+.lens-control-btn:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
+.lens-control-btn:disabled {opacity: 0.3; cursor: not-allowed;}
+
+/* 개발 전달 카드(있을 때): 다운로드 버튼 = 틀 FILES 카드 .file-button, 안내 = 틀 .file-note + .file-note-info (주황 i 아이콘) */
+.lens-control-file {display: flex; align-items: center; gap: 8px; height: 36px; margin-top: 8px; padding: 0 10px 0 12px; border-radius: 8px; background: #000; color: #fff; font: var(--ui-label); text-decoration: none; transition: background 0.15s linear;}
+.lens-control-file:hover {background: #333;}
+.lens-control-file:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
+.lens-control-file::after {content: ''; flex: none; width: 14px; height: 14px; margin-left: auto; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M4 21h16'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M4 21h16'/%3E%3C/svg%3E") center / contain no-repeat;}
+.lens-control-download-note {position: relative; margin: 8px 0 0; padding-left: 18px; font: var(--ui-note); color: var(--ui-sub);}
+.lens-control-download-note::before {content: ''; position: absolute; top: 1px; left: 0; width: 14px; height: 14px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23FA9200'/%3E%3Ccircle cx='8.6' cy='4.6' r='1.15' fill='%23fff'/%3E%3Cpath d='M7.3 7h2.1l-1 5.4H6.3z' fill='%23fff'/%3E%3C/svg%3E") center / contain no-repeat;}
+.lens-control-download-note strong {font-weight: 600; color: var(--ui-text);}
