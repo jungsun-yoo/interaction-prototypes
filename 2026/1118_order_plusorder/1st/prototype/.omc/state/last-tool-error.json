@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__Claude_Browser__javascript_tool",
+  "tool_input_preview": "{\"action\":\"javascript_exec\",\"text\":\"var r=document.querySelector('.plus-title').getBoundingClientRect(); [Math.round(r.left), Math.round(r.top)]\",\"tabId\":\"tab-2\"}",
+  "error": "javascript_tool failed: TypeError: Cannot read properties of null (reading 'getBoundingClientRect')\n    at <anonymous>:1:45",
+  "timestamp": "2026-11-17T12:45:46.475Z",
+  "retry_count": 1
+}

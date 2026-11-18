@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__Claude_Browser__computer",
+  "tool_input_preview": "{\"action\":\"left_click\",\"ref\":\"ref_25\",\"action_summary\":\"툴바의 2배 확대 버튼을 누름\",\"tabId\":\"seed\"}",
+  "error": "ref map not initialized; call read_page first",
+  "timestamp": "2026-11-18T04:36:19.840Z",
+  "retry_count": 1
+}

@@ -1,0 +1,17 @@
+/* ════════════════════════════════════════════════════
+   type_3.css — 주문서 · 무배당발 플러스오더 Type 3
+   화면 레이아웃은 type_1.css 그대로 쓰고, TitleSection 로고 자리만 로티로 바꿈
+   ════════════════════════════════════════════════════ */
+
+/* 로고 로티 자리: 123×32 (로티 원본 369×96 = 3배)
+   아래 14px = 로고 (Type 2 와 같은 자리), 위 18px = + 마크가 올라가는 자리
+   위쪽 18px 은 margin-top 으로 제목 줄 위로 넘겨서, 줄 높이·로고 위치는 Type 1·2 와 같게 유지 */
+.plus-logo-lottie {
+  display: block;
+  flex: none;
+  width: 123px;
+  height: 32px;
+  margin-top: -18px;
+  pointer-events: none; /* 위로 넘친 부분이 위쪽 버튼(쿠폰 사용) 누르기를 막지 않게 */
+}
+.plus-logo-lottie svg {display: block;}

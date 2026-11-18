@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"date '+%H:%M:%S'; IP=192.168.0.79; curl -s -o /dev/null -w \\\"Type_1.html → %{http_code} %{size_download}B\\\\n\\\" \\\"http://$IP:8766/1st/prototype/Type_1.html\\\"; curl -s -o /dev/null -w \\\"item...",
+  "error": "Exit code 28\n21:13:41\nType_1.html → 200 9775B\nitem_1_info → 200 21953B\n--- 6초 동안 라이브 신호 (폰 역할)\n: ok\n\n\n--- 6초 동안 라이브 신호 (인덱스 역할)\n: ok",
+  "timestamp": "2026-11-17T12:13:53.749Z",
+  "retry_count": 1
+}
