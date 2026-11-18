@@ -10,7 +10,7 @@
 :root {
   --spec-w: 280px;        /* 설명창 너비 */
   --spec-gap: 12px;       /* 폰 ↔ 설명창 (index 툴바 간격과 같음) */
-  --spec-top: 100px;      /* index 툴바(버튼 2개 = 92) 아래 8px */
+  --spec-top: calc(var(--index-tools-h, 92px) + 8px);   /* index 툴바 아래 8px (툴바 높이는 index가 --index-tools-h 로 알려 줌, 없으면 버튼 2개 = 92) */
 }
 
 /* 폰 틀은 투명하게 두고, 안의 .proto-screen 이 폰 모양(모서리·그림자)을 가짐 */

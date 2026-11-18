@@ -2,10 +2,10 @@
    controls.css — 옵션창 (PC에서 폰 화면 옆, 로딩·결과 흐름 확인용. 휴대폰에서는 숨김)
    ════════════════════════════════════════════════════ */
 
-/* 옵션창: index 툴바(새 창 · 다시 재생 · QR 버튼 3개 = 138) 아래 8px부터 */
+/* 옵션창: index 툴바 아래 8px부터 */
 .lens-controls {
   align-self: flex-start;
-  margin-top: 146px;
+  margin-top: calc(var(--index-tools-h, 92px) + 8px);   /* index 툴바 아래 8px (툴바 높이는 index가 --index-tools-h 로 알려 줌) */
 }
 .lens-control {
   box-sizing: border-box;

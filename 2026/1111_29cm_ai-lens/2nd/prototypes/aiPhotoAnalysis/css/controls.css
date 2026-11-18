@@ -7,7 +7,7 @@
   align-self: flex-start;
   display: grid;
   gap: 12px;
-  margin-top: 100px;
+  margin-top: calc(var(--index-tools-h, 92px) + 8px);   /* index 툴바 아래 8px (툴바 높이는 index가 --index-tools-h 로 알려 줌) */
 }
 .lens-control {
   box-sizing: border-box;

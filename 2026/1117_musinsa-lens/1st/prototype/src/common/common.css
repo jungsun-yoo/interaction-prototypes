@@ -185,6 +185,19 @@ img {
   user-select: none;
 }
 
+/* 크기 고정 이미지 (.proto-img): 이미지가 아직 안 왔거나 못 불러와도 자리가 원래 크기로 잡히게
+   height: auto 만 두면 비율을 몰라 iPhone 사파리에서 빈 자리가 정사각형 등으로 커짐 → 비율(aspect-ratio)을 같이 지정
+   사용: <img class="proto-img" style="--w: 315; --h: 94" src="…" width="315" height="94" alt="">
+         디자인 px 그대로 보이고, 화면이 그보다 좁으면 비율대로 줄어듦
+   다른 이미지도 CSS 에서 width·height(또는 width + aspect-ratio)를 꼭 지정하고 height: auto 만 쓰지 않는다 */
+.proto-img {
+  display: block;
+  width: calc(var(--w) * 1px);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: var(--w) / var(--h);
+}
+
 /* ─────────────────────────────
     Phone — 모바일 반응형 (--mobile-min-w ~ --mobile-max-w)
 ───────────────────────────── */

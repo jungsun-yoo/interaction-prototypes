@@ -33,18 +33,25 @@
       --qr-card-w: 172px; /* QR 카드 (QR 140 + 여백 16×2) */
       --qr-mini-w: 112px; /* 작은 QR 카드 (QR 96 + 여백 8×2) */
 
-      /* 오른쪽 카드(OPTIONS · FILES …) 글자 단계: 새 카드도 이 5단계만 씀
-         card-title 카드 제목(대문자·회색) > section 섹션 제목 > label 항목 이름 > value 값·숫자 > caption 단위·보조 */
+      /* 오른쪽 카드(OPTIONS · FILES …) 글자 단계: 새 카드도 이 6단계만 씀 (굵기·크기 직접 적지 않기)
+         card-title 카드 제목(대문자·gray500·자간 없음) > section 섹션 제목(gray500) > label 항목 이름 > value 값·숫자 > caption 선택 버튼 > note 보조 글(400·gray500)
+         색은 아래 MDS 2.0 색 변수만 씀 (투명 검정 X) */
       --ui-font: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       --ui-card-title: 600 11px/16px var(--ui-font);
       --ui-section: 700 12px/16px var(--ui-font);
       --ui-label: 600 13px/18px var(--ui-font);
       --ui-value: 600 12px/16px var(--ui-font);
       --ui-caption: 600 11px/15px var(--ui-font);
-      --ui-text: #000;
-      --ui-sub: rgba(0, 0, 0, 0.45);
-      --ui-line: rgba(0, 0, 0, 0.06);
-      --ui-accent: #334cff;
+      --ui-note: 400 11px/15px var(--ui-font); /* 보조 글: 파일명 · 카드 아래 설명 · 보조 설명 */
+      /* 오른쪽 카드 색: MDS 2.0 (prototype common.css 와 같은 값) */
+      --ui-text: #000000;   /* MDS black */
+      --ui-sub: #8A8A8A;    /* MDS gray500: 카드·섹션 제목, 보조 글 */
+      --ui-muted: #666666;  /* MDS gray600: 안 고른 선택 버튼 */
+      --ui-line: #EBEBEB;   /* MDS gray200: 구분선 · 선택 트랙 · 리셋 hover */
+      --ui-off: #E0E0E0;    /* MDS gray300: 스위치 꺼짐 */
+      --ui-accent: #245EFF; /* MDS blue: 고른 값 · 스위치 켜짐 · 포커스 */
+      --ui-warn: #FA9200;   /* MDS yellow: 중요 캡션 아이콘 */
+      --ui-warn-bg: rgba(250, 146, 0, 0.1); /* MDS yellow 10% (팔레트의 blue-10 · red-10 과 같은 규칙) */
     }
 
     html, body {
@@ -85,6 +92,7 @@
     .panel-download-note svg {flex-shrink: 0; display: block; margin-top: 1px; color: #ffb020;}
     .panel-download-note b {color: #fff; font-weight: 600;}
     .panel-download-note.is-hidden {display: none;}
+    .panel-download-note.is-locked {opacity: 0.3;} /* zip 버튼이 잠기면 안내도 같이 흐리게 */
     /* 숨김: 버튼 각각, 둘 다 숨으면 묶음(위 여백)까지 */
     .panel-download.is-hidden, .panel-download-wrap:not(:has(.panel-download:not(.is-hidden))) {display: none;}
 
@@ -107,6 +115,7 @@
     .qr-card.is-mini .qr-title, .qr-card.is-mini .qr-url {display: none;}
     .qr-card.is-folded {display: none; z-index: 2;}
     .qr-card.is-folded.is-open {display: block;}
+    .qr-card[hidden] {display: none;} /* 항목 qr: false */
     .qr-image {display: block; width: 100%; aspect-ratio: 1;}
     .qr-image[href] {cursor: pointer; transition: opacity 0.15s linear;}
     .qr-image[href]:hover {opacity: 0.7;}
@@ -122,6 +131,18 @@
     .tool-button svg {display: block;}
     .tool-button[hidden] {display: none;}
     .qr-card.is-open ~ .stage-tools #qrButton {background: rgba(0, 0, 0, 0.06);}
+    /* 폰 동기화 토글 (와이파이): 켜짐 = 연한 회색 바탕 + 물결이 아래부터 차례로 켜지는 모션 / 꺼짐 = 기본 바탕, 모션 멈춤, 물결 흐리게 + 사선 */
+    .sync-button.is-on {background: #f1f1f1; color: #000;}
+    .sync-button.is-on:hover {background: #e6e6e6;}
+    .sync-icon {overflow: visible;}
+    .sync-button.is-on .sync-wave {animation: sync-wave 1.6s ease-in-out infinite;}
+    .sync-button.is-on .sync-wave--2 {animation-delay: 0.2s;}
+    .sync-button.is-on .sync-wave--3 {animation-delay: 0.4s;}
+    .sync-button:not(.is-on) .sync-wave {opacity: 0.35;}
+    .sync-slash {display: none;}
+    .sync-button:not(.is-on) .sync-slash {display: inline;}
+    @keyframes sync-wave {0%, 15% {opacity: 0.25;} 35%, 70% {opacity: 1;} 100% {opacity: 0.25;}}
+    @media (prefers-reduced-motion: reduce) {.sync-button.is-on .sync-wave {animation: none;}}
     /* 툴팁: 붙어 있을 땐 오른쪽, 우상단일 땐 왼쪽(폰 쪽)으로 */
     .tool-button::after {content: attr(data-tip); position: absolute; top: 50%; left: calc(100% + 10px); padding: 6px 8px; border-radius: 6px; background: #1c1c1e; color: #fff; font-size: 12px; line-height: 16px; white-space: nowrap; opacity: 0; pointer-events: none; transform: translateY(-50%); transition: opacity 0.15s;}
     .stage-tools:not(.is-attached) .tool-button::after {left: auto; right: calc(100% + 10px);}
@@ -129,7 +150,7 @@
     /* 오른쪽 카드 묶음: 툴바 아래 12px (붙어 있을 땐 폰 오른쪽, 아니면 바탕 우상단 아래). 카드끼리 12px
        OPTIONS 카드(섹션 card: true면 카드가 더 생김) → FILES 카드 순서. 화면보다 길면 묶음 안에서 스크롤
        스크롤 영역이 카드 그림자를 자르지 않게 좌우·아래 24px 여백을 두고 그만큼 바깥으로 (카드 너비 200 그대로) */
-    .side-stack {position: absolute; right: 0; z-index: 1; display: flex; flex-direction: column; gap: 12px; width: 248px; padding: 0 24px 24px; overflow-y: auto; scrollbar-width: none;}
+    .side-stack {position: absolute; right: 0; z-index: 1; display: flex; flex-direction: column; gap: 12px; width: 288px; /* 카드 240 + 좌우 그림자 여백 24 */ padding: 0 24px 24px; overflow-y: auto; scrollbar-width: none;}
     .side-stack::-webkit-scrollbar {display: none;}
     .side-stack.is-attached {right: auto;}
     .side-stack:not(:has(.option-card:not([hidden]))) {display: none;}
@@ -137,7 +158,7 @@
     .option-card {flex: none; padding: 14px 16px; border-radius: 16px; background: #fff; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 24px;}
     .option-card[hidden] {display: none;}
     #optionCards {display: contents;} /* 안의 카드도 묶음 간격 12px을 그대로 받음 */
-    .option-title {margin-bottom: 4px; font: var(--ui-card-title); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ui-sub);}
+    .option-title {margin-bottom: 4px; font: var(--ui-card-title); text-transform: uppercase; color: var(--ui-sub);} /* 자간 없음: 한글 제목이 성기게 보여서 뺌 */
     /* 제목 줄: 제목(왼쪽) + 리셋 아이콘(오른쪽, 누르면 그 카드·섹션만 CONFIG 기본값으로) */
     .option-head {display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;}
     .option-head .option-title {margin-bottom: 0;}
@@ -149,24 +170,78 @@
     .option-reset:disabled {opacity: 0.2; cursor: default; background: transparent;} /* 이미 모두 기본값 */
     .option-reset:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 1px;}
     /* 섹션: 같은 카드 안 묶음. 위에 구분선 + 섹션 제목 */
-    .option-section + .option-section {margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(0, 0, 0, 0.1);}
+    .option-section + .option-section {margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--ui-line);}
     .option-section-title {font: var(--ui-section); color: var(--ui-sub);} /* 회색: 아래 검정 항목 이름과 구분 */
     .option-section > .option-head {margin-bottom: 0;}
     .option-row {display: flex; align-items: center; gap: 12px; padding: 8px 0; cursor: pointer;}
     .option-row + .option-row {border-top: 1px solid var(--ui-line);}
     .option-text {flex: 1; min-width: 0;}
     .option-label {display: block; font: var(--ui-label); color: var(--ui-text);}
+    /* 캡션(보조 글): 옵션 이름 아래 note · FILES 아래 설명 · MOTION 보조 문구 · 보조 설명
+       강조 2가지: <b>글</b> = 검정 600 (내용 강조) / <em>글</em> = 파랑 600 (값·주의 강조) */
+    .option-note {display: block; margin-top: 2px; font: var(--ui-note); color: var(--ui-sub); word-break: keep-all;}
+    :is(.option-note, .file-note, .motion-sub li, .motion-group-title span) b {font-weight: 600; color: var(--ui-text);}
+    :is(.option-note, .file-note, .motion-sub li, .motion-group-title span) em {font-style: normal; font-weight: 600; color: var(--ui-accent);}
+    /* 중요 캡션 notice: 꼭 지켜야 할 조건 (예: 최소 3초 노출). 주황 i 아이콘 + 연주황 바탕, 글자는 value 단계 */
+    .option-notice {display: flex; align-self: flex-start; align-items: flex-start; gap: 4px; width: fit-content; margin-top: 6px; padding: 4px 8px 4px 6px; border-radius: 6px;
+      background: var(--ui-warn-bg); font: var(--ui-value); color: var(--ui-text); word-break: keep-all;}
+    .option-notice::before {content: ''; flex: none; width: 14px; height: 14px; margin-top: 1px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23FA9200'/%3E%3Ccircle cx='8.6' cy='4.6' r='1.15' fill='%23fff'/%3E%3Cpath d='M7.3 7h2.1l-1 5.4H6.3z' fill='%23fff'/%3E%3C/svg%3E") center / contain no-repeat;}
+    .option-notice em {font-style: normal; color: var(--ui-accent);}
+    /* 슬라이더 + 숫자 입력(스텝 ▲▼) 세트: { id, label, min, max, step, unit?, default } */
+    .option-row.is-slider {flex-direction: column; align-items: stretch; gap: 8px; cursor: default;}
+    .option-head-line {display: flex; align-items: baseline; justify-content: space-between; gap: 8px;}
+    .option-slider-line {display: flex; align-items: center; gap: 10px;}
+    .option-range {flex: 1; min-width: 0; height: 20px; margin: 0; background: transparent; appearance: none; -webkit-appearance: none; cursor: pointer;}
+    .option-range::-webkit-slider-runnable-track {height: 4px; border-radius: 2px;
+      background: linear-gradient(to right, var(--ui-accent) var(--fill, 0%), var(--ui-line) var(--fill, 0%));}
+    .option-range::-moz-range-track {height: 4px; border-radius: 2px; background: var(--ui-line);}
+    .option-range::-moz-range-progress {height: 4px; border-radius: 2px; background: var(--ui-accent);}
+    .option-range::-webkit-slider-thumb {width: 16px; height: 16px; margin-top: -6px; border: 0; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); appearance: none; -webkit-appearance: none;}
+    .option-range::-moz-range-thumb {width: 16px; height: 16px; border: 0; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);}
+    .option-range:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px; border-radius: 4px;}
+    .option-number {flex: none; display: flex; align-items: stretch; width: 84px; height: 28px; border-radius: 8px; background: var(--ui-line);}
+    /* 흰 칸: 숫자 + 단위(회색)를 가운데에 같이 둠. 단위는 글자일 뿐이라 입력에 안 섞임 */
+    .option-field {flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; margin: 2px 0 2px 2px; padding: 0 4px; border-radius: 6px; background: #FFFFFF; cursor: text;}
+    .option-field:focus-within {outline: 2px solid var(--ui-accent); outline-offset: 0;}
+    .option-number input {flex: 1; min-width: 0; padding: 0; border: 0; background: transparent; font: var(--ui-value); color: var(--ui-text); text-align: center; outline: none; -moz-appearance: textfield;}
+    .option-field.has-unit input {flex: none; max-width: 100%; text-align: right;} /* 너비는 숫자 길이만큼 (script) */
+    .option-number input::-webkit-inner-spin-button, .option-number input::-webkit-outer-spin-button {margin: 0; -webkit-appearance: none;}
+    .option-unit {flex: none; margin-left: 2px; font: var(--ui-note); color: var(--ui-sub);}
+    .option-step {display: flex; flex-direction: column; width: 18px;}
+    .option-step button {flex: 1; padding: 0; border: 0; background: transparent; color: var(--ui-muted); cursor: pointer;}
+    .option-step button::before {content: ''; display: block; width: 8px; height: 5px; margin: auto; background: currentColor;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M4 0 8 5H0z'/%3E%3C/svg%3E") center / contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M4 0 8 5H0z'/%3E%3C/svg%3E") center / contain no-repeat;}
+    .option-step button + button::before {transform: rotate(180deg);}
+    .option-step button:hover {color: var(--ui-text);}
+    .option-step button:disabled {opacity: 0.3; cursor: default;}
+    .option-row.is-disabled .option-range, .option-row.is-disabled .option-number {pointer-events: none;}
     /* 스위치 */
-    .option-switch {flex-shrink: 0; position: relative; width: 36px; height: 20px; margin: 0; border-radius: 10px; background: rgba(0, 0, 0, 0.15); appearance: none; -webkit-appearance: none; cursor: pointer; transition: background 0.15s linear;}
+    .option-switch {flex-shrink: 0; position: relative; width: 36px; height: 20px; margin: 0; border-radius: 10px; background: var(--ui-off); appearance: none; -webkit-appearance: none; cursor: pointer; transition: background 0.15s linear;}
     .option-switch::after {content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);}
-    .option-switch:checked {background: #334cff;}
+    .option-switch:checked {background: var(--ui-accent);}
     .option-switch:checked::after {transform: translateX(16px);}
-    .option-switch:focus-visible {outline: 2px solid #334cff; outline-offset: 2px;}
+    .option-switch:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
     .option-row.is-choice {flex-direction: column; align-items: stretch; gap: 8px; cursor: default;}
-    .option-choices {display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 2px; border-radius: 8px; background: rgba(0, 0, 0, 0.06);}
-    .option-choice {flex: 1; min-width: 0; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; font: var(--ui-caption); color: rgba(0, 0, 0, 0.5); cursor: pointer; transition: background 0.15s linear, color 0.15s linear;}
+    .option-choices {display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 2px; border-radius: 8px; background: var(--ui-line);}
+    .option-choice {flex: 1; min-width: 0; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; font: var(--ui-caption); color: var(--ui-muted); cursor: pointer; transition: background 0.15s linear, color 0.15s linear;}
     .option-choice[aria-pressed="true"] {background: #fff; color: var(--ui-accent); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);}
     .option-row.is-disabled {opacity: 0.35;}
+    /* FLOW 자동 재생 (26-1116 취향선택브랜드에서 공통으로): ▶ 자동 재생 → ■ 정지(빨강, 재생 중 옵션 카드 흐리게) → ↺ 처음으로
+       프로토타입에 시나리오(src/types/type_N_autoplay.js)가 없으면 버튼만 흐리게 · 못 누름 */
+    .autoplay-card .option-title {margin-bottom: 8px;}
+    .autoplay-button {display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 36px; margin: 0; border: 0; border-radius: 8px; background: #000; font: var(--ui-label); color: #fff; cursor: pointer;}
+    .autoplay-button:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
+    .autoplay-button:disabled {opacity: 0.3; cursor: not-allowed;}
+    .autoplay-icon {width: 0; height: 0; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor;}
+    .autoplay-button.is-playing {background: #F31110;}
+    .autoplay-button.is-playing .autoplay-icon {width: 9px; height: 9px; border: 0; border-radius: 1px; background: currentColor;}
+    .autoplay-button.is-done {background: #fff; box-shadow: inset 0 0 0 1px #000; color: #000;}
+    .autoplay-button.is-done .autoplay-icon {width: 12px; height: 12px; border: 0; background: currentColor;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3C/svg%3E") center / contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3C/svg%3E") center / contain no-repeat;}
+    #optionCards .option-card {transition: opacity 0.2s linear;}
+    .side-stack.is-autoplaying #optionCards .option-card {opacity: 0.35; pointer-events: none;}
     .option-row.is-disabled .option-choice {cursor: default;}
     .option-choice:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 1px;}
     /* FILES 카드: 개발 전달용 파일(로티 json · zip 등) 내려받기. 선택한 항목의 files → 공통 CONFIG.files, 없으면 숨김 */
@@ -175,12 +250,40 @@
     .file-button:hover {background: #333;}
     .file-button:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
     .file-label {flex: none; font: var(--ui-label); white-space: nowrap;}
-    .file-name {flex: 1; min-width: 0; overflow: hidden; font: var(--ui-caption); font-weight: 400; color: rgba(255, 255, 255, 0.55); text-align: right; text-overflow: ellipsis; white-space: nowrap;}
+    .file-name {flex: 1; min-width: 0; overflow: hidden; font: var(--ui-note); color: var(--ui-sub); text-align: right; text-overflow: ellipsis; white-space: nowrap;}
     .file-button::after {content: ''; flex: none; width: 14px; height: 14px; background: currentColor;
       -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M4 21h16'/%3E%3C/svg%3E") center / contain no-repeat;
       mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M4 21h16'/%3E%3C/svg%3E") center / contain no-repeat;}
-    .file-note {margin-top: 8px; font: var(--ui-caption); font-weight: 400; color: var(--ui-sub);}
+    .file-note {margin-top: 8px; font: var(--ui-note); color: var(--ui-sub);}
+    /* fileNote 안 번호 목록(<ol>) · 중요 문구(<span class="option-notice">) — 개발 가이드처럼 순서·조건을 적을 때 */
+    .file-note ol {margin: 0; padding: 0; list-style: none; counter-reset: note-step;}
+    .file-note ol li {position: relative; padding-left: 14px; counter-increment: note-step;}
+    .file-note ol li::before {content: counter(note-step) '.'; position: absolute; top: 0; left: 0; font-variant-numeric: tabular-nums;}
+    .file-note .option-notice {margin-top: 8px;}
+    /* fileNote 정보 아이콘 캡션 (<span class="file-note-info">) — 글자는 회색 캡션 그대로, 앞에 주황 i 아이콘만. 박스·바탕 없음
+       프로토타입 zip 을 FILES 에 넣을 때 "압축 파일 안의 interaction.md 확인" 안내에 씀 */
+    .file-note-info {display: block; position: relative; padding-left: 18px;}
+    .file-note-info::before {content: ''; position: absolute; top: 1px; left: 0; width: 14px; height: 14px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23FA9200'/%3E%3Ccircle cx='8.6' cy='4.6' r='1.15' fill='%23fff'/%3E%3Cpath d='M7.3 7h2.1l-1 5.4H6.3z' fill='%23fff'/%3E%3C/svg%3E") center / contain no-repeat;}
+    /* MOTION 카드: 타입별 모션 설명 (CONFIG.items[].motion). 없으면 숨김 */
+    .motion-group + .motion-group {margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--ui-line);}
+    #motionBody {margin-top: 12px;} /* 카드 제목 아래 간격: 다른 카드(OPTIONS 13px)와 맞춤 */
+    .motion-group-title {margin-bottom: 8px; font: var(--ui-section); color: var(--ui-sub);}
+    .motion-group-title span {margin-left: 4px; font: 400 12px/16px var(--ui-font); color: var(--ui-sub);} /* MOTION 보조 글: 다른 카드보다 한 단계 크게 (12) */
+    .motion-list {display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: motion-step;}
+    .motion-list > li {position: relative; padding-left: 16px; counter-increment: motion-step; font: var(--ui-label); color: var(--ui-text); word-break: keep-all;}
+    .motion-list > li::before {content: counter(motion-step) '.'; position: absolute; top: 0; left: 0; font-variant-numeric: tabular-nums;} /* 숫자 목록: 1. 2. 3. */
+    .motion-sub {display: flex; flex-direction: column; gap: 2px; margin: 4px 0 0; padding: 0; list-style: none;}
+    .motion-sub li {font: 400 12px/16px var(--ui-font); color: var(--ui-sub); word-break: keep-all;}
+    .motion-sub li::before {content: '– ';}
+    /* 자동 재생 중: 프로토타입 안을 사람이 만지지 못하게 (클릭 · 터치 · 휠 · 키보드 모두 막음, 자동 재생의 가짜 탭 · 스크롤은 그대로) */
+    .stage.is-autoplaying .stage-frame {pointer-events: none;}
     .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
+    /* 확대 보기 (툴바 돋보기 · Z): 폰을 바탕에 꽉 차게 (위아래 여백 24, 스크롤 없음). 오른쪽 카드 · QR은 가림 */
+    .stage.is-zoomed .side-stack, .stage.is-zoomed .qr-card {display: none;}
+    .zoom-button.is-on {background: rgba(0, 0, 0, 0.06);}
+    .zoom-button .zoom-minus {display: none;}
+    .zoom-button.is-on .zoom-plus {display: none;}
+    .zoom-button.is-on .zoom-minus {display: inline;}
   </style>
 </head>
 <body>
@@ -214,7 +317,7 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
           <span>Download (.zip)</span>
         </a>
-        <!-- zip 버튼 아래 안내 (CONFIG.downloadNote, zip 버튼이 보이고 잠기지 않았을 때만) -->
+        <!-- zip 버튼 아래 안내 (CONFIG.downloadNote, zip 버튼이 보이면 항상, 잠기면 같이 흐리게) -->
         <p class="panel-download-note is-hidden" id="downloadNote"></p>
       </div>
       <!-- 타입 목록·키보드 안내: 타입이 2개 이상일 때만 보임 (script) -->
@@ -231,17 +334,32 @@
         <p class="qr-url" id="qrUrl"></p>
       </div>
       <div class="stage-tools" id="stageTools">
+        <button class="tool-button sync-button is-on" type="button" id="syncButton" data-tip="폰 동기화 켜짐 (P)" aria-label="폰 동기화" aria-pressed="true" hidden><svg class="sync-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="sync-wave sync-wave--3" d="M2.5 9a14 14 0 0 1 19 0"/><path class="sync-wave sync-wave--2" d="M5.5 12.5a9.5 9.5 0 0 1 13 0"/><path class="sync-wave sync-wave--1" d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor" stroke="none"/><path class="sync-slash" d="M3 3l18 18"/></svg></button>
         <button class="tool-button" type="button" id="openButton" data-tip="새 창으로 보기" aria-label="새 창으로 보기"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></button>
+        <button class="tool-button zoom-button" type="button" id="zoomButton" data-tip="화면에 맞게 확대 (Z)" aria-label="화면에 맞게 확대" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/><path d="M8 10.5h5"/><path class="zoom-plus" d="M10.5 8v5"/><path class="zoom-minus" d="M8 10.5h5"/></svg></button>
         <button class="tool-button" type="button" id="replayButton" data-tip="다시 재생 (R)" aria-label="다시 재생"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
         <button class="tool-button" type="button" id="qrButton" data-tip="QR 코드" aria-label="QR 코드" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M21 21h-4v-4"/></svg></button>
       </div>
       <!-- 오른쪽 카드 묶음: 옵션 카드(script가 CONFIG.options로 그림) → FILES 카드 -->
       <div class="side-stack" id="sideStack">
+        <!-- MOTION: 선택한 타입의 모션 설명 (CONFIG.items[].motion). 없으면 숨김 -->
+        <div class="option-card motion-card" id="motionCard" hidden>
+          <p class="option-title">MOTION</p>
+          <div id="motionBody"></div>
+        </div>
         <div id="optionCards"></div>
+        <!-- FLOW 자동 재생: 프로토타입에 src/common/autoplay.js 가 있으면 보임. 시나리오가 없으면 버튼 비활성
+             필요 없으면 프로토타입에서 autoplay 두 줄을 지우면 카드도 사라짐 -->
+        <div class="option-card autoplay-card" id="autoplayCard" hidden>
+          <p class="option-title">FLOW</p>
+          <button class="autoplay-button" id="autoplayButton" type="button" disabled title="자동 재생 시나리오가 아직 없습니다 (type_N_autoplay.js)">
+            <span class="autoplay-icon" aria-hidden="true"></span><span class="autoplay-label">자동 재생</span>
+          </button>
+        </div>
         <div class="option-card files-card" id="filesCard" hidden>
           <p class="option-title">FILES</p>
           <div class="file-list" id="fileList"></div>
-          <p class="file-note" id="fileNote" hidden></p>
+          <div class="file-note" id="fileNote" hidden></div> <!-- div: 안에 번호 목록(<ol>)을 넣을 수 있게 -->
         </div>
       </div>
       <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
@@ -262,14 +380,24 @@
         download: 내려받을 zip. 최종 결정된 프로토타입만 마지막에 넣음 (비우면 버튼 숨김)
                   download/ 폴더에 prototype(s) 폴더를 통째로 압축. 항목별로 다르면 items의 download
                   zip을 넣은 뒤 prototype(s) 안 파일을 고치면 zip도 다시 만들고 version 올리기
-        downloadNote: zip 버튼 아래 안내 문구 (주의 아이콘 자동, <b>로 강조). 비우면 숨김. zip 버튼이 숨거나 잠기면 같이 숨김
+        downloadNote: zip 버튼 아래 안내 문구 (주의 아이콘 자동, <b>로 강조). 비우면 숨김. zip 버튼이 숨으면 같이 숨김, 잠기면 같이 흐리게 (문구는 항상 보임)
         locked: 버튼은 보이되 아직 못 내려받게 흐리게 할 것 ['spec', 'download']. 준비되면 배열에서 빼기 (zip은 그때 download/ 에 넣기)
                 항목별로 다르면 items의 locked
         items가 1개면 타입 목록·TYPES 제목·키보드 안내를 숨김
+        items[].motion: 오른쪽 MOTION 카드에 보일 모션 설명 [{ title?, note?, items: ['문장' | { text, sub: ['보충'] }] }]. 없으면 카드 숨김
         options: 오른쪽 옵션 카드. 고른 값을 <html data-id="값">으로 프로토타입에 넣음 (CSS는 :root[data-id="값"] 으로 받음)
                  스위치: { id, label, on, off, default } → 켜면 on 값, 끄면 off 값
                  선택:   { id, label, choices: [{ value, label }], default } → 버튼 중 하나 (4개 넘으면 줄바꿈)
-                         값은 영문·숫자·-_ 만 (소수점 X → 시간은 ms로: '150' = 0.15초)
+                         값은 영문·숫자·-_ 만 (선택 값은 소수점 X → 시간은 ms로: '150' = 0.15초)
+                 슬라이더: { id, label, min, max, step, unit, default } → 슬라이더 + 숫자 칸(▲▼ step 단위) 세트
+                         값은 숫자 문자열 (step 소수 자리에 맞춤: step 0.05 → '0.15'). 프로토타입에서 data-id="값" + CSS 변수 --opt-id 로 받음
+                         예) { id: 'speed', label: '지속 시간', unit: 'ms', min: 0, max: 1000, step: 10, default: '300' }
+                         scale: 화면 단위와 프로토타입에 넘길 단위가 다를 때. min·max·step·unit 은 화면 단위, default 는 넘길 단위
+                         예) { id: 'hold', label: '노출 시간', unit: '초', min: 3, max: 8, step: 0.5, scale: 1000, default: '3000' } → 화면 3초, 프로토타입 3000(ms)
+                            → CSS: transition-duration: calc(var(--opt-speed) * 1ms);
+                 note: '캡션' 을 넣으면 옵션 이름 아래 작은 회색 설명. 강조 <b>검정 굵게</b> · <em>파랑 굵게</em>
+                       (fileNote · MOTION note·sub 도 같은 강조 태그 사용)
+                 notice: '중요 조건' 을 넣으면 주황 i 아이콘 + 연주황 바탕 캡션 (꼭 지켜야 할 값. 예: notice: '최소 3초 노출')
                  when: { id, value } 를 넣으면 그 옵션이 그 값일 때만 쓸 수 있음 (아니면 흐리게)
                  group: '이름' 을 같은 값으로 준 스위치끼리는 하나만 켜짐 (켜면 나머지 꺼짐. 예: 화면 바로보기 스위치들)
                  예) { id: 'preview', label: '로딩 바로보기', on: 'on', off: 'off', default: 'off' },
@@ -285,13 +413,16 @@
                { label: '버튼 글자', file: '경로', name: '받을 파일 이름(생략하면 원래 이름)' }
                fileNote: FILES 카드 아래 작은 설명 (생략 가능)
                예) files: [{ label: 'Lottie', file: 'prototype/src/lottie/ic_search.json' }, { label: 'CSS', file: 'download/icon-css.zip' }]
+               프로토타입 zip 을 FILES 에 넣으면 명세 안내는 정보 아이콘 캡션으로 (공통):
+                   files: [{ label: '프로토타입', file: 'download/prototype.zip' }],
+                   fileNote: '<span class="file-note-info">압축 파일 안의 <b>interaction.md</b>를 확인해 주세요.</span>'
     */
     var CONFIG = {
       title: '무신사 렌즈',
       sub: '26-1117 · Prototype',
       label: 'TYPES',
-      version: '20261117-8',
-      qrHost: '172.30.1.42', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
+      version: '20261118-1',
+      qrHost: '', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: 'https://www.figma.com/design/gFaXkGfdt0Z8oEktTll4wW/-26-3Q--%EB%AC%B4%EC%8B%A0%EC%82%AC-%EB%A0%8C%EC%A6%88?node-id=3402-109358', // [26-3Q] 무신사 렌즈
       jira: '',
       spec: '', // 예: 'prototype/interaction.md' (명세를 따로 받게 할 때만, 선택)
@@ -326,6 +457,11 @@
       [].forEach.call(document.querySelectorAll('[data-config]'), function (el) {
         el.textContent = CONFIG[el.dataset.config];
       });
+      /* 제작 회차: 인덱스가 들어 있는 폴더 이름(1st · 2nd · 3rd …)을 읽어 1st 가 아니면 날짜 줄 'Prototype' 옆에 붙임 (예: 26-1111 · Prototype · 2nd) */
+      var round = (location.pathname.match(/\/(\d+(?:st|nd|rd|th))\/(?:index\.html)?$/) || [])[1];
+      if (round && round !== '1st') {
+        [].forEach.call(document.querySelectorAll('[data-config="sub"]'), function (el) { el.textContent = CONFIG.sub + ' · ' + round; });
+      }
       document.title = CONFIG.title;
       document.getElementById('keyHint').textContent = '키보드 ↑ ↓ 로 전환 · R 다시 재생';
       /* 타입이 1개면 목록·TYPES 제목·키보드 안내 숨김 (전환할 게 없으므로) */
@@ -338,10 +474,16 @@
       var OPTION_LINES = CONFIG.options || [];                                    /* 섹션 줄 포함 (그리기용) */
       var OPTIONS = OPTION_LINES.filter(function (o) { return o.id; });           /* 값이 있는 옵션만 */
       var optionValues = {};
-      function defaultOf(o) { return o.default || (o.choices ? o.choices[0].value : o.on); }
+      function isSlider(o) { return o.max != null; }
+      function defaultOf(o) {
+        if (o.default != null && o.default !== '') return String(o.default);
+        if (o.choices) return o.choices[0].value;
+        return isSlider(o) ? String(o.min) : o.on;
+      }
       OPTIONS.forEach(function (o) { optionValues[o.id] = defaultOf(o); });
       function isOptionValue(o, value) {
         if (o.choices) return o.choices.some(function (c) { return c.value === value; });
+        if (isSlider(o)) return typeof value === 'string' && value !== '' && isFinite(value) && +value / (o.scale || 1) >= o.min && +value / (o.scale || 1) <= o.max;
         return value === o.on || value === o.off;
       }
       /* group 안에 켜진 스위치가 여럿이면 목록에서 마지막 것만 남김 (예전에 저장된 값 정리) */
@@ -411,6 +553,8 @@
 
       /* 선택한 항목이 바뀔 때마다 QR 다시 그림 */
       function renderQr(type) {
+        qrCard.hidden = type.qr === false; /* 항목 qr: false 면 QR 카드·QR 버튼 숨김 */
+        if (qrCard.hidden) { qrButton.hidden = true; return; }
         var url = shareUrl(type);
         var image = document.getElementById('qrImage');
         document.getElementById('qrTitle').textContent = type.title;
@@ -454,7 +598,7 @@
         var zip = type.download || CONFIG.download;
         renderFile(document.getElementById('specLink'), type.spec || CONFIG.spec, locked.indexOf('spec') !== -1);
         renderFile(document.getElementById('downloadLink'), zip, locked.indexOf('download') !== -1);
-        renderDownloadNote(zip && locked.indexOf('download') === -1 ? (type.downloadNote || CONFIG.downloadNote || '') : '');
+        renderDownloadNote(zip ? (type.downloadNote || CONFIG.downloadNote || '') : '', locked.indexOf('download') !== -1);
       }
       function renderFile(link, file, locked) {
         if (file && !locked) {
@@ -467,12 +611,13 @@
         link.title = !file ? '' : locked ? '아직 내려받을 수 없습니다 (준비 중)' : file.split('/').pop() + ' 내려받기';
       }
       /* zip 아래 안내: 주의 아이콘(주황 원 + 느낌표, 느낌표는 패널 바탕색으로 뚫음) + 문구 */
-      function renderDownloadNote(text) {
+      function renderDownloadNote(text, locked) {
         var note = document.getElementById('downloadNote');
         note.innerHTML = text ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="11"/>'
           + '<path d="M12 6.5v7" style="stroke: var(--panel-bg)" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.5" style="fill: var(--panel-bg)"/></svg>'
           + '<span>' + text + '</span>' : '';
         note.classList.toggle('is-hidden', !text);
+        note.classList.toggle('is-locked', !!text && !!locked);
       }
 
       /* 프로토타입 옵션창 값이 바뀌면 (postMessage 'proto-params') QR을 실시간으로 다시 그림 */
@@ -484,6 +629,7 @@
       });
 
       function select(id) {
+        stopAutoplay(); /* 다른 타입으로 바꾸면 자동 재생 끝냄 */
         current = findType(id);
         protoParams = {};
         loadFrame(fileUrl(current));
@@ -492,6 +638,7 @@
         renderJira(current);
         renderDownload(current);
         renderFiles(current);
+        renderMotion(current);
         document.title = CONFIG.title + ' · ' + current.title;
         [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
           button.classList.toggle('is-active', button.dataset.id === current.id);
@@ -608,12 +755,14 @@
       /* 옵션 한 줄: 선택(choices) 또는 스위치 */
       function optionRow(o) {
           if (o.choices) return choiceRow(o);
+          if (isSlider(o)) return sliderRow(o);
           var isOn = optionValues[o.id] === o.on;
           var row = document.createElement('label');
           row.className = 'option-row';
           row.innerHTML = '<span class="option-text"><span class="option-label"></span></span>'
             + '<input class="option-switch" type="checkbox" role="switch">';
           row.querySelector('.option-label').textContent = o.label;
+          addNote(row.querySelector('.option-text'), o);
           var input = row.querySelector('.option-switch');
           input.checked = isOn;
           input.addEventListener('change', function () {
@@ -625,6 +774,41 @@
             onOptionChange();
           });
           return row;
+      }
+
+      /* MOTION 카드: 선택한 항목의 motion = [{ title, note?, items: ['문장' | { text, sub: ['보충'] }] }], 없으면 숨김 */
+      function renderMotion(type) {
+        var groups = type.motion || [];
+        var body = document.getElementById('motionBody');
+        body.innerHTML = '';
+        groups.forEach(function (g) {
+          var box = document.createElement('div');
+          box.className = 'motion-group';
+          if (g.title) { /* 제목 없이 줄만 적어도 됨: { items: [...] } */
+            var title = document.createElement('p');
+            title.className = 'motion-group-title';
+            title.textContent = g.title;
+            if (g.note) { var n = document.createElement('span'); n.innerHTML = g.note; title.appendChild(n); }
+            box.appendChild(title);
+          }
+          var list = document.createElement('ul');
+          list.className = 'motion-list';
+          (g.items || []).forEach(function (it) {
+            var li = document.createElement('li');
+            li.appendChild(document.createTextNode(typeof it === 'string' ? it : it.text));
+            if (it.sub && it.sub.length) {
+              var sub = document.createElement('ul');
+              sub.className = 'motion-sub';
+              it.sub.forEach(function (t) { var s = document.createElement('li'); s.innerHTML = t; sub.appendChild(s); });
+              li.appendChild(sub);
+            }
+            list.appendChild(li);
+          });
+          box.appendChild(list);
+          body.appendChild(box);
+        });
+        document.getElementById('motionCard').hidden = !groups.length;
+        fitFrame(); /* 카드 묶음 높이가 바뀜 */
       }
 
       /* FILES 카드: 선택한 항목의 files → 공통 CONFIG.files 순서, 없으면 숨김. 파일마다 ?v= 를 붙여 캐시 방지 */
@@ -646,10 +830,92 @@
           list.appendChild(a);
         });
         var noteText = type.fileNote || CONFIG.fileNote || '';
-        note.textContent = noteText;
+        note.innerHTML = noteText; /* <b>·<em> 강조 */
         note.hidden = !noteText;
         document.getElementById('filesCard').hidden = !files.length;
         fitFrame(); /* 카드 묶음 높이가 바뀜 */
+      }
+
+      /* 캡션: 옵션의 note(회색 설명) · notice(중요 조건, 주황 i) — CONFIG에서 쓰는 글이라 <b>·<em> 강조 태그 허용 */
+      function addNote(target, o, after) {
+        var els = [];
+        [['note', 'option-note'], ['notice', 'option-notice']].forEach(function (kind) {
+          if (!o[kind[0]]) return;
+          var el = document.createElement('span');
+          el.className = kind[1];
+          el.innerHTML = o[kind[0]];
+          els.push(el);
+        });
+        if (after) target.after.apply(target, els);
+        else els.forEach(function (el) { target.appendChild(el); });
+      }
+
+      /* 슬라이더 + 숫자 입력 세트: 끌면 바로 반영(저장은 잠깐 뒤 한 번), 놓거나 입력을 마치면 다시 그림
+         숫자 칸: 직접 입력(Enter·바깥 누르면 적용) · ▲▼ 버튼 · 키보드 ↑↓ 모두 step 단위, min~max 안으로 맞춤 */
+      var sliderSaveTimer = null;
+      /* scale: 화면 단위와 저장 단위가 다를 때 (예: 화면 '초', 프로토타입 ms → scale 1000). min·max·step·unit 은 화면 단위, default 는 저장 단위 */
+      function sliderRow(o) {
+        var step = o.step || 1;
+        var k = o.scale || 1;
+        function toView(stored) { return +stored / k; }
+        function toStore(view) { return String(Math.round(+view * k * 1e6) / 1e6); }
+        var digits = (String(step).split('.')[1] || '').length;
+        function snap(n) {
+          n = Math.round((n - o.min) / step) * step + o.min;
+          return String(+Math.min(o.max, Math.max(o.min, n)).toFixed(digits)); /* 0.50 → '0.5' */
+        }
+        var row = document.createElement('div');
+        row.className = 'option-row is-slider';
+        var off = o.when && optionValues[o.when.id] !== o.when.value;
+        if (off) row.classList.add('is-disabled');
+        row.innerHTML = '<div class="option-head-line"><span class="option-label"></span></div>'
+          + '<div class="option-slider-line"><input class="option-range" type="range">'
+          + '<span class="option-number"><label class="option-field"><input type="number" inputmode="decimal"><span class="option-unit"></span></label>'
+          + '<span class="option-step"><button type="button" aria-label="올리기"></button><button type="button" aria-label="내리기"></button></span></span></div>';
+        row.querySelector('.option-label').textContent = o.label;
+        row.querySelector('.option-unit').textContent = o.unit || '';
+        row.querySelector('.option-field').classList.toggle('has-unit', !!o.unit);
+        addNote(row.querySelector('.option-head-line'), o, true);
+        var range = row.querySelector('.option-range');
+        var num = row.querySelector('.option-number input');
+        var buttons = row.querySelectorAll('.option-step button');
+        [range, num].forEach(function (el) { el.min = o.min; el.max = o.max; el.step = step; el.disabled = off; el.setAttribute('aria-label', o.label); });
+        /* 단위가 있으면 숫자 칸 너비를 숫자 길이만큼 → 숫자와 단위가 붙어서 가운데 */
+        function fitNum() {
+          if (o.unit) num.style.width = Math.max(String(num.value).length, 1) * 0.62 + 0.3 + 'em';
+        }
+        function show(value) {
+          range.value = value;
+          num.value = value;
+          fitNum();
+          range.style.setProperty('--fill', (value - o.min) / (o.max - o.min) * 100 + '%');
+          buttons[0].disabled = off || +value >= o.max;
+          buttons[1].disabled = off || +value <= o.min;
+        }
+        function commit(value) {
+          optionValues[o.id] = toStore(snap(+value));
+          onOptionChange();
+        }
+        optionValues[o.id] = toStore(snap(toView(optionValues[o.id]))); /* CONFIG 기본값도 step에 맞춤 */
+        show(toView(optionValues[o.id]));
+        range.addEventListener('input', function () {
+          var view = snap(+range.value);
+          optionValues[o.id] = toStore(view);
+          show(view);
+          applyOptionsToFrame();
+          clearTimeout(sliderSaveTimer);
+          sliderSaveTimer = setTimeout(function () { renderQr(current); saveOptions(); }, 150);
+        });
+        range.addEventListener('change', function () { commit(range.value); });
+        num.addEventListener('change', function () {
+          if (num.value === '' || !isFinite(num.value)) show(toView(optionValues[o.id])); /* 잘못 입력하면 원래 값 */
+          else commit(num.value);
+        });
+        num.addEventListener('keydown', function (e) { if (e.key === 'Enter') num.blur(); });
+        num.addEventListener('input', fitNum);
+        buttons[0].addEventListener('click', function () { commit(toView(optionValues[o.id]) + step); });
+        buttons[1].addEventListener('click', function () { commit(toView(optionValues[o.id]) - step); });
+        return row;
       }
 
       /* 선택 옵션: 라벨 아래 버튼 묶음 (하나만 눌림) */
@@ -659,6 +925,7 @@
         if (o.when && optionValues[o.when.id] !== o.when.value) row.classList.add('is-disabled');
         row.innerHTML = '<span class="option-label"></span><div class="option-choices" role="group"></div>';
         row.querySelector('.option-label').textContent = o.label;
+        addNote(row.querySelector('.option-label'), o, true);
         var group = row.querySelector('.option-choices');
         group.setAttribute('aria-label', o.label);
         group.style.gridTemplateColumns = 'repeat(' + Math.min(o.choices.length, 4) + ', 1fr)'; /* 4개 넘으면 줄바꿈 */
@@ -701,9 +968,127 @@
       }
 
       function replay() {
+        stopAutoplay(); /* 자동 재생 중이면 끝냄 */
+        setAutoplayState('idle');
         loadFrame(fileUrl(current) + '&t=' + Date.now()); /* 다시 불러와 등장 모션부터 재생 */
       }
       document.getElementById('replayButton').addEventListener('click', replay);
+
+      /* FLOW 자동 재생 (프로토타입 src/common/autoplay.js 의 protoAutoplay)
+         바로보기 스위치(group 'preview')를 끄고 → 프로토타입을 처음부터 다시 불러온 뒤 → protoAutoplay.start
+         상태: idle(▶ 자동 재생) → playing(■ 정지, 옵션 카드 흐리게) → done(↺ 처음으로)
+         시나리오가 등록되지 않았으면(protoAutoplay.ready() false) 버튼 비활성 */
+      var autoplayCard = document.getElementById('autoplayCard');
+      var autoplayButton = document.getElementById('autoplayButton');
+      var autoplaying = false;
+      var autoplayDone = false;
+      var AUTOPLAY_LABELS = { idle: '자동 재생', playing: '정지', done: '처음으로' };
+      function setAutoplayState(state) {
+        autoplaying = state === 'playing';
+        autoplayDone = state === 'done';
+        autoplayButton.classList.toggle('is-playing', autoplaying);
+        autoplayButton.classList.toggle('is-done', autoplayDone);
+        autoplayButton.querySelector('.autoplay-label').textContent = AUTOPLAY_LABELS[state];
+        autoplayButton.setAttribute('aria-pressed', String(autoplaying));
+        sideStack.classList.toggle('is-autoplaying', autoplaying);
+        stage.classList.toggle('is-autoplaying', autoplaying); /* 폰 입력 막기 (CSS) */
+        if (autoplaying) blurFrame();
+      }
+      /* 프로토타입 안에 포커스가 남아 있으면 키보드(방향키 · 스페이스)로 스크롤될 수 있어 빼냄 */
+      function blurFrame() {
+        try { var el = frame.contentDocument.activeElement; if (el && el.blur) el.blur(); } catch (e) {}
+        frame.blur();
+      }
+      /* 키보드: 프로토타입을 새로 불러올 때마다, 자동 재생 중이면 안에서 누른 키를 막음 */
+      frame.addEventListener('load', function () {
+        try {
+          frame.contentWindow.addEventListener('keydown', function (e) {
+            if (autoplaying) { e.preventDefault(); e.stopImmediatePropagation(); }
+          }, true);
+        } catch (e) {}
+      });
+      function frameAutoplay() {
+        try { return frame.contentWindow.protoAutoplay || null; } catch (e) { return null; }
+      }
+      function stopAutoplay() {
+        if (!autoplaying) return;
+        var player = frameAutoplay();
+        if (player) player.stop();
+        setAutoplayState('idle');
+      }
+      function startAutoplay() {
+        var changed = false;
+        OPTIONS.forEach(function (o) {
+          if (o.group === 'preview' && !o.choices && optionValues[o.id] !== o.off) { optionValues[o.id] = o.off; changed = true; }
+        });
+        if (changed) onOptionChange();
+        setAutoplayState('playing');
+        frame.addEventListener('load', function () {
+          var player = frameAutoplay();
+          if (!autoplaying || !player || !player.ready()) { setAutoplayState('idle'); return; }
+          setTimeout(function () { /* 첫 화면 등장 모션을 잠깐 보여 주고 시작 */
+            if (autoplaying) player.start(function () { if (autoplaying) setAutoplayState('done'); });
+          }, 800);
+        }, { once: true });
+        loadFrame(fileUrl(current) + '&t=' + Date.now());
+      }
+      autoplayButton.addEventListener('click', function () {
+        if (autoplayButton.disabled) return;
+        if (autoplaying) stopAutoplay();
+        else if (autoplayDone) replay(); /* 처음으로 */
+        else startAutoplay();
+      });
+      /* 프로토타입이 autoplay 엔진을 불러왔으면 카드를 보이고, 시나리오가 있을 때만 버튼을 켬 */
+      frame.addEventListener('load', function () {
+        var player = frameAutoplay();
+        autoplayCard.hidden = !player;
+        var ok = !!(player && player.ready && player.ready());
+        autoplayButton.disabled = !ok;
+        if (ok) autoplayButton.removeAttribute('title');
+        else autoplayButton.title = '자동 재생 시나리오가 아직 없습니다 (type_N_autoplay.js)';
+      });
+
+      /* ▶ 폰 동기화 토글 (proto_server.py, 기본 켜짐)
+         켜짐: QR로 접속한 폰이 파일 저장·옵션 변경을 실시간으로 받음. 켤 때 폰을 한 번 새로 불러와 최신으로 맞춤
+         꺼짐: 폰과의 실시간 연결을 멈춤 (PC 화면은 계속 자동 반영)
+         서버 없이(정적으로) 열면 버튼을 숨김 */
+      var syncButton = document.getElementById('syncButton');
+      function renderSync(on) {
+        syncButton.classList.toggle('is-on', on);
+        syncButton.setAttribute('aria-pressed', on ? 'true' : 'false');
+        syncButton.dataset.tip = on ? '폰 동기화 켜짐 (P)' : '폰 동기화 꺼짐 (P)';
+      }
+      function toggleSync() {
+        if (syncButton.hidden) return;
+        var next = !syncButton.classList.contains('is-on');
+        renderSync(next);
+        fetch('/api/sync?scope=' + encodeURIComponent(optionScope) + '&on=' + (next ? 1 : 0), { method: 'POST' })
+          .then(function (res) { if (!res.ok) throw new Error('sync'); })
+          .catch(function () { renderSync(!next); });
+      }
+      syncButton.addEventListener('click', toggleSync);
+      fetch('/api/sync?scope=' + encodeURIComponent(optionScope), { cache: 'no-store' })
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(); })
+        .then(function (data) { renderSync(data.on !== false); syncButton.hidden = false; })
+        .catch(function () { /* 정적 서버: 동기화 없음 */ });
+
+      /* 라이브 스트림 (PC 인덱스용, 동기화와 상관없이 항상): 파일 저장 → 인덱스 파일이면 새로고침, 아니면 폰 화면 다시 불러오기
+         sync → 다른 창에서 바꾼 동기화 상태를 버튼에 반영 */
+      if (window.EventSource) {
+        var live = new EventSource('/api/live/stream?role=index&scope=' + encodeURIComponent(optionScope));
+        live.onmessage = function (e) {
+          var msg;
+          try { msg = JSON.parse(e.data); } catch (err) { return; }
+          if (msg.type === 'sync') { renderSync(!!msg.on); return; }
+          if (msg.type !== 'change') return;
+          var indexPath = decodeURI(location.pathname).replace(/\/$/, '/index.html');
+          if ((msg.files || []).indexOf(indexPath) !== -1) location.reload();
+          else replay();
+        };
+        live.onerror = function () {
+          if (live.readyState === EventSource.CLOSED) live.close(); /* 정적 서버면 연결 포기 */
+        };
+      }
       document.getElementById('openButton').addEventListener('click', function () {
         window.open(fileUrl(current), '_blank');
       });
@@ -718,13 +1103,15 @@
         placeQrPopover();
       });
 
-      /* 키보드: ↑ ↓ 로 타입 전환, R 다시 재생 (Cmd·Ctrl+R 새로고침은 그대로)
+      /* 키보드: ↑ ↓ 로 타입 전환, R 다시 재생, P 폰 동기화 켜기·끄기, Z 화면에 맞게 확대 (Cmd·Ctrl+R 새로고침은 그대로)
          폰(iframe)을 눌러 포커스가 안으로 들어가도 동작하도록 iframe 문서에도 같은 함수를 붙임 (아래 load)
          프로토타입 안 입력창에서 글자를 칠 때는 무시 */
       function onKey(e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
         if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
         if (e.key === 'r' || e.key === 'R') { replay(); return; }
+        if (e.key === 'p' || e.key === 'P') { toggleSync(); return; }
+        if (e.key === 'z' || e.key === 'Z') { toggleZoom(); return; }
         var index = TYPES.indexOf(current);
         var next = null;
         if (e.key === 'ArrowDown') next = TYPES[(index + 1) % TYPES.length];
@@ -736,7 +1123,31 @@
       }
       document.addEventListener('keydown', onKey);
 
-      var phoneScreenW = 0; /* 툴바 기준 폰 화면 너비 (프로토타입 --phone-screen-w, 없으면 0) */
+      /* 확대 보기: 툴바 돋보기 · Z → 폰을 바탕에 꽉 차게 (다시 누르면 원래 크기)
+         확대는 이 인덱스 화면에서만: 서버 저장 · 폰 동기화로 보내지 않음 (QR로 연 폰은 그대로) */
+      var zoomed = false;
+      var zoomButton = document.getElementById('zoomButton');
+      function toggleZoom() {
+        zoomed = !zoomed;
+        stage.classList.toggle('is-zoomed', zoomed);
+        zoomButton.classList.toggle('is-on', zoomed);
+        zoomButton.setAttribute('aria-pressed', String(zoomed));
+        zoomButton.dataset.tip = zoomed ? '원래 크기 (Z)' : '화면에 맞게 확대 (Z)';
+        zoomButton.setAttribute('aria-label', zoomed ? '원래 크기' : '화면에 맞게 확대');
+        fitFrame();
+      }
+      zoomButton.addEventListener('click', toggleZoom);
+      /* 확대: 폰(그림자 여백 빼고)이 바탕 위아래 24px 안에 꽉 차게. 툴바는 바탕 우상단 */
+      function fitZoom(frameW, frameH, pad) {
+        var scale = Math.min((stage.clientWidth - 48) / (frameW - pad * 2), (stage.clientHeight - 48) / (frameH - pad * 2));
+        frame.style.setProperty('--frame-scale', scale);
+        var tools = document.getElementById('stageTools');
+        tools.classList.remove('is-attached');
+        tools.style.left = tools.style.top = '';
+        qrButton.hidden = true;
+      }
+
+      var phoneScreenW = 0; /* 툴바 기준 폰 화면 너비 (프로토타입 --phone-screen-w, 없으면 0 = 프레임 전체가 폰) */
 
       /* 화면이 프레임보다 작으면 비율 유지하며 축소 */
       function fitFrame() {
@@ -745,6 +1156,7 @@
         var frameW = parseFloat(style.getPropertyValue('--phone-w')) + pad * 2; /* CSS --frame-w와 같은 식 */
         var frameH = parseFloat(style.getPropertyValue('--phone-h')) + pad * 2;
         var scale = Math.min(1, stage.clientWidth / frameW, stage.clientHeight / frameH);
+        if (zoomed) return fitZoom(frameW, frameH, pad);
         frame.style.setProperty('--frame-scale', scale);
 
         /* QR 카드 단계: 폰 왼쪽 여백(바탕 왼쪽 24 + 폰과 간격 16 제외)에 맞춰 전체 → 작은 카드 → 툴바 버튼
@@ -754,21 +1166,31 @@
         var folded = qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w'));
         qrCard.classList.toggle('is-mini', !folded && qrRoom < parseFloat(style.getPropertyValue('--qr-card-w')));
         qrCard.classList.toggle('is-folded', folded);
-        qrButton.hidden = !folded;
+        qrButton.hidden = !folded || qrCard.hidden;
         if (!folded) qrCard.classList.remove('is-open');
 
         /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단
-           프로토타입이 --phone-screen-w를 정하면(폰 옆에 옵션창이 있어 --phone-w가 더 넓을 때) 그 폰 화면 오른쪽에 붙임 */
+           프로토타입이 --phone-screen-w를 정하면(폰 옆에 옵션창·설명창이 있어 --phone-w가 더 넓을 때) 그 폰 화면 오른쪽에 붙임 */
         var tools = document.getElementById('stageTools');
-        var phoneRight = phoneScreenW ? phoneLeft + phoneScreenW * scale : stage.clientWidth - phoneLeft;
+        var frameRight = stage.clientWidth - phoneLeft;                     /* 프레임(폰 + 옆 패널) 오른쪽 */
+        var phoneRight = phoneScreenW ? phoneLeft + phoneScreenW * scale : frameRight;
         var phoneTop = (stage.clientHeight - frameH * scale) / 2 + pad * scale;
         var attached = phoneRight + 12 + tools.offsetWidth + 16 <= stage.clientWidth;
         tools.classList.toggle('is-attached', attached);
         tools.style.left = attached ? phoneRight + 12 + 'px' : '';
         tools.style.top = attached ? phoneTop + 'px' : '';
-        var stackTop = tools.offsetTop + tools.offsetHeight + 12;
-        sideStack.classList.toggle('is-attached', attached);
-        sideStack.style.left = attached ? phoneRight + 12 - 24 + 'px' : ''; /* 그림자 여백 24 만큼 왼쪽으로 */
+        /* 폰 옆 패널(옵션창·설명창)이 툴바 바로 아래(8px)에 오도록 지금 툴바 높이를 프로토타입에 알려 줌 (--index-tools-h, 프로토타입 px)
+           툴바 버튼 수가 바뀌어도(QR 접힘 등) 패널이 가려지지 않음 */
+        try {
+          var fdoc = frame.contentDocument;
+          if (fdoc && phoneScreenW) fdoc.documentElement.style.setProperty('--index-tools-h', Math.ceil(tools.offsetHeight / scale) + 'px');
+        } catch (e) { /* 다른 출처 */ }
+        /* 오른쪽 카드 묶음: 툴바 아래. 폰 옆 패널이 있으면 패널과 겹치지 않게 프레임 오른쪽에 (폰 윗선부터) */
+        var stackTop = phoneScreenW ? phoneTop : tools.offsetTop + tools.offsetHeight + 12;
+        var stackX = phoneScreenW ? frameRight : phoneRight;
+        var stackAttached = phoneScreenW ? stackX + 12 + 240 + 16 <= stage.clientWidth : attached;
+        sideStack.classList.toggle('is-attached', stackAttached);
+        sideStack.style.left = stackAttached ? stackX + 12 - 24 + 'px' : ''; /* 그림자 여백 24 만큼 왼쪽으로 */
         sideStack.style.top = stackTop + 'px';
         sideStack.style.maxHeight = stage.clientHeight - stackTop + 'px'; /* 바탕 아래까지 (안쪽 아래 여백 24), 넘치면 묶음 안 스크롤 */
         placeQrPopover();
@@ -786,6 +1208,7 @@
         var win = frame.contentWindow;
         if (!e.deltaY || !win || !win.pageScroll) return;
         e.preventDefault();
+        if (autoplaying) return; /* 자동 재생 중엔 바탕 휠도 프로토타입으로 넘기지 않음 */
         win.pageScroll.scrollByWheel(e);
       }, { passive: false });
 

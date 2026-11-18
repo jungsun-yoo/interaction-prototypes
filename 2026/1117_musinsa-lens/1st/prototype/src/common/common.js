@@ -59,16 +59,21 @@ var pageScroll = (function () {
    값이 들어오는 길
    ① 주소 ?opt-옵션=값 — QR·새 창으로 열 때
    ② 인덱스 안 iframe이면 인덱스가 protoOptions.apply()를 바로 부름
-   ③ 혼자 열린 화면(모바일)은 서버 /api/options/stream 으로 실시간 (proto_server.py, 없으면 조용히 건너뜀) */
+   ③ 혼자 열린 화면(모바일)은 서버 /api/options/stream 으로 실시간 (proto_server.py, 없으면 조용히 건너뜀)
+   ④ 혼자 열린 화면은 /api/live/stream 도 받아, 파일 저장 때 새로 불러옴 (인덱스 ▶ 동기화가 켜져 있을 때만) */
 var protoOptions = (function () {
     var root = document.documentElement;
     var KEY_RE = /^[a-z][a-z0-9-]{0,30}$/;
-    var VALUE_RE = /^[A-Za-z0-9_-]{1,40}$/;
+    var VALUE_RE = /^[A-Za-z0-9_.-]{1,40}$/; /* 슬라이더 소수 값(0.15) 때문에 . 허용 */
+    var NUMBER_RE = /^-?\d+(\.\d+)?$/;
 
+    /* 숫자 값(슬라이더 · 숫자 선택)은 CSS 변수 --opt-옵션 으로도 넣음 (단위 없음 → calc(var(--opt-speed) * 1ms)) */
     function apply(options) {
         Object.keys(options || {}).forEach(function (key) {
             var value = options[key];
-            if (KEY_RE.test(key) && typeof value === 'string' && VALUE_RE.test(value)) root.setAttribute('data-' + key, value);
+            if (!(KEY_RE.test(key) && typeof value === 'string' && VALUE_RE.test(value))) return;
+            root.setAttribute('data-' + key, value);
+            if (NUMBER_RE.test(value)) root.style.setProperty('--opt-' + key, value);
         });
     }
 
@@ -82,13 +87,30 @@ var protoOptions = (function () {
     try { inIndex = window.parent !== window && !!window.parent.CONFIG; } catch (e) { /* 다른 출처 */ }
     if (!inIndex && window.EventSource) {
         /* scope: 인덱스 폴더 (/1st/prototype/Type_1.html → /1st) */
-        var scope = location.pathname.replace(/\/[^\/]*$/, '').replace(/\/prototypes?$/, '') || '/';
+        /* prototype(s)/ 아래 한 단계 더 깊은 화면(/1st/prototype/aiPhotoAnalysis/index.html)도 → /1st */
+        var scope = (/\/prototypes?\//.test(location.pathname)
+            ? location.pathname.replace(/\/prototypes?\/.*$/, '')
+            : location.pathname.replace(/\/[^\/]*$/, '')) || '/';
         var stream = new EventSource('/api/options/stream?scope=' + encodeURIComponent(scope));
         stream.onmessage = function (e) {
             try { apply(JSON.parse(e.data)); } catch (err) { /* 잘못된 값은 무시 */ }
         };
         stream.onerror = function () {
             if (stream.readyState === EventSource.CLOSED) stream.close(); /* 정적 서버(깃헙 페이지 등)면 연결 포기 */
+        };
+
+        /* 라이브: 파일 저장 또는 인덱스 ▶ 동기화를 다시 켤 때 → 이 화면(폰)을 새로 불러옴
+           인덱스에서 동기화를 끄면 서버가 아무 신호도 보내지 않음 (옵션 스트림도 같음)
+           인덱스 파일(index.html)만 바뀐 경우는 폰 화면과 상관없어 건너뜀 */
+        var live = new EventSource('/api/live/stream?role=phone&scope=' + encodeURIComponent(scope));
+        live.onmessage = function (e) {
+            var msg;
+            try { msg = JSON.parse(e.data); } catch (err) { return; }
+            var onlyIndex = msg.type === 'change' && (msg.files || []).every(function (f) { return /\/index\.html$/.test(f) && f.split('/').length === 3; });
+            if ((msg.type === 'replay' || msg.type === 'change') && !onlyIndex) location.reload();
+        };
+        live.onerror = function () {
+            if (live.readyState === EventSource.CLOSED) live.close();
         };
     }
 
