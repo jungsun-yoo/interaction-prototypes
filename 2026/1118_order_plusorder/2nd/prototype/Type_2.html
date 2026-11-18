@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko" data-phone="375"> <!-- 폰 크기 프리셋: 375(기본) · 393 · 402 · 440 (common.css) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#F5F5F5"> <!-- 사파리 상단·전체 화면 상태바 색: 화면 배경(gray100)과 같게 -->
+  <title>Type 2</title>
+  <!-- 홈 화면 아이콘으로 열면 사파리 없이 전체 화면 (링크로 열면 기존처럼 사파리)
+       상태바 default: 흰 바탕·검정 글자, 콘텐츠는 상태바 아래부터 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Type 2"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <!-- 파비콘: 무신사 (CDN) -->
+  <link rel="icon" type="image/svg+xml" href="https://image.msscdn.net/static/assets/bi/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-180x180.png">
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261110-22">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261110-22">
+  <link rel="stylesheet" href="./src/types/order.css?v=20261118-02"> <!-- 주문서 화면 레이아웃 -->
+  <link rel="stylesheet" href="./src/types/type_2.css?v=20261118-01">
+</head>
+<body>
+
+  <div class="phone">
+
+    <!-- status-bar: PC 폰 프레임에서만 보임 -->
+    <div class="status-bar is-dark" aria-hidden="true">
+      <!-- Figma: 1_디자인 싱크 > StatusBar / iPhone 14 (node 30120-64398). 색만 currentColor로 바꿈 -->
+      <span class="status-bar-time">9:41</span>
+      <svg class="status-bar-icons" width="51.4012" height="13" viewBox="26 0 51.4012 13" fill="none">
+        <!-- wifi -->
+        <path d="M32.1152 10.085C33.535 8.85937 35.6144 8.8595 37.0342 10.085C37.1056 10.1509 37.1474 10.2445 37.1494 10.3428C37.1514 10.441 37.1136 10.5357 37.0449 10.6045L34.8213 12.8945C34.7562 12.9617 34.6678 12.9999 34.5752 13C34.4825 13 34.3933 12.9618 34.3281 12.8945L32.1045 10.6045C32.0359 10.5356 31.998 10.441 32 10.3428C32.002 10.2445 32.0437 10.1508 32.1152 10.085ZM29.1094 7.26172C32.1685 4.35713 36.9058 4.35713 39.9648 7.26172C40.0339 7.32982 40.0732 7.42351 40.0742 7.52148C40.0751 7.61935 40.0373 7.71377 39.9697 7.7832L38.6846 9.1084C38.5521 9.24367 38.338 9.24698 38.2021 9.11523C37.1977 8.1868 35.8912 7.67185 34.5361 7.67188C33.1818 7.67245 31.876 8.18733 30.8721 9.11523C30.7362 9.24697 30.5221 9.24374 30.3896 9.1084L29.1045 7.7832C29.0367 7.71385 28.9992 7.61941 29 7.52148C29.0009 7.42352 29.0404 7.32981 29.1094 7.26172ZM26.1074 4.44238C30.7993 -0.147226 38.2007 -0.147163 42.8926 4.44238C42.9605 4.51057 42.9994 4.60393 43 4.70117C43.0005 4.79826 42.9625 4.89204 42.8955 4.96094L41.6094 6.28613C41.4768 6.42211 41.2616 6.42382 41.127 6.29004C39.3393 4.55527 36.9666 3.588 34.5 3.58789C32.0334 3.58801 29.6608 4.55527 27.873 6.29004C27.7385 6.42393 27.523 6.42228 27.3906 6.28613L26.1035 4.96094C26.0365 4.89201 25.9995 4.79823 26 4.70117C26.0006 4.60393 26.0395 4.51052 26.1074 4.44238Z" fill="currentColor"/>
+        <!-- battery -->
+        <mask id="statusBarBatteryMask" fill="white">
+          <path d="M50 4C50 1.79086 51.7909 0 54 0H71C73.2091 0 75 1.79086 75 4V9C75 11.2091 73.2091 13 71 13H54C51.7909 13 50 11.2091 50 9V4Z" fill-rule="evenodd" clip-rule="evenodd"/>
+        </mask>
+        <path opacity="0.35" d="M54 13H71C73.2091 13 75 11.2091 75 9V4C75 1.79086 73.2091 0 71 0H54C51.7909 0 50 1.79086 50 4V9C50 11.2091 51.7909 13 54 13Z" stroke-width="2.11017" stroke="currentColor" mask="url(#statusBarBatteryMask)"/>
+        <path opacity="0.4" d="M76 5V9.22034C76.8491 8.86291 77.4012 8.0314 77.4012 7.11017C77.4012 6.18894 76.8491 5.35744 76 5" fill="currentColor"/>
+        <path d="M52 4C52 2.89543 52.8954 2 54 2H71C72.1046 2 73 2.89543 73 4V9C73 10.1046 72.1046 11 71 11H54C52.8954 11 52 10.1046 52 9V4Z" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- content -->
+    <div class="scroll-area">
+      <!-- 주문서 (Figma 작업 26-11 · node 318-298451) — 반응형 (실제 앱처럼 375 ~ 600)
+           폭이 늘어나는 부분(바·박스·버튼·구분선·헤더)은 코드, 크기가 고정인 부분(썸네일+글·섹션 제목·상품 목록)은 3배 이미지
+           TitleSection(무배당발 플러스오더 혜택가 상품)은 모션 테스트용 코드 -->
+      <div class="order">
+        <!-- AppBar (node 318-298923) -->
+        <header class="order-appbar">
+          <img class="order-appbar-back" src="./src/img/order/ic_arrow_left.svg" width="20" height="20" alt="뒤로">
+          <h1 class="order-appbar-title">주문서</h1>
+        </header>
+
+        <img style="--w: 375; --h: 47" class="proto-img order-first" src="./src/img/order/items_title.png" width="375" height="47" alt="주문 상품 2개">
+
+        <!-- ListCart 1 (node 318-298459) -->
+        <section class="cart-item cart-item--1">
+          <img style="--w: 315; --h: 94" class="proto-img" src="./src/img/order/item_1_info.png" width="315" height="94" alt="무신사 스탠다드 홈 &amp; 프로덕트 에어케어 공간탈취제 360g [포레스트] 2팩 1개 3,990원">
+          <p class="nudge nudge--mbdb"><img src="./src/img/order/mbdb_logo.png" width="54" height="14" alt="무배당발">22시까지 결제 시 내일(목) 도착 보장</p>
+          <p class="nudge nudge--blue">무배당발 상품과 함께 구매 가능 (단독 구매불가)</p>
+        </section>
+
+        <!-- ListCart 2 (node 318-298495) -->
+        <section class="cart-item cart-item--2">
+          <div class="cart-item-info">
+            <img style="--w: 315; --h: 86" class="proto-img" src="./src/img/order/item_2_info.webp" width="315" height="86" alt="무신사 스탠다드 신세틱 스웨이드 워크 재킷 L / 1개 100,000원">
+            <p class="nudge nudge--mbdb"><img src="./src/img/order/mbdb_logo.png" width="54" height="14" alt="무배당발">오늘 22시까지 결제 시 내일(토) 도착 보장</p>
+          </div>
+          <button class="line-button" type="button">쿠폰 사용</button>
+        </section>
+
+        <!-- TitleSection (node 318-298496): 모션 테스트 영역 -->
+        <section class="plus-title" aria-label="무배당발 플러스오더 혜택가 상품">
+          <div class="plus-title-row">
+            <!-- Type 2 로고: 로티 (src/lottie/logo_plusdelivery-plusorder.json, 123×14 · 3배 369×42)
+                 처음 한 번 끝까지(0 → 869) 재생한 뒤 loopStart(480) ~ loopEnd(869) 구간 반복 -->
+            <span class="plus-logo-lottie" id="plusLogoLottie" role="img" aria-label="무배당발 플러스오더"></span>
+            <p class="plus-title-text">혜택가 상품</p>
+          </div>
+          <p class="plus-title-caption">무배당발 상품 주문 시 아래 상품을 혜택가로 구매할 수 있어요</p>
+        </section>
+
+        <!-- 혜택가 상품 목록 (node 318-298507, 502×410): 가로 스크롤 — 폭이 넓으면 더 많이 보임 -->
+        <div class="plus-list">
+          <div class="plus-list-track">
+            <img src="./src/img/order/plus_list.png" width="502" height="410" alt="플러스오더 혜택가 상품 10개">
+          </div>
+        </div>
+
+        <img style="--w: 375; --h: 62" class="proto-img" src="./src/img/order/usedbag_title.png" width="375" height="62" alt="유즈드백 함께 주문하기">
+
+        <!-- 유즈드백 (node 318-298887): 회색 박스는 늘어나고 ⓘ는 오른쪽 끝 -->
+        <div class="usedbag">
+          <div class="usedbag-box">
+            <span class="checkbox" aria-hidden="true"></span>
+            <img class="usedbag-item" src="./src/img/order/usedbag_item.png" width="285" height="49" alt="USED BAG (중고 의류 수거용) 0원">
+            <img class="usedbag-info" src="./src/img/order/ic_info_16.svg" width="16" height="16" alt="안내">
+          </div>
+        </div>
+
+        <div class="divider" role="separator"></div>
+
+        <!-- 장바구니 쿠폰 (node 318-298904): 제목은 이미지, 드롭다운은 코드 -->
+        <img style="--w: 375; --h: 48" class="proto-img" src="./src/img/order/coupon_title.png" width="375" height="48" alt="장바구니 쿠폰">
+        <div class="dropdown">
+          <div class="dropdown-box">
+            <span class="dropdown-text">사용 가능한 쿠폰 없음</span>
+            <img src="./src/img/order/ic_arrow_down_16.svg" width="16" height="16" alt="">
+          </div>
+        </div>
+
+        <div class="divider" role="separator"></div>
+
+        <!-- ButtonFloating (node 318-298921): 배경 gray100 80% + backdrop blur 20 -->
+        <div class="order-floating">
+          <button class="order-cta" type="button">52,990원 결제하기</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 라이브러리: 필요할 때만 CDN으로 붙임
+       lottie  https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js
+       swiper  https://cdn.jsdelivr.net/npm/swiper@11.1.14/swiper-bundle.min.js (+ swiper-bundle.min.css) -->
+  <script src="https://cdn.jsdelivr.net/npm/motion@14.1.0/dist/motion.js"></script>
+  <script src="./src/common/common.js?v=20261110-22"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
+  <script src="./src/types/type_2.js?v=20261118-01"></script>
+</body>
+</html>

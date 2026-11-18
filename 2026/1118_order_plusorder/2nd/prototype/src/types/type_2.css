@@ -1,0 +1,13 @@
+/* ════════════════════════════════════════════════════
+   type_2.css — 주문서 · 무배당발 플러스오더 Type 2
+   화면 레이아웃은 order.css, 여기는 TitleSection 로고 자리(로티)만
+   ════════════════════════════════════════════════════ */
+
+/* 로고 로티 자리: 123×14 (로티 원본 369×42 = 3배) — 제목 줄(높이 20) 가운데 */
+.plus-logo-lottie {
+  display: block;
+  flex: none;
+  width: 123px;
+  height: 14px;
+}
+.plus-logo-lottie svg {display: block;}

@@ -1,0 +1,229 @@
+/* ════════════════════════════════════════════════════
+   order.css — 주문서 · 무배당발 플러스오더 화면 레이아웃 (2nd · Type 2 확정)
+   Figma 작업 26-11 (node 318-298451)
+   반응형: 실제 앱처럼 폭이 넓어지면 바·박스·버튼·구분선·헤더만 늘어나고 글자·썸네일 크기는 그대로 (375 ~ .phone 최대 600)
+   - 코드: AppBar · 무배당발 넛지 바 · 쿠폰 사용 버튼 · TitleSection · 유즈드백 박스 · 드롭다운 · 구분선 · 결제하기
+   - TitleSection 로고 모션: type_2.css · type_2.js (로티)
+   - 3배 이미지: 크기가 고정인 부분 (썸네일+상품 정보 · 섹션 제목 · 혜택가 상품 목록)
+   ════════════════════════════════════════════════════ */
+
+/* 하단 안전영역은 고정 버튼(.order-floating)이 직접 채움 */
+.scroll-area {padding-bottom: 0;}
+
+.order {
+  min-height: 100%;
+  background: var(--mds-color-white);
+}
+.order img {display: block;}
+
+/* 크기 고정 이미지는 공통 .proto-img (common.css) — 이미지가 안 와도 원래 크기 유지 */
+
+/* ─────────────────────────────
+    AppBar (node 318-298923) — 높이 52, gray100, 좌우 16
+    뒤로 아이콘 28 영역(가운데 20) + 2 + 제목 16/22 Medium
+───────────────────────────── */
+.order-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--mds-color-gray100);
+}
+.order-appbar-back {flex: none; width: 20px; height: 20px; margin: 4px;} /* 20 + 4×2 = 28 */
+.order-appbar-title {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--mds-color-black);
+}
+
+/* Figma 는 헤더 아래로 위 구분선 흰 여백 3px 이 보이고 「주문 상품 2개」가 시작 */
+.order-first {margin-top: 3px;}
+
+/* ─────────────────────────────
+    ListCart — 썸네일+정보는 이미지, 넛지 바·버튼은 폭에 맞춰 늘어남
+    1 (node 318-298459): 패딩 12/16, 정보 · 넛지 · 넛지 사이 8 → 186
+    2 (node 318-298495): 패딩 4/16/12, [정보 · 넛지 8] · 버튼 12 → 184
+───────────────────────────── */
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+}
+.cart-item--2 {gap: 12px; padding: 4px 16px 12px;}
+.cart-item-info {display: flex; flex-direction: column; gap: 8px;}
+
+/* 넛지 바: 높이 26 (6 + 14 + 6), 모서리 4, 가운데 정렬 11/14 */
+.nudge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  color: #245EFF; /* semantic/blue */
+  text-align: center;
+  white-space: nowrap;
+}
+.nudge--mbdb {background: var(--mds-color-gray100);}
+.nudge--mbdb img {flex: none; width: 54px; height: 14px;}
+.nudge--blue {background: #EBF1FF;} /* scale/blue-100 */
+
+/* 쿠폰 사용: 높이 36, 흰 바탕 · 테두리 gray300, 13/18 Medium */
+.line-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  background: var(--mds-color-white);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--mds-color-black);
+}
+
+/* ─────────────────────────────
+    TitleSection (node 318-298496) — 62px
+    padding 12/16, 제목 줄(로고 123×14 + 「혜택가 상품」 14/20 Medium) 과 설명(11/14 #666) 사이 4
+───────────────────────────── */
+.plus-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 12px 16px;
+  background: var(--mds-color-white);
+}
+.plus-title-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+}
+/* 로고 자리는 type_2.css (로티 123×14) */
+.plus-title-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--mds-color-black);
+  white-space: nowrap;
+}
+.plus-title-caption {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  color: var(--mds-color-gray600);
+  white-space: nowrap;
+}
+
+/* 혜택가 상품 목록 (node 318-298507): 2열 502×410 이미지를 가로 스크롤
+   좌우 16 은 안쪽 트랙에 줌 (스크롤 영역의 오른쪽 패딩을 무시하는 브라우저가 있어서) */
+.plus-list {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.plus-list::-webkit-scrollbar {display: none;}
+.plus-list-track {width: max-content; padding: 0 16px;}
+.plus-list img {width: 502px; height: 410px;}
+
+/* ─────────────────────────────
+    유즈드백 (node 318-298887) — 78 (박스 66 + 아래 12)
+    박스: gray100, 모서리 4, 패딩 6/8, 사이 8 · 체크박스 16 · 상품(285×49) · ⓘ 16 은 오른쪽 끝
+───────────────────────────── */
+.usedbag {padding: 0 16px 12px;}
+.usedbag-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 66px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: var(--mds-color-gray100);
+}
+.checkbox {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #CCCCCC;
+  border-radius: 2px;
+  background: var(--mds-color-white);
+}
+.usedbag-item {flex: none; width: 285px; height: 49px;}
+.usedbag-info {flex: none; width: 16px; height: 16px; margin-left: auto;}
+
+/* 구분선 (Divider): 위아래 12, 좌우 16, 선 1px gray500 10% → 25 */
+.divider {padding: 12px 16px;}
+.divider::before {content: ''; display: block; height: 1px; background: rgba(138, 138, 138, 0.1);}
+
+/* 드롭다운 (node 318-298906) — 52 (4 + 박스 36 + 12) · 테두리 gray300 · 14/20 gray500 */
+.dropdown {padding: 4px 16px 12px;}
+.dropdown-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 7px;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  background: var(--mds-color-white);
+}
+.dropdown-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 20px;
+  color: #8A8A8A;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dropdown-box img {flex: none; width: 16px; height: 16px;}
+
+/* ─────────────────────────────
+    ButtonFloating (node 318-298921) — 화면 아래 고정
+    배경 gray100 80% + backdrop blur 20 (뒤 콘텐츠가 비침), 위 테두리 1px gray500 10% (안쪽)
+    btnArea 패딩 12/16, 버튼 높이 44 · 모서리 4 · 검정, 글자 14/20 Medium 흰색
+    아래 안전영역(홈 인디케이터)도 같은 배경으로 채움
+───────────────────────────── */
+.order-floating {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: 11px 16px calc(12px + var(--safe-area-bottom));
+  border-top: 1px solid rgba(138, 138, 138, 0.1);
+  background: rgba(245, 245, 245, 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+.order-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--mds-color-black);
+  color: var(--mds-color-white);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+}
