@@ -1092,6 +1092,10 @@
          프로토타입 안 입력창에서 글자를 칠 때는 무시 */
       function onKey(e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        /* 한글 입력 상태: R 을 누르면 key 가 'ㄱ' 처럼 오므로, 영문 글자가 아니면 자판 위치(KeyR)를 영문 키로 바꿔 다시 처리 */
+        if (/^Key[A-Z]$/.test(e.code || '') && e.key && e.key.length === 1 && !/[a-z]/i.test(e.key)) {
+          return onKey({ key: e.code.slice(3).toLowerCase(), target: e.target, preventDefault: function () { e.preventDefault(); } });
+        }
         /* Esc: 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 들어가 있으면 그 창을 닫아 달라고 알림.
            프로토타입을 클릭하면 키 입력이 이 페이지로 들어와 바깥 사이트가 Esc 를 못 듣기 때문 */
         if (e.key === 'Escape' && window.parent !== window) { window.parent.postMessage({ type: 'proto-index:escape' }, '*'); return; }
