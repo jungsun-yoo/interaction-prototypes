@@ -1,0 +1,82 @@
+{
+  "items": [
+    {
+      "id": "1117_musinsa-lens",
+      "title": "무신사 렌즈",
+      "date": "2026-11-17",
+      "team": "Discovery",
+      "path": "2026/1117_musinsa-lens/1st/",
+      "round": "1st",
+      "open": "aiPhotoAnalysis",
+      "tags": [
+        "렌즈",
+        "ai",
+        "ai로딩"
+      ],
+      "surfaces": [],
+      "thumb": "thumb.webp"
+    },
+    {
+      "id": "1116_onboarding_brand-taste",
+      "title": "[온보딩] 브랜드 취향 선택",
+      "date": "2026-11-16",
+      "team": "Engagement",
+      "path": "2026/1116_onboarding_brand-taste/1st/",
+      "round": "1st",
+      "tags": [
+        "브랜드취향",
+        "온보딩"
+      ],
+      "surfaces": [],
+      "thumb": "thumb.webp"
+    },
+    {
+      "id": "1111_29cm_ai-lens",
+      "title": "[29CM] AI 렌즈",
+      "date": "2026-11-16",
+      "team": "Discovery",
+      "path": "2026/1111_29cm_ai-lens/2nd/",
+      "round": "2nd",
+      "open": "type5",
+      "tags": [
+        "렌즈",
+        "ai",
+        "ai로딩",
+        "29cm"
+      ],
+      "thumb": "thumb.webp"
+    },
+    {
+      "id": "1111_appbar-apptech-icon",
+      "title": "[앱바] 앱테크 아이콘 모션",
+      "date": "2026-11-11",
+      "team": "Core UX",
+      "path": "2026/1111_appbar-apptech-icon/2nd/",
+      "round": "2nd",
+      "tags": [
+        "앱바",
+        "앱테크",
+        "로티"
+      ],
+      "surfaces": [],
+      "thumb": "thumb.webp",
+      "desc": "스토어별 앱테크 로티와 이벤트 배지 모션"
+    },
+    {
+      "id": "1109_appbar-checkin-motion",
+      "title": "[앱바] 체크인 뱃지 모션",
+      "date": "2026-11-09",
+      "team": "Engagement",
+      "path": "2026/1109_appbar-checkin-motion/1st/",
+      "round": "1st",
+      "tags": [
+        "앱바",
+        "체크인",
+        "뱃지모션"
+      ],
+      "surfaces": [],
+      "thumb": "thumb.webp",
+      "desc": "앱바 체크인 아이콘의 '이벤트' 뱃지 등장·퇴장 루프 모션"
+    }
+  ]
+}
