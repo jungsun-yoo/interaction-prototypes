@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko"> <!-- 화면 크기: 피그마 600×780 프레임 (purchase_challenge.css 의 --phone-w · --phone-h) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000"> <!-- 사파리 상단·전체 화면 상태바 색: 화면 배경(검정)과 같게 -->
+  <title>구매 챌린지</title>
+  <!-- 홈 화면 아이콘으로 열면 사파리 없이 전체 화면 (링크로 열면 기존처럼 사파리) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="구매 챌린지"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <!-- 파비콘: 무신사 (CDN) -->
+  <link rel="icon" type="image/svg+xml" href="https://image.msscdn.net/static/assets/bi/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-180x180.png">
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261119-2">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261119-2">
+  <link rel="stylesheet" href="./src/types/purchase_challenge.css?v=20261119-2">
+</head>
+<body>
+
+  <div class="phone">
+    <div class="scroll-area">
+
+      <!-- Figma: 작업-26-11 / 354:1331 (600×780)
+           배경은 화면 전체 더미 이미지, 그 위 module(354:2615) 자리에 프로토타입을 얹는다
+           배경 이미지는 600×780 고정 — 화면이 좁으면 가운데 기준으로 좌우가 잘린다 -->
+      <div class="page">
+        <img class="page__bg" src="./src/img/bg_challenge.webp" width="600" height="780" alt="">
+
+        <!-- module (354:2615): 검정 바탕으로 배경 이미지의 같은 자리를 덮는다 -->
+        <main class="challenge" data-node="354:2615">
+
+          <!-- Local_OrderAmount -->
+          <div class="order-amount" data-node="354:2616">
+            <div class="order-amount__main">
+              <div class="order-amount__title">
+                <p class="order-amount__label">나의 결제 금액</p>
+                <button class="icon-info" type="button" aria-label="결제 금액 안내">
+                  <img src="./src/img/Ic_Info.svg" width="16" height="16" alt="">
+                </button>
+              </div>
+              <div class="order-amount__value">
+                <span class="order-amount__num" data-role="order-amount" data-target="502900">0</span>
+                <span class="order-amount__unit">원</span>
+              </div>
+              <div class="order-amount__confirmed">
+                <span class="order-amount__confirmed-label">구매 확정 금액</span>
+                <span class="order-amount__confirmed-value"><span data-role="confirmed-amount" data-target="192300">0</span>원</span>
+              </div>
+            </div>
+            <p class="order-amount__info">* 구매확정 시 혜택 지급</p>
+          </div>
+
+          <!-- Local_ChallengeProgress (354:2617) -->
+          <div class="progress" data-node="354:2617">
+            <div class="progress__gage">
+              <div class="progress__bar progress__bar--gray" data-role="gage-gray"></div>
+              <div class="progress__bar progress__bar--blue" data-role="gage-blue"></div>
+            </div>
+            <!-- 체크·티켓 상태는 금액 데이터로 결정된다 (purchase_challenge.js) -->
+            <ol class="progress__steps">
+              <li class="step" data-stage="1" data-amount="0">
+                <span class="step__marker">
+                  <span class="step__num">1</span>
+                  <img class="step__mark" src="./src/img/Ic_Check.svg" width="16" height="16" alt="">
+                </span>
+                <span class="step__label">0원</span>
+              </li>
+              <li class="step" data-stage="2" data-amount="50000">
+                <span class="step__marker">
+                  <span class="step__num">2</span>
+                  <img class="step__mark" src="./src/img/Ic_Check.svg" width="16" height="16" alt="">
+                </span>
+                <span class="step__label">5만원</span>
+              </li>
+              <li class="step" data-stage="3" data-amount="150000">
+                <span class="step__marker">
+                  <span class="step__num">3</span>
+                  <img class="step__mark" src="./src/img/Ic_Check.svg" width="16" height="16" alt="">
+                </span>
+                <span class="step__label">15만원</span>
+              </li>
+              <li class="step" data-stage="4" data-amount="300000">
+                <span class="step__marker">
+                  <span class="step__num">4</span>
+                  <img class="step__mark" src="./src/img/Ic_Check.svg" width="16" height="16" alt="">
+                  <!-- ticket — JS 가 데이터에 맞는 단계의 마커로 옮긴다 -->
+                  <span class="step__ticket" data-role="ticket">
+                    <img src="./src/img/ticketWon.png" width="20" height="16" alt="">
+                  </span>
+                </span>
+                <span class="step__label">30만원</span>
+              </li>
+              <li class="step" data-stage="5" data-amount="1000000">
+                <span class="step__marker">
+                  <span class="step__num">5</span>
+                  <img class="step__mark" src="./src/img/Ic_Check.svg" width="16" height="16" alt="">
+                </span>
+                <span class="step__label">100만원</span>
+              </li>
+            </ol>
+          </div>
+
+        </main>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="./src/common/common.js?v=20261119-2"></script>
+  <script src="./src/common/mds-motion.js?v=20261119-2"></script>
+  <script src="./src/common/amount-counter.js?v=20261119-2"></script>
+  <script src="./src/types/purchase_challenge.js?v=20261119-2"></script>
+</body>
+</html>

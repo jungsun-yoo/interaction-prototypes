@@ -1,0 +1,293 @@
+/* ════════════════════════════════════════════════════
+   purchase_challenge.css — 구매 챌린지 (주문 금액 · 구매확정 금액 · 단계 게이지)
+   Figma: 작업-26-11 / 354:1331 (600×780), module 354:2615
+   ════════════════════════════════════════════════════ */
+
+:root {
+  /* 화면 크기: 피그마 프레임 600×780 (PC 인덱스 프레임). 모바일은 320~600 반응형 (common.css) */
+  --phone-w: 600px;
+  --phone-h: 780px;
+  --status-bar-h: 0px;        /* 피그마 프레임에 상태바 없음 */
+  --phone-safe-bottom: 0px;
+
+  --c-bg: #000;
+  --c-white: #fff;
+  --c-white-12: rgba(255, 255, 255, 0.12);
+  --c-subtext: #ccc;
+  --c-point: #0bf;
+  --c-gray600: #666;
+  --c-num-bg: #3b3b3b;
+
+  /* 티켓 하이라이트 보더 — MDS highlight 3색 (26-0624_강조배너 sample.html 과 동일) */
+  --c-hl1: var(--mds-color-highlight-1); /* #A3F8FB */
+  --c-hl2: var(--mds-color-highlight-2); /* #245EFF */
+  --c-hl3: var(--mds-color-highlight-3); /* #7CCEFF */
+  --outline-speed: 3s;                   /* 보더 1바퀴 회전 시간 */
+
+  /* 게이지 길이: 최초 0 — 실제 값은 purchase_challenge.js 가 금액으로 계산해 .progress 에 덮어쓴다 (600 기준 최종 gray 462px / blue 323px 끝점) */
+  --gage-gray: 0px;
+  --gage-blue: 0px;
+  /* 게이지 시작점: 1단계 아이콘(16px) 중심 — 바 왼쪽 끝이 항상 아이콘 뒤에 숨는다 */
+  --gage-start: 8px;
+}
+
+html, body { background: var(--c-bg); } /* 바디 배경 검정 (common.css 기본 #f0f0f0 을 이 화면만 덮어씀) */
+.phone { background: var(--c-bg); }
+
+ol { list-style: none; }
+
+/* ---------- 페이지: 배경 이미지 + module ---------- */
+.page {
+  position: relative;
+  height: 780px;
+  overflow: hidden;
+  background: var(--c-bg);
+  color: var(--c-white);
+  font-family: var(--mds-font-family);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 배경: 600×780 고정, 가운데 기준 — 600 보다 좁은 화면은 좌우가 잘린다 */
+.page__bg {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: block;
+  width: 600px;
+  max-width: none;
+  height: 780px;
+  transform: translateX(-50%);
+}
+
+/* module (354:2615): 피그마 y 286 (274 + 12) 자리, 좌우 16 여백. 검정 바탕으로 배경의 같은 자리를 덮는다 */
+.challenge {
+  position: absolute;
+  top: 286px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px;
+  background: var(--c-bg);
+}
+
+/* ---------- Local_OrderAmount ---------- */
+.order-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.order-amount__title {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.order-amount__label {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+}
+
+.icon-info {
+  display: block;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.icon-info img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.order-amount__value {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.order-amount__num {
+  font-size: 30px;
+  line-height: 1.36;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-amount__unit {
+  width: 16px;
+  padding-bottom: 4px;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.order-amount__confirmed {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.order-amount__confirmed-label { color: var(--c-subtext); }
+.order-amount__confirmed-value { color: var(--c-point); }
+
+.order-amount__info {
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--c-subtext);
+}
+
+/* ---------- Local_ChallengeProgress ---------- */
+.progress {
+  position: relative;
+  height: 46px;
+}
+
+/* 트랙 (세로 중심 15px → 12~18px) */
+.progress__gage {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  border-radius: 6px;
+  background: var(--c-white-12);
+}
+
+.progress__bar {
+  position: absolute;
+  top: 0;
+  left: var(--gage-start);
+  height: 6px;
+  border-radius: 30px;
+}
+
+.progress__bar--gray { width: var(--gage-gray); background: var(--c-gray600); }
+.progress__bar--blue { width: var(--gage-blue); background: var(--c-point); }
+
+/* 단계: 40px 칸 5개. 1단계는 왼쪽 끝, 5단계는 오른쪽 끝
+   2~4단계는 피그마 568 폭 위치(126 · 264 · 402)를 비율로 → 320~600 반응형에서도 같은 간격 비율 */
+.progress__steps {
+  position: absolute;
+  inset: 0;
+}
+
+.step {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  width: 40px;
+}
+
+.step[data-stage="1"] { left: 0; align-items: flex-start; }
+.step[data-stage="2"] { left: calc(126 / 568 * 100%); }
+.step[data-stage="3"] { left: calc(264 / 568 * 100%); }
+.step[data-stage="4"] { left: calc(402 / 568 * 100%); }
+.step[data-stage="5"] { right: 0; align-items: flex-end; }
+
+/* 단계 아이콘 자리: 숫자 원 위에 체크가 겹쳐 팝된다 */
+.step__marker {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.step__mark {
+  position: absolute;
+  inset: 0;
+  width: 16px;
+  height: 16px;
+  transform: scale(0); /* 최초 상태 — 파란 게이지가 지나가면 1로 */
+}
+
+.step__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--c-num-bg);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 500;
+}
+
+.step__label {
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--c-subtext);
+  white-space: nowrap;
+}
+
+/* ticket: 하이라이트 보더 — 회전하는 코닉 그라디언트(::before) 위에
+   1px 안쪽으로 검정 원(::after)을 덮어 1px 보더만 남긴다 */
+@property --ticket-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.step__ticket {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  filter: drop-shadow(0 0 8px rgba(0, 187, 255, 0.6));
+  transform: scale(0); /* 최초 상태 — 파란 게이지 모션이 끝나면 1로 */
+}
+
+.step__ticket::before,
+.step__ticket::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.step__ticket::before {
+  inset: 0;
+  background-image: conic-gradient(
+    from var(--ticket-angle) at 50% 50%,
+    var(--c-hl3) 0deg,
+    var(--c-hl1) 90deg,
+    var(--c-hl2) 225deg,
+    var(--c-hl3) 360deg
+  );
+  animation: ticketBorder var(--outline-speed) infinite linear;
+}
+
+.step__ticket::after {
+  inset: 1px;
+  background: var(--c-bg);
+}
+
+@keyframes ticketBorder {
+  0% { --ticket-angle: 90deg; }
+  100% { --ticket-angle: 450deg; }
+}
+
+.step__ticket img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 20px;
+  height: 16px;
+}
