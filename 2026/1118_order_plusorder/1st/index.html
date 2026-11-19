@@ -254,6 +254,11 @@
       -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M4 21h16'/%3E%3C/svg%3E") center / contain no-repeat;
       mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M4 21h16'/%3E%3C/svg%3E") center / contain no-repeat;}
     .file-note {margin-top: 8px; font: var(--ui-note); color: var(--ui-sub);}
+    /* fileNote 안 번호 목록(<ol>) · 중요 문구(<span class="option-notice">) — 개발 가이드처럼 순서·조건을 적을 때 */
+    .file-note ol {margin: 0; padding: 0; list-style: none; counter-reset: note-step;}
+    .file-note ol li {position: relative; padding-left: 14px; counter-increment: note-step;}
+    .file-note ol li::before {content: counter(note-step) '.'; position: absolute; top: 0; left: 0; font-variant-numeric: tabular-nums;}
+    .file-note .option-notice {margin-top: 8px;}
     /* MOTION 카드: 타입별 모션 설명 (CONFIG.items[].motion). 없으면 숨김 */
     .motion-group + .motion-group {margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--ui-line);}
     #motionBody {margin-top: 12px;} /* 카드 제목 아래 간격: 다른 카드(OPTIONS 13px)와 맞춤 */
@@ -347,7 +352,7 @@
         <div class="option-card files-card" id="filesCard" hidden>
           <p class="option-title">FILES</p>
           <div class="file-list" id="fileList"></div>
-          <p class="file-note" id="fileNote" hidden></p>
+          <div class="file-note" id="fileNote" hidden></div> <!-- div: 안에 번호 목록(<ol>)을 넣을 수 있게 -->
         </div>
       </div>
       <iframe class="stage-frame" id="frame" title="프로토타입"></iframe>
@@ -622,6 +627,8 @@
         renderFiles(current);
         renderMotion(current);
         document.title = CONFIG.title + ' · ' + current.title;
+        /* 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 있으면 지금 타입을 알림 → 그 사이트의 링크 복사·새 창이 #타입 주소로 */
+        if (window.parent !== window) window.parent.postMessage({ type: 'proto-index:select', id: current.id }, '*');
         [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
           button.classList.toggle('is-active', button.dataset.id === current.id);
         });
@@ -1070,6 +1077,13 @@
          프로토타입 안 입력창에서 글자를 칠 때는 무시 */
       function onKey(e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        /* 한글 입력 상태: R 을 누르면 key 가 'ㄱ' 처럼 오므로, 영문 글자가 아니면 자판 위치(KeyR)를 영문 키로 바꿔 다시 처리 */
+        if (/^Key[A-Z]$/.test(e.code || '') && e.key && e.key.length === 1 && !/[a-z]/i.test(e.key)) {
+          return onKey({ key: e.code.slice(3).toLowerCase(), target: e.target, preventDefault: function () { e.preventDefault(); } });
+        }
+        /* Esc: 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 들어가 있으면 그 창을 닫아 달라고 알림.
+           프로토타입을 클릭하면 키 입력이 이 페이지로 들어와 바깥 사이트가 Esc 를 못 듣기 때문 */
+        if (e.key === 'Escape' && window.parent !== window) { window.parent.postMessage({ type: 'proto-index:escape' }, '*'); return; }
         if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
         if (e.key === 'r' || e.key === 'R') { replay(); return; }
         if (e.key === 'p' || e.key === 'P') { toggleSync(); return; }
@@ -1084,6 +1098,13 @@
         select(next.id);
       }
       document.addEventListener('keydown', onKey);
+      /* 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 들어가 있을 때, 그 사이트가 넘겨준 단축키(R·P·Z·↑↓)도 처리.
+         보기 창을 열면 키 입력이 바깥 사이트에 있어서 이 페이지가 직접 듣지 못하기 때문 */
+      window.addEventListener('message', function (e) {
+        if (window.parent === window || e.source !== window.parent) return;
+        if (!e.data || e.data.type !== 'proto-index:key' || typeof e.data.key !== 'string') return;
+        onKey({ key: e.data.key, target: document.body, preventDefault: function () {} });
+      });
 
       /* 확대 보기: 툴바 돋보기 · Z → 폰을 바탕에 꽉 차게 (다시 누르면 원래 크기)
          확대는 이 인덱스 화면에서만: 서버 저장 · 폰 동기화로 보내지 않음 (QR로 연 폰은 그대로) */
