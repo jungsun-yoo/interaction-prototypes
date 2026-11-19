@@ -93,6 +93,20 @@
       ],
       "thumb": "thumb.webp",
       "desc": "오프라인 매장 체크인 · 스탬프 적립 · 조건달성 3개 화면 모션"
+    },
+    {
+      "id": "1019_apptech_purchase-challenge",
+      "title": "[앱테크] 구매 챌린지",
+      "date": "2026-10-19",
+      "team": "Engagement",
+      "path": "2026/1019_apptech_purchase-challenge/1st/",
+      "round": "1st",
+      "tags": [
+        "카운트업",
+        "게이지"
+      ],
+      "thumb": "thumb.webp",
+      "desc": "결제 · 구매확정 금액 카운트업과 단계 게이지 · 체크 · 티켓 모션"
     }
   ]
 }
