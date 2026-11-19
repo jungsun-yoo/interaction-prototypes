@@ -236,8 +236,11 @@ var brandSelect = (function () {
         if (e.detail.on) hide();
     });
 
-    /* ① 랜딩 0.5초 후 등장 (5초 후 자동 사라짐은 show 안에서) */
-    enterTimer = setTimeout(show, TIMING.enterDelay);
+    /* ① 랜딩 0.5초 후 등장 (5초 후 자동 사라짐은 show 안에서)
+       랜딩 = 페이지 로딩이 끝나 화면이 다 보인 때 (common.js protoReady) */
+    (window.protoReady || Promise.resolve()).then(function () {
+        if (state === 'waiting') enterTimer = setTimeout(show, TIMING.enterDelay);
+    });
 })();
 
 /* 6. 추천 브랜드: 브랜드를 "선택"하면 비슷한 브랜드 3개가 그 바로 뒤에 들어옴 (디자이너 샘플 분석)

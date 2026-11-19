@@ -18,10 +18,15 @@ var landingPage = (function () {
         document.dispatchEvent(new CustomEvent('brandpage:reset'));
     }
 
+    /* 혜택 페이지 이미지(data-src, 뒤에서 받기)가 받아진 뒤 이동 — 보통은 로딩 화면 동안 이미 받아져 바로 이동
+       (common.js protoPrefetch.wait: 다 받거나 실패해도 최대 5초) */
     function push() {
         if (isOpen) return;
         isOpen = true;
-        protoPage.push(brandPage, page).then(function () { if (isOpen) resetBrandPage(); });
+        (window.protoPrefetch ? protoPrefetch.wait(page) : Promise.resolve()).then(function () {
+            if (!isOpen) return; /* 기다리는 사이 취소(reset)됐으면 안 감 */
+            protoPage.push(brandPage, page).then(function () { if (isOpen) resetBrandPage(); });
+        });
     }
     function pop() {
         if (!isOpen) return;
@@ -45,7 +50,10 @@ var landingPage = (function () {
         reset();
         if (isPreview()) previewTimer = setTimeout(push, PREVIEW_DELAY);
     }
-    if (isPreview()) previewTimer = setTimeout(push, PREVIEW_DELAY);
+    /* 바로보기가 켜진 채로 열면: 페이지 로딩이 끝난 뒤 (common.js protoReady) */
+    (window.protoReady || Promise.resolve()).then(function () {
+        if (isPreview()) previewTimer = setTimeout(push, PREVIEW_DELAY);
+    });
     new MutationObserver(syncPreview).observe(document.documentElement, { attributes: true, attributeFilter: ['data-landing-preview'] });
 
     return { push: push, pop: pop, reset: reset };
@@ -100,7 +108,7 @@ var homePage = (function () {
 
     function isPreview() { return document.documentElement.getAttribute('data-home-preview') === 'on'; }
     function syncPreview() { if (isPreview()) show(); else hide(); }
-    syncPreview();
+    (window.protoReady || Promise.resolve()).then(syncPreview); /* 처음엔 페이지 로딩이 끝난 뒤 (common.js protoReady) */
     new MutationObserver(syncPreview).observe(document.documentElement, { attributes: true, attributeFilter: ['data-home-preview'] });
 
     var landingHome = document.getElementById('landingHome');

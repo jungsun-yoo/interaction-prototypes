@@ -295,11 +295,21 @@ var protoAutoplay = (function () {
         if (touch) touch.style.opacity = '0';
     }
 
+    /* 페이지 로딩(common.js protoReady)이 끝나 화면이 보인 뒤에 시작
+       인덱스는 파일을 다 불러오고 0.8초 뒤 start()를 부르는데, 로딩이 그보다 길면 가림막 뒤에서 시작돼 버림
+       → 그때 아직 안 보였으면: 화면이 보인 뒤 첫 화면을 FIRST_VIEW초 보여 주고 시작 (이미 보였으면 바로) */
+    var FIRST_VIEW = 0.8;
+    function whenVisible(id) {
+        if (!window.protoReady || document.documentElement.classList.contains('proto-play')) return Promise.resolve();
+        return window.protoReady.then(function () { alive(id); return wait(FIRST_VIEW, id); });
+    }
+
     function start(onDone) {
         stop();
         if (!window.Motion || !scrollArea) { if (onDone) onDone(); return; }
         var id = runId;
-        scenario(id)
+        whenVisible(id)
+            .then(function () { return scenario(id); })
             .then(function () { if (id === runId && onDone) onDone(); })
             .catch(function (e) { if (e !== 'stopped') { if (window.console) console.warn('autoplay', e); if (onDone) onDone(); } });
     }

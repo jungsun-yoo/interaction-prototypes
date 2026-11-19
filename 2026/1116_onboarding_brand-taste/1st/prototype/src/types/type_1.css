@@ -219,6 +219,10 @@
 .ai-icon.is-entrance {
   animation: aiEntranceScale 1.3s forwards, aiEntranceRotate 1.3s forwards;
 }
+/* 랜딩 진입 애니메이션(AI 아이콘 등장 · 배경 글로우)은 페이지 로딩이 끝나 화면이 보일 때까지 첫 프레임에서 멈춤
+   (common.js가 준비 끝 신호와 함께 <html>에 proto-play를 붙임 — common.css '페이지 로딩') */
+html:not(.proto-play) .ai-icon.is-entrance,
+html:not(.proto-play) .gradient-effect.is-active * {animation-play-state: paused;}
 .ai-icon.is-loop {
   /* 주기 3.5s · 12s는 나누어떨어지지 않게 둠 (반복 인상 줄이기) */
   animation: aiLoopScale 3.5s var(--mds-motion-power1-easeInOut) infinite,

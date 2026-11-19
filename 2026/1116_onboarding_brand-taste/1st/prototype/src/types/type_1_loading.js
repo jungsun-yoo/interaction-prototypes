@@ -161,7 +161,8 @@ var loadingScreen = (function () {
         if (isPreview()) show(previewButtons());
         else if (!screen.hidden) hide();
     }
-    if (isPreview()) show(previewButtons());
+    /* 바로보기가 켜진 채로 열면: 페이지 로딩이 끝난 뒤 시작 (common.js protoReady) */
+    (window.protoReady || Promise.resolve()).then(function () { if (isPreview()) show(previewButtons()); });
 
     /* 옵션(바로보기·썸네일 개수)이 바뀌면 로딩 화면을 처음부터 다시 재생 → 바로 비교 */
     new MutationObserver(syncPreview).observe(document.documentElement, { attributes: true, attributeFilter: ['data-loading-preview', 'data-thumb-count'] });
