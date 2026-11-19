@@ -78,6 +78,19 @@
       "desc": "앱바 체크인 아이콘의 '이벤트' 뱃지 등장·퇴장 루프 모션"
     },
     {
+      "id": "1028_fab-event",
+      "title": "[FAB] 무신사 체크인",
+      "date": "2026-11-06",
+      "team": "Engagement",
+      "path": "2026/1028_fab-event/5th/",
+      "round": "5th",
+      "tags": [
+        "체크인",
+        "fab"
+      ],
+      "thumb": "thumb.webp"
+    },
+    {
       "id": "1105_gateway_width-guide",
       "title": "[게이트웨이] 너비 가이드",
       "date": "2026-11-05",
