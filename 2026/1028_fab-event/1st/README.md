@@ -59,4 +59,10 @@ python3 -m http.server 8765
 
 ## 배포 (GitHub Pages)
 
-`jungsun-yoo/interaction-prototypes` 저장소의 `YYYY/MMDD_이름/차수/` 폴더에 `_html` 안의 내용을 그대로 올립니다. 배포된 주소에서는 QR이 GitHub Pages 주소로 만들어집니다.
+프로토타입은 GitHub `jungsun-yoo` 계정의 [interaction-prototypes](https://github.com/jungsun-yoo/interaction-prototypes) 저장소에 올리고, GitHub Pages 주소로 공유합니다.
+
+1. 저장소의 `YYYY/MMDD_이름/차수/` 폴더에 `_html` 안의 내용을 그대로 올립니다.
+2. 커밋 후 Pages 배포가 끝나면 아래 주소로 열립니다.
+   `https://jungsun-yoo.github.io/interaction-prototypes/YYYY/MMDD_이름/차수/`
+   - 예: https://jungsun-yoo.github.io/interaction-prototypes/2026/1028_fab-event/1st/
+3. 배포된 주소에서는 QR이 이 GitHub Pages 주소로 만들어지므로, 링크와 QR을 그대로 공유하면 됩니다.
