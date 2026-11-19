@@ -79,6 +79,20 @@
       "desc": "앱바 체크인 아이콘의 '이벤트' 뱃지 등장·퇴장 루프 모션"
     },
     {
+      "id": "1105_gateway_width-guide",
+      "title": "[게이트웨이] 너비 가이드",
+      "date": "2026-11-05",
+      "team": "Core UX",
+      "path": "2026/1105_gateway_width-guide/",
+      "tags": [
+        "게이트웨이",
+        "너비가이드",
+        "폴더블"
+      ],
+      "thumb": "thumb.webp",
+      "desc": "화면 높이에 맞춰 게이트웨이 너비를 줄이는 TO-BE 기준과 기기별 비교"
+    },
+    {
       "id": "1019_apptech_offline-checkin",
       "title": "[앱테크] 오프라인 체크인",
       "date": "2026-10-19",
