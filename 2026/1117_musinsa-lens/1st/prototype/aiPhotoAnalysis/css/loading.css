@@ -247,3 +247,7 @@
     .lens-screen .LensLightMaskX {animation: none; transform: translateX(calc(var(--lens-light-cx) * -1));}
     .lens-screen .LensLightMaskY {animation: none; transform: translateY(calc(var(--lens-light-cy) * -1));}
 }
+
+/* 페이지 로딩(common.js protoReady): 화면이 보일 때까지 로딩 화면 모션을 멈춰 둠 (가림막 뒤에서 첫 부분이 지나가지 않게) */
+html:not(.proto-play) .lens-screen,
+html:not(.proto-play) .lens-screen * {animation-play-state: paused;}

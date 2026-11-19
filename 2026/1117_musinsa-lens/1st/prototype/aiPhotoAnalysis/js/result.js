@@ -294,7 +294,7 @@
         style.textContent = css;
     }
 
-    /* 상품마다 파형 점·썸네일·상품 리스트를 만듦 */
+    /* 상품마다 파형 점·썸네일·상품 리스트를 만듦 (이미지는 data-src → 첫 화면이 보인 뒤 뒤에서 받음) */
     function buildItems() {
         var dotSrc = pointsBox ? pointsBox.dataset.dot : '';
         items.forEach(function (it, i) {
@@ -305,7 +305,7 @@
                 dot.type = 'button';
                 dot.dataset.focus = it.id;
                 dot.setAttribute('aria-label', label + ' 보기');
-                dot.innerHTML = '<img src="' + dotSrc + '" width="14" height="14" alt="">';
+                dot.innerHTML = '<img data-src="' + dotSrc + '" width="14" height="14" alt="">';
                 dot.addEventListener('click', function () { selectItem(it.id, true); });
                 pointsBox.appendChild(dot);
             }
@@ -315,7 +315,7 @@
                 thumb.type = 'button';
                 thumb.setAttribute('role', 'tab');
                 thumb.dataset.focus = it.id;
-                thumb.innerHTML = '<img src="' + (it.thumb || '') + '" width="54" height="54" alt="' + label + '">';
+                thumb.innerHTML = '<img data-src="' + (it.thumb || '') + '" width="54" height="54" alt="' + label + '">';
                 thumb.addEventListener('click', function () { selectItem(it.id, true); });
                 thumbsBox.appendChild(thumb);
             }
@@ -323,7 +323,7 @@
                 var list = document.createElement('img');
                 list.className = 'lens-result-list';
                 list.dataset.focus = it.id;
-                list.src = it.list || '';
+                list.dataset.src = it.list || '';   /* 뒤에서 받기: 첫 화면이 보인 뒤 common.js protoPrefetch 가 src 를 넣음 */
                 list.width = 375;
                 list.height = 270;
                 list.alt = label + ' 비슷한 상품 목록';
@@ -352,7 +352,7 @@
     }
 
     (function initResult() {
-        Array.prototype.forEach.call(document.querySelectorAll('#lensResultPhoto .crop-photo'), function (img) { img.src = data.image; });
+        Array.prototype.forEach.call(document.querySelectorAll('#lensResultPhoto .crop-photo'), function (img) { img.dataset.src = data.image; });   /* 결과 사진도 뒤에서 받기 (로딩 화면은 img/loading/photo.webp) */
         buildItems();
         selectItem(firstId, false);
         var img = photo && photo.querySelector('.crop-photo');

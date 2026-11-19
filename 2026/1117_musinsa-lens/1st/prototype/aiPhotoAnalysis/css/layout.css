@@ -10,6 +10,7 @@
   --phone-h: 812px;
   --phone-radius: 0px;
   --lens-gap: 12px;         /* 폰 ↔ 옵션창 (index 툴바와 같은 12px) */
+  --proto-loading-radius: 48px;  /* 페이지 로딩 가림막 모서리 = 폰 화면 모서리 */
 }
 
 body {-webkit-font-smoothing: antialiased;}

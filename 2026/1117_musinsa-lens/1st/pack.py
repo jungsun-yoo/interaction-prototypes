@@ -13,6 +13,8 @@
  4) 받은 원본 이미지(img/_source) · 작업 파일(.omc, _dbg*) 은 넣지 않음
  5) 압축을 풀고 파일로 바로 열어도(file://) 되게: AI 로딩 아이콘 로티 json 을 HTML 안에 넣고,
     공용 common.js 의 옵션 실시간 연결은 http 로 열 때만 (원본 파일은 그대로, zip 안 사본만 바꿈)
+ 6) 페이지 로딩을 끔: 각 HTML <html> 에 data-loading="off" (로딩은 프로토타입 '보기용'이라 개발 전달물에는 넣지 않음.
+    꺼도 진입 모션 · 분석 타이머 · 뒤에서 받기는 그대로 — common.js protoReady 가 바로 '준비 끝'으로 처리)
 표준 라이브러리만 사용
 """
 import argparse
@@ -23,6 +25,14 @@ import sys
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def turn_off_loading(match):
+    """<html ...> 태그에 data-loading="off" 를 넣음 (이미 있으면 off 로 바꿈)"""
+    tag = match.group(0)
+    if re.search(r'\bdata-loading\s*=', tag):
+        return re.sub(r'\bdata-loading\s*=\s*"[^"]*"', 'data-loading="off"', tag)
+    return tag[:-1].rstrip() + ' data-loading="off">'
 PROTO = os.path.join(HERE, 'prototype')
 PHOTO = 'aiPhotoAnalysis/'
 PROTO_ONLY = [PHOTO + 'css/controls.css', PHOTO + 'js/sync.js']   # 옵션창 · 동기화 (테스트용)
@@ -84,6 +94,10 @@ def main():
                             text = re.sub(r'\sdata-index-path="[^"]*"', ' data-index-path=""', text)
                         else:
                             text = text.replace('<html lang="ko"', '<html lang="ko" data-index-path=""', 1)
+                        # 페이지 로딩 끄기 (공통 도구 tools/make_prototype_zip.py 와 같은 규칙)
+                        text, n = re.subn(r'<html\b[^>]*>', turn_off_loading, text, count=1)
+                        if n != 1:
+                            sys.exit(rel + ' 에서 <html> 태그를 못 찾았어요')
                     if rel == 'aiLoading.html':
                         # 파일로 바로 열면(file://) 브라우저가 로티 json 을 못 읽음 → zip 에서는 json 을 HTML 안에 넣음
                         data = open(os.path.join(PROTO, LOTTIE), encoding='utf-8').read().strip()
