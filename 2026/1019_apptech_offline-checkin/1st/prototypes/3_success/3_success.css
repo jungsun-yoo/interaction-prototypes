@@ -1,0 +1,158 @@
+/* ════════════════════════════════════════════════════
+   3_success.css — 조건달성 (스탬프 10개 선물)
+   ════════════════════════════════════════════════════ */
+
+/* 화면 바탕 검정 (다이얼로그 화면), 상태바도 검정 */
+.phone {
+  --status-bar-bg: #000;
+  background: #000;
+}
+
+/* 콘텐츠를 폰 화면(상태바 아래) 세로 중앙에 — 화면보다 길어지면 위부터 스크롤 */
+.scroll-area {
+  display: flex;
+  flex-direction: column;
+}
+.scroll-area > main {
+  flex-shrink: 0;
+  margin: auto 0;
+}
+
+.achieve {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 30px 0 60px;
+  background: #000;
+}
+
+.achieve__visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 30px 0;
+}
+
+/* ------------------------------- */
+/* bg-glow */
+.achieve__glow {
+  position: absolute;
+  left: calc(50% - 8.5px);
+  top: calc(50% - 6px);
+  width: 510px;
+  height: 474px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.achieve__glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+.achieve__glow-orb--purple {
+  left: 160px;
+  top: 198px;
+  width: 115px;
+  height: 116px;
+  background: rgba(91, 36, 255, 0.6);
+}
+
+.achieve__glow-orb--blue {
+  left: 243px;
+  top: 160px;
+  width: 107px;
+  height: 107px;
+  background: rgba(36, 94, 255, 0.6);
+}
+/* -------------------------------------------------- */
+/* confetti 로티 — 311×207, 고저사이즈로 노출 */
+.achieve__confetti {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 311px;
+  height: 207px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+/* -------------------------------------------------- */
+/* 상품 부유 모션  */
+.achieve__product-wrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  perspective: 300px;
+}
+
+.achieve__float,
+.achieve__rotate-x,
+.achieve__rotate-y {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.achieve__float { animation: floatVertical 4.5s ease-in-out infinite; }
+.achieve__rotate-x { animation: floatX 5s ease-in-out infinite; }
+.achieve__rotate-y { animation: floatY 7s ease-in-out infinite; }
+
+.achieve__rotate-y {
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  margin: -2px;
+  padding: 2px;
+  transform-style: flat;    
+}
+
+@keyframes floatVertical {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(2px); }
+}
+
+@keyframes floatX {
+  0%, 100% { transform: rotateX(-3deg); }
+  50% { transform: rotateX(3deg); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: rotateY(-5deg); }
+  50% { transform: rotateY(5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achieve__float,
+  .achieve__rotate-x,
+  .achieve__rotate-y { animation: none; }
+}
+/* -------------------------------------------------- */
+
+.achieve__product {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--mds-color-gray100);
+}
+
+.achieve__product img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.achieve__info {
+  position: relative;
+  display: block;
+  width: 279px;
+  height: 191px;
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" data-phone="375"> <!-- 폰 크기 프리셋: 375(기본) · 393 · 402 · 440 (common.css) -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000"> <!-- 사파리 상단·전체 화면 상태바 색: 화면 배경(검정)과 같게 -->
+  <title>스탬프</title>
+  <!-- 홈 화면 아이콘으로 열면 사파리 없이 전체 화면 (링크로 열면 기존처럼 사파리)
+       상태바 default: 흰 바탕·검정 글자, 콘텐츠는 상태바 아래부터 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="스탬프"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <!-- 파비콘: 무신사 (CDN) -->
+  <link rel="icon" type="image/svg+xml" href="https://image.msscdn.net/static/assets/bi/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-180x180.png">
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="./common/mds-motion.css?v=20261119-04">
+  <link rel="stylesheet" href="./common/common.css?v=20261119-04">
+  <link rel="stylesheet" href="./2_stamp/2_stamp.css?v=20261119-04">
+</head>
+<body>
+
+  <div class="phone">
+
+    <!-- status-bar: PC 폰 프레임에서만 보임 -->
+    <div class="status-bar is-light" aria-hidden="true">
+      <!-- Figma: 1_디자인 싱크 > StatusBar / iPhone 14 (node 30120-64398). 색만 currentColor로 바꿈 -->
+      <span class="status-bar-time">9:41</span>
+      <svg class="status-bar-icons" width="51.4012" height="13" viewBox="26 0 51.4012 13" fill="none">
+        <!-- wifi -->
+        <path d="M32.1152 10.085C33.535 8.85937 35.6144 8.8595 37.0342 10.085C37.1056 10.1509 37.1474 10.2445 37.1494 10.3428C37.1514 10.441 37.1136 10.5357 37.0449 10.6045L34.8213 12.8945C34.7562 12.9617 34.6678 12.9999 34.5752 13C34.4825 13 34.3933 12.9618 34.3281 12.8945L32.1045 10.6045C32.0359 10.5356 31.998 10.441 32 10.3428C32.002 10.2445 32.0437 10.1508 32.1152 10.085ZM29.1094 7.26172C32.1685 4.35713 36.9058 4.35713 39.9648 7.26172C40.0339 7.32982 40.0732 7.42351 40.0742 7.52148C40.0751 7.61935 40.0373 7.71377 39.9697 7.7832L38.6846 9.1084C38.5521 9.24367 38.338 9.24698 38.2021 9.11523C37.1977 8.1868 35.8912 7.67185 34.5361 7.67188C33.1818 7.67245 31.876 8.18733 30.8721 9.11523C30.7362 9.24697 30.5221 9.24374 30.3896 9.1084L29.1045 7.7832C29.0367 7.71385 28.9992 7.61941 29 7.52148C29.0009 7.42352 29.0404 7.32981 29.1094 7.26172ZM26.1074 4.44238C30.7993 -0.147226 38.2007 -0.147163 42.8926 4.44238C42.9605 4.51057 42.9994 4.60393 43 4.70117C43.0005 4.79826 42.9625 4.89204 42.8955 4.96094L41.6094 6.28613C41.4768 6.42211 41.2616 6.42382 41.127 6.29004C39.3393 4.55527 36.9666 3.588 34.5 3.58789C32.0334 3.58801 29.6608 4.55527 27.873 6.29004C27.7385 6.42393 27.523 6.42228 27.3906 6.28613L26.1035 4.96094C26.0365 4.89201 25.9995 4.79823 26 4.70117C26.0006 4.60393 26.0395 4.51052 26.1074 4.44238Z" fill="currentColor"/>
+        <!-- battery -->
+        <mask id="statusBarBatteryMask" fill="white">
+          <path d="M50 4C50 1.79086 51.7909 0 54 0H71C73.2091 0 75 1.79086 75 4V9C75 11.2091 73.2091 13 71 13H54C51.7909 13 50 11.2091 50 9V4Z" fill-rule="evenodd" clip-rule="evenodd"/>
+        </mask>
+        <path opacity="0.35" d="M54 13H71C73.2091 13 75 11.2091 75 9V4C75 1.79086 73.2091 0 71 0H54C51.7909 0 50 1.79086 50 4V9C50 11.2091 51.7909 13 54 13Z" stroke-width="2.11017" stroke="currentColor" mask="url(#statusBarBatteryMask)"/>
+        <path opacity="0.4" d="M76 5V9.22034C76.8491 8.86291 77.4012 8.0314 77.4012 7.11017C77.4012 6.18894 76.8491 5.35744 76 5" fill="currentColor"/>
+        <path d="M52 4C52 2.89543 52.8954 2 54 2H71C72.1046 2 73 2.89543 73 4V9C73 10.1046 72.1046 11 71 11H54C52.8954 11 52 10.1046 52 9V4Z" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- content -->
+    <div class="scroll-area">
+      <main class="stamp">
+        <div class="stamp__board">
+          <img class="stamp__board-img" src="2_stamp/img/boardContent.png" width="343" height="399" alt="" draggable="false">
+          <div class="stamp__mark">
+            <img class="stamp__mark-img" id="stampMark" src="2_stamp/img/stamp-mark/store.png" width="64" height="64" alt="스탬프 적립됨" draggable="false">
+            <div class="stamp__mark-lottie" id="stampConfetti" aria-hidden="true"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
+  <script src="./common/common.js?v=20261119-04"></script>
+  <script src="./common/stamp_mark.js?v=20261119-04" data-base="2_stamp/img/stamp-mark/"></script> <!-- 인덱스 옵션 카드 '스탬프' → 매장 이미지 -->
+  <script src="./2_stamp/2_stamp.js?v=20261119-04"></script>
+</body>
+</html>

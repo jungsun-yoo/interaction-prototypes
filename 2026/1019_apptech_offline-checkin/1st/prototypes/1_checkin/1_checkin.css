@@ -1,0 +1,232 @@
+/* ════════════════════════════════════════════════════
+   1_checkin.css — 체크인 (스탬프 → 코인)
+   ════════════════════════════════════════════════════ */
+
+/* 화면 바탕 검정 (다이얼로그 화면), 상태바도 검정 */
+.phone {
+  --status-bar-bg: #000;
+  background: #000;
+}
+
+/* 콘텐츠를 폰 화면(상태바 아래) 세로 중앙에 — 화면보다 길어지면 위부터 스크롤 */
+.scroll-area {
+  display: flex;
+  flex-direction: column;
+}
+.scroll-area > main {
+  flex-shrink: 0;
+  margin: auto 0;
+}
+
+.checkin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 30px 0 60px;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ============================================================
+   체크인 시퀀스 (1회) — .checkin__visual 에 .is-playing 이 붙으면 시작
+   0 ~ 0.6s    스탬프 쾅 — 140% → 90%(0.3s) → 100%, 투명 0 → 100%(0.3s)
+   0.3 ~ 1.4s  스탬프 잔상 — 100% → 120%, 투명 50% → 0
+   1.0 ~ 1.5s  Y축 뒤집기 0° → -180°, 절반(1.25s)에서 스탬프 → 코인 교체
+   1.3s        콘페티 시작 (JS 가 --t-confetti 를 읽음, 코인 위에 그려짐)
+   ============================================================ */
+.checkin__visual {
+  --t-echo: 0.3s;       /* 잔상 시작 */
+  --t-flip: 1.0s;       /* 뒤집기 시작 */
+  --d-flip: 0.5s;       /* 뒤집기 길이 */
+  --t-confetti: 1.3s;   /* 콘페티 시작 */
+  --mds-motion-power2-easeInOut: cubic-bezier(0.6, 0, 0.4, 1);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 0;
+}
+
+/* ------------------------------------------------------------ */
+/* bg-glow — 블러 원 2개, 스탬프 중심보다 (+8.5, +2.25) */
+.checkin__glow {
+  position: absolute;
+  left: calc(50% + 8.5px);
+  top: calc(50% + 2.25px);
+  width: 544px;
+  height: 508px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.checkin__glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+.checkin__glow-orb--purple {
+  left: 180px;
+  top: 216px;
+  width: 112px;
+  height: 112px;
+  background: rgba(91, 36, 255, 0.5);
+}
+
+.checkin__glow-orb--blue {
+  left: 261px;
+  top: 180px;
+  width: 103px;
+  height: 103px;
+  background: rgba(36, 94, 255, 0.5);
+}
+
+/* ------------------------------------------------------------ */
+/* 스탬프 → 코인 */
+
+/* token — 스탬프/코인 자리 110×110 */
+.checkin__token {
+  position: relative;
+  width: 110px;
+  height: 110px;
+}
+
+/* press — 2D 그룹 (잔상·스탬프를 레이어 순서로 겹쳐 회전 중 잔상이 앞으로 올라오지 않음) */
+.checkin__press {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* stage — 원근은 이 안에서만 적용 */
+.checkin__stage {
+  position: absolute;
+  inset: 0;
+  perspective: 300px;
+}
+
+.checkin__flip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform; /* 회전 시작 순간 레이어가 새로 만들어지며 튀는 것 방지 */
+}
+
+/* 앞면(스탬프) / 뒷면(코인) — 투명 여백 2px 로 회전 시 외곽 계단 현상 방지 */
+.checkin__face {
+  position: absolute;
+  inset: -2px;
+  padding: 2px;
+}
+
+.checkin__face--coin {
+  transform: rotateY(180deg);
+  opacity: 0;
+}
+
+.checkin__stamp,
+.checkin__coin {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 시작 전에는 스탬프를 숨김 */
+.checkin__stamp { opacity: 0; }
+
+/* 1) 스탬프 쾅 */
+.is-playing .checkin__press {
+  animation: stampPress 0.6s both;
+}
+
+@keyframes stampPress {
+  0%   { scale: 1.4; animation-timing-function: cubic-bezier(1, 0, 0.8, 1); }
+  50%  { scale: 0.9; animation-timing-function: cubic-bezier(0.2, 0, 0, 1); }
+  100% { scale: 1; }
+}
+
+.is-playing .checkin__stamp {
+  animation: stampFade 0.3s linear both;
+}
+
+@keyframes stampFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 2) 스탬프 잔상 — 스탬프 뒤에서 커지며 사라짐 (회전하지 않음) */
+.checkin__echo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-playing .checkin__echo {
+  animation:
+    echoGrow 1.1s var(--t-echo) cubic-bezier(0.167, 0.167, 0.2, 1) forwards,
+    echoFade 1.1s var(--t-echo) cubic-bezier(0.167, 0.167, 0.667, 1) forwards;
+}
+
+@keyframes echoGrow {
+  from { scale: 1; }
+  to   { scale: 1.2; }
+}
+
+@keyframes echoFade {
+  from { opacity: 0.5; }
+  to   { opacity: 0; }
+}
+
+/* 3) 뒤집기 */
+.is-playing .checkin__flip {
+  animation: tokenFlip var(--d-flip) var(--t-flip) var(--mds-motion-power2-easeInOut) both;
+}
+
+@keyframes tokenFlip {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(-180deg); }
+}
+
+/* 뒤집기 절반(90°) 순간에 면 교체 */
+.is-playing .checkin__face--stamp { animation: faceHide var(--d-flip) var(--t-flip) linear both; }
+.is-playing .checkin__face--coin  { animation: faceShow var(--d-flip) var(--t-flip) linear both; }
+
+@keyframes faceHide {
+  0%, 50%     { opacity: 1; }
+  50.1%, 100% { opacity: 0; }
+}
+
+@keyframes faceShow {
+  0%, 50%     { opacity: 0; }
+  50.1%, 100% { opacity: 1; }
+}
+
+/* ------------------------------------------------------------ */
+/* 콘페티 로티 — 311×207, 코인 중심보다 24px 아래, 코인 위에 1회 재생 */
+.checkin__confetti {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 24px);
+  width: 311px;
+  height: 207px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* info — 3x 이미지 837×570 → 279×190 */
+.checkin__info {
+  position: relative;
+  display: block;
+  width: 279px;
+  height: 190px;
+}
