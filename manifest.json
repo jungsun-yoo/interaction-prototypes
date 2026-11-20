@@ -18,6 +18,20 @@
       "desc": "무배당발 플러스오더 혜택가 상품 로고 모션"
     },
     {
+      "id": "1118_mbdb-icon-motion",
+      "title": "무배당발 아이콘 모션",
+      "date": "2026-11-18",
+      "team": "Core UX",
+      "path": "2026/1118_mbdb-icon-motion/1st/",
+      "round": "1st",
+      "tags": [
+        "무배당발",
+        "로티"
+      ],
+      "thumb": "thumb.webp",
+      "desc": "띠배너, 탭에 적용된 무배당발 아이콘 모션(앱 Lottie .웹 CSS)"
+    },
+    {
       "id": "1117_musinsa-lens",
       "title": "무신사 렌즈",
       "date": "2026-11-17",
