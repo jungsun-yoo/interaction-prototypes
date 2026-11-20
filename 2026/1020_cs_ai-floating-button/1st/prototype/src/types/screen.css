@@ -1,0 +1,76 @@
+/* 프로토타입 화면 (1:1문의내역) — 개발 전달 대상 아님 */
+
+/* common.css 의 겹쳐 쌓는 구조 대신 상태바 → 앱바 → 스크롤 세로 흐름 */
+.phone {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+.status-bar {
+  position: relative;
+}
+
+/* ─── 앱바: MDS 2.0 AppBar (375×52, 아이콘 28) ─── */
+.appbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 52px;
+  padding: 0 16px;
+  background: #fff;
+}
+.appbar-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+.appbar-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: #000;
+  text-align: center;
+}
+
+.scroll-area {
+  position: relative;
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 105px; /* 바텀 플로팅 높이: 버튼 영역 71 + 홈 인디케이터 34 */
+}
+
+/* ─── 바텀 플로팅 (MDS ButtonFloating) ─── */
+.btn-floating {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+.btn-area {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(138, 138, 138, 0.1);
+  background: #fff;
+}
+.home-indicator {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 34px;
+  padding-bottom: 8px;
+  background: #fff;
+}
+.home-indicator-bar {
+  width: 134px;
+  height: 5px;
+  border-radius: 100px;
+  background: #2A2A2A;
+}
+
+/* 페이지 로딩이 끝나 화면이 보일 때 아이콘·타이틀 모션 시작 */
+html:not(.proto-play) :is(.ai-btn-icon, .ai-btn-text) {
+  animation-play-state: paused;
+}

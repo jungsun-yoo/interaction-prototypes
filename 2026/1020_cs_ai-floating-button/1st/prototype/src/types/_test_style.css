@@ -1,0 +1,35 @@
+/* 스타일 테스트 전용: 인덱스 옵션 카드 값(<html data-…>)으로 비교 — 개발 전달 대상 아님 */
+
+/* AI Border 기본형: 90deg #99ACFF → #E3BCFF */
+:root[data-border-type="basic"] .ai-btn {
+  --ai-btn-border: linear-gradient(90deg, #99ACFF 0%, #E3BCFF 100%);
+}
+
+/* AI Border 모션: conic 그라디언트 회전 (강조형 4색 6s · 기본형 2색 2s) */
+@property --ai-btn-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes ai-btn-border-rotate {
+  to { --ai-btn-angle: 360deg; }
+}
+:root[data-border-motion="on"] .ai-btn {
+  --ai-btn-border: conic-gradient(from var(--ai-btn-angle),
+    #86BAFF 0deg, #E476FF 90deg, #878FFF 180deg, #E476FF 270deg, #86BAFF 360deg);
+  animation: ai-btn-border-rotate 6s linear infinite;
+}
+:root[data-border-motion="on"][data-border-type="basic"] .ai-btn {
+  --ai-btn-border: conic-gradient(from var(--ai-btn-angle),
+    #99ACFF 0deg, #E3BCFF 180deg, #99ACFF 360deg);
+  animation-duration: 2s;
+}
+
+/* AI Title 모션 끔: 고정 그라디언트 */
+:root[data-title-motion="off"] .ai-btn-text {
+  background-image: linear-gradient(90deg, #3060FF 38.462%, #9860FF 100%);
+  background-size: 100% 100%;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  animation: none;
+}
