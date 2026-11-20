@@ -136,6 +136,20 @@
       "desc": "화면 높이에 맞춰 게이트웨이 너비를 줄이는 TO-BE 기준과 기기별 비교"
     },
     {
+      "id": "1020_cs_ai-floating-button",
+      "title": "CS AI Floating",
+      "date": "2026-10-20",
+      "team": "Commerce",
+      "path": "2026/1020_cs_ai-floating-button/1st/",
+      "round": "1st",
+      "open": "final",
+      "tags": [
+        "ai"
+      ],
+      "thumb": "thumb.webp",
+      "desc": "AI 보더 강조형 · 타이틀 모션 · 아이콘 모션"
+    },
+    {
       "id": "1019_apptech_offline-checkin",
       "title": "[앱테크] 오프라인 체크인",
       "date": "2026-10-19",
