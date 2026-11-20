@@ -32,7 +32,20 @@
         [].forEach.call(boxes, function (box) { box.classList.add('is-play'); });
     }
 
-    [].forEach.call(document.querySelectorAll('.mbdb-tab'), function (tab) {
+    /* 지면 탭: 고른 지면만 보이고, 그 지면 모션을 처음부터 다시 */
+    var surfaceTabs = document.querySelectorAll('.surface-tab');
+    [].forEach.call(surfaceTabs, function (tab) {
+        tab.addEventListener('click', function () {
+            var surface = tab.dataset.surface;
+            [].forEach.call(surfaceTabs, function (t) { t.setAttribute('aria-selected', String(t === tab)); });
+            [].forEach.call(document.querySelectorAll('.cmp-row[data-surface]'), function (row) {
+                row.hidden = row.dataset.surface !== surface;
+                if (!row.hidden) restartMotion(row);
+            });
+        });
+    });
+
+    [].forEach.call(document.querySelectorAll('button.mbdb-tab'), function (tab) {
         tab.addEventListener('click', function () {
             var next = tab.getAttribute('aria-pressed') !== 'true';
             tab.setAttribute('aria-pressed', String(next));

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-phone="375"> <!-- 폰 크기 프리셋: 375(기본) · 393 · 402 · 440 (common.css) -->
+<html lang="ko"> <!-- 폰 케이스 없는 캔버스: 크기는 type_1.css 의 --phone-w · --phone-h -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -22,165 +22,118 @@
   <link rel="stylesheet" href="./src/types/type_1.css?v=20261110-22"></head>
 <body>
 
+  <!-- 폰 케이스 없는 캔버스 (앱테크 구매챌린지 게이지 모션과 같은 방식): 상태바 · 폰 모서리 · 그림자 없음, 인덱스 바탕색과 같은 gray100
+       맨 위 지면 탭(세일판 · 랭킹판) → 고른 지면을 위 Lottie(앱) · 아래 CSS animation(웹) 으로 -->
   <div class="phone">
-
-    <!-- status-bar: PC 폰 프레임에서만 보임 -->
-    <div class="status-bar is-dark" aria-hidden="true">
-      <!-- Figma: 1_디자인 싱크 > StatusBar / iPhone 14 (node 30120-64398). 색만 currentColor로 바꿈 -->
-      <span class="status-bar-time">9:41</span>
-      <svg class="status-bar-icons" width="51.4012" height="13" viewBox="26 0 51.4012 13" fill="none">
-        <!-- wifi -->
-        <path d="M32.1152 10.085C33.535 8.85937 35.6144 8.8595 37.0342 10.085C37.1056 10.1509 37.1474 10.2445 37.1494 10.3428C37.1514 10.441 37.1136 10.5357 37.0449 10.6045L34.8213 12.8945C34.7562 12.9617 34.6678 12.9999 34.5752 13C34.4825 13 34.3933 12.9618 34.3281 12.8945L32.1045 10.6045C32.0359 10.5356 31.998 10.441 32 10.3428C32.002 10.2445 32.0437 10.1508 32.1152 10.085ZM29.1094 7.26172C32.1685 4.35713 36.9058 4.35713 39.9648 7.26172C40.0339 7.32982 40.0732 7.42351 40.0742 7.52148C40.0751 7.61935 40.0373 7.71377 39.9697 7.7832L38.6846 9.1084C38.5521 9.24367 38.338 9.24698 38.2021 9.11523C37.1977 8.1868 35.8912 7.67185 34.5361 7.67188C33.1818 7.67245 31.876 8.18733 30.8721 9.11523C30.7362 9.24697 30.5221 9.24374 30.3896 9.1084L29.1045 7.7832C29.0367 7.71385 28.9992 7.61941 29 7.52148C29.0009 7.42352 29.0404 7.32981 29.1094 7.26172ZM26.1074 4.44238C30.7993 -0.147226 38.2007 -0.147163 42.8926 4.44238C42.9605 4.51057 42.9994 4.60393 43 4.70117C43.0005 4.79826 42.9625 4.89204 42.8955 4.96094L41.6094 6.28613C41.4768 6.42211 41.2616 6.42382 41.127 6.29004C39.3393 4.55527 36.9666 3.588 34.5 3.58789C32.0334 3.58801 29.6608 4.55527 27.873 6.29004C27.7385 6.42393 27.523 6.42228 27.3906 6.28613L26.1035 4.96094C26.0365 4.89201 25.9995 4.79823 26 4.70117C26.0006 4.60393 26.0395 4.51052 26.1074 4.44238Z" fill="currentColor"/>
-        <!-- battery -->
-        <mask id="statusBarBatteryMask" fill="white">
-          <path d="M50 4C50 1.79086 51.7909 0 54 0H71C73.2091 0 75 1.79086 75 4V9C75 11.2091 73.2091 13 71 13H54C51.7909 13 50 11.2091 50 9V4Z" fill-rule="evenodd" clip-rule="evenodd"/>
-        </mask>
-        <path opacity="0.35" d="M54 13H71C73.2091 13 75 11.2091 75 9V4C75 1.79086 73.2091 0 71 0H54C51.7909 0 50 1.79086 50 4V9C50 11.2091 51.7909 13 54 13Z" stroke-width="2.11017" stroke="currentColor" mask="url(#statusBarBatteryMask)"/>
-        <path opacity="0.4" d="M76 5V9.22034C76.8491 8.86291 77.4012 8.0314 77.4012 7.11017C77.4012 6.18894 76.8491 5.35744 76 5" fill="currentColor"/>
-        <path d="M52 4C52 2.89543 52.8954 2 54 2H71C72.1046 2 73 2.89543 73 4V9C73 10.1046 72.1046 11 71 11H54C52.8954 11 52 10.1046 52 9V4Z" fill="currentColor"/>
-      </svg>
-    </div>
-
-    <!-- content -->
     <div class="scroll-area">
-      <!-- 화면 가운데에 위아래로: 세일판 탭 / 랭킹판 띠배너 (Figma MDS 2.0 변경 로그 공유 9424-38552, 9424-38617) -->
-      <section class="mbdb-stage">
-        <!-- ① 로티 버전: 앱 전달용 로티(src/lottie/*.json, 69×18)를 lottie-web 으로 재생. 위치·이미지는 아래 CSS 버전과 같음
-             탭: 선택 mbdb_icon / 미선택 mbdb_icon_gray500 · 띠배너(h16 으로 축소): 미체크 mbdb_icon / 체크 mbdb_icon_white -->
-        <div class="mbdb-variant">
-          <p class="mbdb-variant-title">로티 버전</p>
-          <div class="mbdb-block">
-            <p class="mbdb-title">TabOutlinedItem - 무배당발</p>
-            <div class="mbdb-shot">
-              <img class="proto-img" style="--w: 375; --h: 74" width="375" height="74" src="./src/img/tab_mbdb.png?v=2" alt="세일판 무배당발 탭">
-              <button type="button" class="mbdb-tab" aria-pressed="true" style="left: 134.33px">
-                <span class="mbdb-tab-lottie">
-                  <span class="is-on mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
-                  <span class="is-off mbdb-lottie" data-lottie="mbdb_icon_gray500" aria-hidden="true"></span>
-                </span>
-              </button>
-              <button type="button" class="mbdb-tab" aria-pressed="false" style="left: 219.33px">
-                <span class="mbdb-tab-lottie">
-                  <span class="is-on mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
-                  <span class="is-off mbdb-lottie" data-lottie="mbdb_icon_gray500" aria-hidden="true"></span>
-                </span>
-              </button>
-            </div>
-          </div>
-          <div class="mbdb-block">
-            <p class="mbdb-title">무배당발 띠배너</p>
-            <div class="mbdb-shot">
-              <img class="proto-img" style="--w: 375; --h: 110" width="375" height="110" src="./src/img/banner_mbdb.png?v=2" alt="랭킹판 무배당발 띠배너">
-              <span class="mbdb-banner-logo" data-checked="false" style="left: 34px; top: 51px">
-                <span class="mbdb-banner-lottie">
-                  <span class="is-on mbdb-lottie" data-lottie="mbdb_icon_white" aria-hidden="true"></span>
-                  <span class="is-off mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
-                </span>
-              </span>
-              <span class="mbdb-banner-logo" data-checked="true" style="left: 36px; top: 85px">
-                <span class="mbdb-banner-lottie">
-                  <span class="is-on mbdb-lottie" data-lottie="mbdb_icon_white" aria-hidden="true"></span>
-                  <span class="is-off mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
-                </span>
-              </span>
-            </div>
+      <!-- 지면 탭: 세일판 / 랭킹판 — 고른 지면만 보이고, 그 안에서 위 Lottie(앱) · 아래 CSS(웹) -->
+      <nav class="surface-tabs" role="tablist" aria-label="지면">
+        <button type="button" class="surface-tab" role="tab" data-surface="sale" aria-selected="true">세일판</button>
+        <button type="button" class="surface-tab" role="tab" data-surface="ranking" aria-selected="false">랭킹판</button>
+      </nav>
+      <div class="cmp">
+
+      <section class="cmp-row" data-surface="sale" role="tabpanel">
+        <p class="cmp-row-title">TabOutlinedItem - 무배당발</p>
+        <div class="cmp-cols">
+        <div class="cmp-cell" data-kind="lottie">
+          <p class="cmp-cell-label"><b>Lottie</b> · 앱</p>
+          <div class="mbdb-shot">
+            <img class="proto-img" style="--w: 375; --h: 74" width="375" height="74" src="./src/img/tab_mbdb.png?v=2" alt="세일판 무배당발 탭">
+            <button type="button" class="mbdb-tab" aria-pressed="true" style="left: 134.33px">
+                      <span class="mbdb-tab-lottie">
+                        <span class="is-on mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
+                        <span class="is-off mbdb-lottie" data-lottie="mbdb_icon_gray500" aria-hidden="true"></span>
+                      </span>
+                    </button>
+            <button type="button" class="mbdb-tab" aria-pressed="false" style="left: 219.33px">
+                      <span class="mbdb-tab-lottie">
+                        <span class="is-on mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
+                        <span class="is-off mbdb-lottie" data-lottie="mbdb_icon_gray500" aria-hidden="true"></span>
+                      </span>
+                    </button>
           </div>
         </div>
-
-        <!-- ② CSS animation 버전: 웹 구현용 (src/mbdb-icon-motion.css, 이미지 트럭 2장 이동) -->
-        <div class="mbdb-variant">
-          <p class="mbdb-variant-title">CSS animation 버전</p>
-          <div class="mbdb-block">
-            <p class="mbdb-title">TabOutlinedItem - 무배당발</p>
-            <!-- 이미지 위 같은 자리에 코드 버튼을 올려 이미지 속 무배당발 칩을 가림 (375 고정) -->
-            <div class="mbdb-shot">
+        <div class="cmp-cell" data-kind="css">
+          <p class="cmp-cell-label"><b>CSS animation</b> · 웹</p>
+          <div class="mbdb-shot">
             <img class="proto-img" style="--w: 375; --h: 74" width="375" height="74" src="./src/img/tab_mbdb.png?v=2" alt="세일판 무배당발 탭">
-
-            <!-- 코드: TabOutlinedItem - 무배당발 (Figma 9424-28730 selected / 9424-28732 unselected)
-                 버튼 81×32 = 패딩 7·6 + 심볼 20×18 + 로고타입 49×18
-                 심볼·로고타입 칸마다 on(파랑)·off(회색) 이미지를 겹쳐 두고 aria-pressed 로 바꿔 보여줌 → 아이콘 모션은 .mbdb-tab-symbol 에
-                 위치: 이미지 속 칩 자리 (선택 x 134.33 / 미선택 x 219.33, y 0) -->
-              <button type="button" class="mbdb-tab" aria-pressed="true" style="left: 134.33px">
-                <span class="mbdb-tab-symbol">
-                  <span class="is-on mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_on.png" alt="">
-                    <img src="./src/img/mbdb_symbol_on.png" alt="">
-                  </span>
-                  <span class="is-off mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_off.png" alt="">
-                    <img src="./src/img/mbdb_symbol_off.png" alt="">
-                  </span>
-                </span>
-                <span class="mbdb-tab-logotype">
-                  <img class="is-on" src="./src/img/mbdb_logotype_on.png" width="49" height="18" alt="무배당발">
-                  <img class="is-off" src="./src/img/mbdb_logotype_off.png" width="49" height="18" alt="무배당발">
-                </span>
-              </button>
-              <button type="button" class="mbdb-tab" aria-pressed="false" style="left: 219.33px">
-                <span class="mbdb-tab-symbol">
-                  <span class="is-on mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_on.png" alt="">
-                    <img src="./src/img/mbdb_symbol_on.png" alt="">
-                  </span>
-                  <span class="is-off mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_off.png" alt="">
-                    <img src="./src/img/mbdb_symbol_off.png" alt="">
-                  </span>
-                </span>
-                <span class="mbdb-tab-logotype">
-                  <img class="is-on" src="./src/img/mbdb_logotype_on.png" width="49" height="18" alt="무배당발">
-                  <img class="is-off" src="./src/img/mbdb_logotype_off.png" width="49" height="18" alt="무배당발">
-                </span>
-              </button>
-            </div>
+            <button type="button" class="mbdb-tab" aria-pressed="true" style="left: 134.33px">
+                      <span class="mbdb-tab-symbol">
+                        <span class="is-on mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_on.png" alt=""><img src="./src/img/mbdb_symbol_on.png" alt=""></span>
+                        <span class="is-off mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_off.png" alt=""><img src="./src/img/mbdb_symbol_off.png" alt=""></span>
+                      </span>
+                      <span class="mbdb-tab-logotype">
+                        <img class="is-on" src="./src/img/mbdb_logotype_on.png" width="49" height="18" alt="무배당발">
+                        <img class="is-off" src="./src/img/mbdb_logotype_off.png" width="49" height="18" alt="무배당발">
+                      </span>
+                    </button>
+            <button type="button" class="mbdb-tab" aria-pressed="false" style="left: 219.33px">
+                      <span class="mbdb-tab-symbol">
+                        <span class="is-on mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_on.png" alt=""><img src="./src/img/mbdb_symbol_on.png" alt=""></span>
+                        <span class="is-off mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_off.png" alt=""><img src="./src/img/mbdb_symbol_off.png" alt=""></span>
+                      </span>
+                      <span class="mbdb-tab-logotype">
+                        <img class="is-on" src="./src/img/mbdb_logotype_on.png" width="49" height="18" alt="무배당발">
+                        <img class="is-off" src="./src/img/mbdb_logotype_off.png" width="49" height="18" alt="무배당발">
+                      </span>
+                    </button>
           </div>
-          <div class="mbdb-block">
-            <p class="mbdb-title">무배당발 띠배너</p>
-            <div class="mbdb-shot">
-              <img class="proto-img" style="--w: 375; --h: 110" width="375" height="110" src="./src/img/banner_mbdb.png?v=2" alt="랭킹판 무배당발 띠배너">
-
-              <!-- 코드: 무배당발 띠배너 로고 (Figma 9424-38139 unselected / 9424-38197 selected)
-                   로고 62×16 = 심볼 18×16 + 로고타입 44×16. 탭과 같은 구조: 칸마다 on(흰색)·off(파랑) 이미지를 겹쳐 두고 data-checked 로 바꿔 보여줌
-                   위치: 이미지 속 띠배너 로고 자리 (미체크 띠배너 y 42 → 로고 34,51 / 체크 띠배너 y 76 → 로고 36,85)
-                   배경색은 띠배너 색과 같게 깔아 이미지 속 로고를 가림. 아이콘 모션은 .mbdb-banner-symbol 에 -->
-              <span class="mbdb-banner-logo" data-checked="false" style="left: 34px; top: 51px">
-                <span class="mbdb-banner-symbol">
-                  <span class="is-on mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_white_h16.png" alt="">
-                    <img src="./src/img/mbdb_symbol_white_h16.png" alt="">
-                  </span>
-                  <span class="is-off mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_h16.png" alt="">
-                    <img src="./src/img/mbdb_symbol_h16.png" alt="">
-                  </span>
-                </span>
-                <span class="mbdb-banner-logotype">
-                  <img class="is-on" src="./src/img/mbdb_logotype_white_h16.png" alt="무배당발">
-                  <img class="is-off" src="./src/img/mbdb_logotype_h16.png" alt="무배당발">
-                </span>
-              </span>
-              <span class="mbdb-banner-logo" data-checked="true" style="left: 36px; top: 85px">
-                <span class="mbdb-banner-symbol">
-                  <span class="is-on mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_white_h16.png" alt="">
-                    <img src="./src/img/mbdb_symbol_white_h16.png" alt="">
-                  </span>
-                  <span class="is-off mbdb-icon-motion is-play" aria-hidden="true">
-                    <img src="./src/img/mbdb_symbol_h16.png" alt="">
-                    <img src="./src/img/mbdb_symbol_h16.png" alt="">
-                  </span>
-                </span>
-                <span class="mbdb-banner-logotype">
-                  <img class="is-on" src="./src/img/mbdb_logotype_white_h16.png" alt="무배당발">
-                  <img class="is-off" src="./src/img/mbdb_logotype_h16.png" alt="무배당발">
-                </span>
-              </span>
-            </div>
-          </div>
+        </div>
         </div>
       </section>
-    </div>
 
+      <section class="cmp-row" data-surface="ranking" role="tabpanel" hidden>
+        <p class="cmp-row-title">무배당발 띠배너<span>위: 미체크 / 아래: 체크</span></p>
+        <div class="cmp-cols">
+        <div class="cmp-cell" data-kind="lottie">
+          <p class="cmp-cell-label"><b>Lottie</b> · 앱</p>
+          <div class="mbdb-shot">
+            <img class="proto-img" style="--w: 375; --h: 110" width="375" height="110" src="./src/img/banner_mbdb.png?v=2" alt="랭킹판 무배당발 띠배너">
+            <span class="mbdb-banner-logo" data-checked="false" style="left: 34px; top: 51px">
+                      <span class="mbdb-banner-lottie">
+                        <span class="is-on mbdb-lottie" data-lottie="mbdb_icon_white" aria-hidden="true"></span>
+                        <span class="is-off mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
+                      </span>
+                    </span>
+            <span class="mbdb-banner-logo" data-checked="true" style="left: 36px; top: 85px">
+                      <span class="mbdb-banner-lottie">
+                        <span class="is-on mbdb-lottie" data-lottie="mbdb_icon_white" aria-hidden="true"></span>
+                        <span class="is-off mbdb-lottie" data-lottie="mbdb_icon" aria-hidden="true"></span>
+                      </span>
+                    </span>
+          </div>
+        </div>
+        <div class="cmp-cell" data-kind="css">
+          <p class="cmp-cell-label"><b>CSS animation</b> · 웹</p>
+          <div class="mbdb-shot">
+            <img class="proto-img" style="--w: 375; --h: 110" width="375" height="110" src="./src/img/banner_mbdb.png?v=2" alt="랭킹판 무배당발 띠배너">
+            <span class="mbdb-banner-logo" data-checked="false" style="left: 34px; top: 51px">
+                      <span class="mbdb-banner-symbol">
+                        <span class="is-on mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_white_h16.png" alt=""><img src="./src/img/mbdb_symbol_white_h16.png" alt=""></span>
+                        <span class="is-off mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_h16.png" alt=""><img src="./src/img/mbdb_symbol_h16.png" alt=""></span>
+                      </span>
+                      <span class="mbdb-banner-logotype">
+                        <img class="is-on" src="./src/img/mbdb_logotype_white_h16.png" alt="무배당발">
+                        <img class="is-off" src="./src/img/mbdb_logotype_h16.png" alt="무배당발">
+                      </span>
+                    </span>
+            <span class="mbdb-banner-logo" data-checked="true" style="left: 36px; top: 85px">
+                      <span class="mbdb-banner-symbol">
+                        <span class="is-on mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_white_h16.png" alt=""><img src="./src/img/mbdb_symbol_white_h16.png" alt=""></span>
+                        <span class="is-off mbdb-icon-motion is-play" aria-hidden="true"><img src="./src/img/mbdb_symbol_h16.png" alt=""><img src="./src/img/mbdb_symbol_h16.png" alt=""></span>
+                      </span>
+                      <span class="mbdb-banner-logotype">
+                        <img class="is-on" src="./src/img/mbdb_logotype_white_h16.png" alt="무배당발">
+                        <img class="is-off" src="./src/img/mbdb_logotype_h16.png" alt="무배당발">
+                      </span>
+                    </span>
+          </div>
+        </div>
+        </div>
+      </section>
+      </div>
+    </div>
   </div>
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임

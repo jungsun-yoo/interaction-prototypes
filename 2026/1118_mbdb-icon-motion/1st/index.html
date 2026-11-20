@@ -22,7 +22,7 @@
       --panel-line: rgba(255, 255, 255, 0.08);
       --panel-text: #fff;
       --panel-sub: rgba(255, 255, 255, 0.45);
-      --canvas-bg: #f0f0f0;
+      --canvas-bg: #F5F5F5; /* 이 프로젝트: 폰 케이스 없는 캔버스(gray100)와 같은 색 (틀 기본값 #f0f0f0) */
       /* 프레임(iframe) = 폰 + 그림자 여백×2
          --phone-w·--phone-h는 각 프로토타입 common.css 값을 script가 읽어 덮어씀 (아래는 불러오기 전 잠깐 쓰는 기본값) */
       --phone-w: 375px;
@@ -80,7 +80,7 @@
     .panel-download svg {flex-shrink: 0; display: block;}
     .panel-download:hover {background: rgba(255, 255, 255, 0.85);}
     .panel-download + .panel-download {margin-top: 6px;}
-    /* md(명세) 버튼: zip보다 약한 보조 버튼 (링크 칩과 같은 어두운 바탕) */
+    /* md(가이드) 버튼: zip보다 약한 보조 버튼 (링크 칩과 같은 어두운 바탕) */
     .panel-download--sub {height: 32px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; font-weight: 600;}
     .panel-download--sub:hover {background: rgba(255, 255, 255, 0.16);}
     /* 잠금(아직 내려받을 수 없음): 자리만 보이고 흐리게 · 누를 수 없음 (href 없음) */
@@ -270,10 +270,12 @@
     .motion-list {display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: motion-step;}
     .motion-list > li {position: relative; padding-left: 16px; counter-increment: motion-step; font: var(--ui-label); color: var(--ui-text); word-break: keep-all;}
     .motion-list > li::before {content: counter(motion-step) '.'; position: absolute; top: 0; left: 0; font-variant-numeric: tabular-nums;} /* 숫자 목록: 1. 2. 3. */
+    .motion-list.is-dot > li {padding-left: 12px;}
+    .motion-list.is-dot > li::before {content: ''; top: 7px; left: 2px; width: 3px; height: 3px; border-radius: 50%; background: currentColor;} /* list: 'dot' — 점 목록 */
     .motion-sub {display: flex; flex-direction: column; gap: 2px; margin: 4px 0 0; padding: 0; list-style: none;}
     .motion-sub li {font: 400 12px/16px var(--ui-font); color: var(--ui-sub); word-break: keep-all;}
     .motion-sub li::before {content: '– ';}
-    .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
+    .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(calc(-50% - var(--frame-shift, 0px)), -50%) scale(var(--frame-scale, 1));} /* --frame-shift: 오른쪽 카드 자리가 모자랄 때 왼쪽으로 */
     /* 확대 보기 (툴바 돋보기 · Z): 폰을 바탕에 꽉 차게 (위아래 여백 24, 스크롤 없음). 오른쪽 카드 · QR은 가림 */
     .stage.is-zoomed .side-stack, .stage.is-zoomed .qr-card {display: none;}
     .zoom-button.is-on {background: rgba(0, 0, 0, 0.06);}
@@ -303,7 +305,7 @@
         </div>
       </div>
       <!-- 다운로드: TYPES 제목 위
-           md: 인터랙션 명세 (CONFIG.spec, 비우면 숨김) / zip: download/ 폴더 (최종 결정된 프로토타입만, 비우면 숨김) -->
+           md: 가이드 (CONFIG.spec, 비우면 숨김) / zip: download/ 폴더 (최종 결정된 프로토타입만, 비우면 숨김) -->
       <div class="panel-download-wrap">
         <a class="panel-download panel-download--sub is-hidden" id="specLink" download>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
@@ -371,8 +373,8 @@
         items: 항목 추가는 한 줄 (id는 주소 #id로 쓰임)
         figma: 프로젝트 공통 피그마 설명 링크 / 항목별로 다르면 items의 figma에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
         jira: 프로젝트 공통 Jira 링크 / 항목별로 다르면 items의 jira에 적기 (항목 값이 우선, 둘 다 없으면 버튼 비활성)
-        spec: 인터랙션 명세 md 단독 버튼 (Type_N.html 옆 interaction.md를 그대로 연결, 복사본 만들지 않음). 비우면 버튼 숨김
-              선택사항 — 명세는 zip 안에도 들어가므로, 따로 받게 할지는 프로젝트마다 정함
+        spec: 가이드 md 단독 버튼 (Type_N.html 옆 *_interaction-guide.md · *_motion-guide.md 를 그대로 연결, 복사본 만들지 않음). 비우면 버튼 숨김
+              선택사항 — 가이드는 zip 안에도 들어가므로, 따로 받게 할지는 프로젝트마다 정함
         download: 내려받을 zip. 최종 결정된 프로토타입만 마지막에 넣음 (비우면 버튼 숨김)
                   download/ 폴더에 prototype(s) 폴더를 통째로 압축. 항목별로 다르면 items의 download
                   zip을 넣은 뒤 prototype(s) 안 파일을 고치면 zip도 다시 만들고 version 올리기
@@ -412,13 +414,13 @@
       title: '무배당발 아이콘 모션',
       sub: '26-1118 · Prototype',
       label: 'TYPES',
-      version: '20261118-01',
+      version: '20261120-01',
       qrHost: '172.30.1.42', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: 'https://www.figma.com/design/o0jTKUbX15ampUa9e8VUEP/MDS-2.0-%EB%B3%80%EA%B2%BD-%EB%A1%9C%EA%B7%B8-%EA%B3%B5%EC%9C%A0?node-id=9424-5613',
       jira: 'https://musinsa-oneteam.atlassian.net/browse/FT-826',
-      spec: '', // 예: 'prototype/interaction.md' (명세를 따로 받게 할 때만, 선택)
+      spec: '', // 예: 'prototype/01_mbdb-icon_interaction-guide.md' (가이드를 따로 받게 할 때만, 선택)
       download: '', // 예: 'download/prototype.zip'
-      downloadNote: '압축 파일 안의 <b>interaction.md</b>를 확인해 주세요.', // zip 버튼 아래 안내 (비우면 숨김)
+      downloadNote: '압축 파일 안의 <b>01_mbdb-icon_interaction-guide.md</b>를 확인해 주세요.', // zip 버튼 아래 안내 (비우면 숨김)
       locked: [], // 예: ['spec', 'download'] → 버튼만 보이고 흐리게 (최종 전)
       /* 화면 1개면 prototype/, 여러 개면 prototypes/ 폴더 */
       /* 예: { id: 'glow', label: 'AI Glow 높이 키우기', on: 'tall', off: 'original', default: 'tall' }
@@ -428,14 +430,11 @@
         { label: 'Lottie (3종)', file: 'download/mbdb_icon_lottie.zip' },
         { label: '프로토타입', file: 'download/prototype.zip' }
       ],
-      fileNote: '<span class="file-note-info">압축 파일 안의 <b>interaction.md</b>를 확인해 주세요.</span>',
+      fileNote: '<span class="file-note-info">압축 파일 안의 <b>01_mbdb-icon_interaction-guide.md</b>를 확인해 주세요.</span>',
       items: [
         { id: 'type1', title: 'Type 1', file: 'prototype/Type_1.html',
           motion: [
-            { title: '구현 방식', items: [
-              { text: '앱은 Lottie 로 제작', sub: ['FILES 의 mbdb_icon_lottie.zip (기본 · white · gray500)'] },
-              { text: '웹은 CSS 로 제작', sub: ['prototype/src/mbdb-icon-motion.css'] }
-            ] }
+            { title: '구현 방식', list: 'dot', items: ['앱은 Lottie 로 제작', '웹은 CSS 로 제작'] }
           ] }
       ]
     };
@@ -619,6 +618,8 @@
         renderFiles(current);
         renderMotion(current);
         document.title = CONFIG.title + ' · ' + current.title;
+        /* 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 있으면 지금 타입을 알림 → 그 사이트의 링크 복사·새 창이 #타입 주소로 */
+        if (window.parent !== window) window.parent.postMessage({ type: 'proto-index:select', id: current.id }, '*');
         [].forEach.call(typeList.querySelectorAll('.type-button'), function (button) {
           button.classList.toggle('is-active', button.dataset.id === current.id);
         });
@@ -771,7 +772,7 @@
             box.appendChild(title);
           }
           var list = document.createElement('ul');
-          list.className = 'motion-list';
+          list.className = 'motion-list' + (g.list === 'dot' ? ' is-dot' : ''); /* list: 'dot' 이면 번호 대신 점 */
           (g.items || []).forEach(function (it) {
             var li = document.createElement('li');
             li.appendChild(document.createTextNode(typeof it === 'string' ? it : it.text));
@@ -1067,6 +1068,13 @@
          프로토타입 안 입력창에서 글자를 칠 때는 무시 */
       function onKey(e) {
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        /* 한글 입력 상태: R 을 누르면 key 가 'ㄱ' 처럼 오므로, 영문 글자가 아니면 자판 위치(KeyR)를 영문 키로 바꿔 다시 처리 */
+        if (/^Key[A-Z]$/.test(e.code || '') && e.key && e.key.length === 1 && !/[a-z]/i.test(e.key)) {
+          return onKey({ key: e.code.slice(3).toLowerCase(), target: e.target, preventDefault: function () { e.preventDefault(); } });
+        }
+        /* Esc: 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 들어가 있으면 그 창을 닫아 달라고 알림.
+           프로토타입을 클릭하면 키 입력이 이 페이지로 들어와 바깥 사이트가 Esc 를 못 듣기 때문 */
+        if (e.key === 'Escape' && window.parent !== window) { window.parent.postMessage({ type: 'proto-index:escape' }, '*'); return; }
         if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
         if (e.key === 'r' || e.key === 'R') { replay(); return; }
         if (e.key === 'p' || e.key === 'P') { toggleSync(); return; }
@@ -1081,6 +1089,13 @@
         select(next.id);
       }
       document.addEventListener('keydown', onKey);
+      /* 다른 사이트(Core UX Interaction Design 의 보기 창) 안에 들어가 있을 때, 그 사이트가 넘겨준 단축키(R·P·Z·↑↓)도 처리.
+         보기 창을 열면 키 입력이 바깥 사이트에 있어서 이 페이지가 직접 듣지 못하기 때문 */
+      window.addEventListener('message', function (e) {
+        if (window.parent === window || e.source !== window.parent) return;
+        if (!e.data || e.data.type !== 'proto-index:key' || typeof e.data.key !== 'string') return;
+        onKey({ key: e.data.key, target: document.body, preventDefault: function () {} });
+      });
 
       /* 확대 보기: 툴바 돋보기 · Z → 폰을 바탕에 꽉 차게 (다시 누르면 원래 크기)
          확대는 이 인덱스 화면에서만: 서버 저장 · 폰 동기화로 보내지 않음 (QR로 연 폰은 그대로) */
@@ -1113,12 +1128,23 @@
         var frameW = parseFloat(style.getPropertyValue('--phone-w')) + pad * 2; /* CSS --frame-w와 같은 식 */
         var frameH = parseFloat(style.getPropertyValue('--phone-h')) + pad * 2;
         var scale = Math.min(1, stage.clientWidth / frameW, stage.clientHeight / frameH);
-        if (zoomed) return fitZoom(frameW, frameH, pad);
+        if (zoomed) { frame.style.setProperty('--frame-shift', '0px'); return fitZoom(frameW, frameH, pad); }
+
+        /* 오른쪽 카드 묶음(MOTION·FILES 등)까지 폰 오른쪽에 들어가야 함 (카드 240 + 간격 12 + 바탕 여백 16).
+           모자라면 프레임을 왼쪽으로 옮기고 (왼쪽 여백 24 까지), 그래도 모자라면 축소 */
+        var stackShown = getComputedStyle(sideStack).display !== 'none';
+        var needRight = stackShown ? 12 + 240 + 16 : 12 + document.getElementById('stageTools').offsetWidth + 16;
+        var phoneW = frameW - pad * 2;
+        scale = Math.min(scale, (stage.clientWidth - 24 - needRight) / phoneW);
+        var centerLeft = (stage.clientWidth - frameW * scale) / 2 + pad * scale;
+        var overflow = centerLeft + phoneW * scale + needRight - stage.clientWidth;
+        var shift = Math.max(0, Math.min(overflow, centerLeft - 24));
         frame.style.setProperty('--frame-scale', scale);
+        frame.style.setProperty('--frame-shift', shift + 'px');
 
         /* QR 카드 단계: 폰 왼쪽 여백(바탕 왼쪽 24 + 폰과 간격 16 제외)에 맞춰 전체 → 작은 카드 → 툴바 버튼
            (프레임 안 그림자 여백 --frame-pad 제외한 실제 폰 왼쪽 기준) */
-        var phoneLeft = (stage.clientWidth - frameW * scale) / 2 + pad * scale;
+        var phoneLeft = centerLeft - shift;
         var qrRoom = phoneLeft - 24 - 16;
         var folded = qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w'));
         qrCard.classList.toggle('is-mini', !folded && qrRoom < parseFloat(style.getPropertyValue('--qr-card-w')));
@@ -1128,7 +1154,7 @@
 
         /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단 */
         var tools = document.getElementById('stageTools');
-        var phoneRight = stage.clientWidth - phoneLeft;
+        var phoneRight = phoneLeft + phoneW * scale; /* 폰 오른쪽 끝 x (프레임을 옮겼으면 그만큼) */
         var phoneTop = (stage.clientHeight - frameH * scale) / 2 + pad * scale;
         var attached = phoneRight + 12 + tools.offsetWidth + 16 <= stage.clientWidth;
         tools.classList.toggle('is-attached', attached);

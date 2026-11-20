@@ -1,49 +1,83 @@
 /* ════════════════════════════════════════════════════
    type_1.css — Type 1 전용 스타일
-   세일판 무배당발 탭 / 랭킹판 무배당발 띠배너 이미지를 화면 가운데에 위아래로
+   폰 케이스 없는 캔버스, 맨 위 지면 탭(세일판 · 랭킹판) → 고른 지면을 위 로티(앱) · 아래 CSS animation(웹)
    ════════════════════════════════════════════════════ */
 
-.mbdb-stage {
+/* 캔버스: 폰 케이스 없음 (앱테크 구매챌린지와 같은 방식)
+   PC 인덱스 프레임 = 375 × 460 (화면 이미지 폭), 상태바 · 모서리 · 그림자 없음, 바탕은 인덱스(--canvas-bg)와 같은 gray100 */
+:root {
+  --phone-w: 375px;
+  --phone-h: 460px;
+  --phone-radius: 0px;
+  --status-bar-h: 0px;
+  --phone-safe-bottom: 0px;
+}
+html, body, .phone {background: var(--mds-color-gray100);}
+.phone {box-shadow: none !important; border-radius: 0 !important;}
+
+/* 지면 탭: 두 칸 꽉 채움, 고른 탭 검정 굵게 + 아래 2px 선 */
+.surface-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--mds-color-gray200);
+}
+.surface-tab {
+  flex: 1;
+  height: 44px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--mds-color-gray500);
+  cursor: pointer;
+  box-shadow: inset 0 -2px 0 transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+.surface-tab[aria-selected="true"] {
+  font-weight: 700;
+  color: var(--mds-color-black);
+  box-shadow: inset 0 -2px 0 var(--mds-color-black);
+}
+
+.cmp {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 40px;
-  min-height: 100%;
+  gap: 36px;
+  padding: 24px 0 32px;
 }
-/* 위: 로티 버전 / 아래: CSS animation 버전 */
-.mbdb-variant {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.mbdb-variant-title {
+.cmp-row[hidden] {display: none;}
+.cmp-row {display: flex; flex-direction: column; gap: 12px;}
+.cmp-row-title {
   padding: 0 16px;
   font-size: 15px;
   font-weight: 700;
   line-height: 22px;
   color: var(--mds-color-black);
 }
-.mbdb-block {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.cmp-row-title span {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mds-color-gray500);
 }
-.mbdb-title {
+/* 위 Lottie · 아래 CSS */
+.cmp-cols {display: flex; flex-direction: column; gap: 48px;}
+.cmp-cell {display: flex; flex-direction: column; gap: 8px; min-width: 0;}
+.cmp-cell-label {
   padding: 0 16px;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
   color: var(--mds-color-gray600);
 }
-.mbdb-block .proto-img {
-  width: 100%;
-}
+.cmp-cell-label b {font-weight: 700; color: var(--mds-color-blue, #245EFF);} /* Lottie · CSS 같은 파랑 */
 
 /* 이미지 + 그 위에 올린 코드 (이미지 속 자리와 맞추려고 375 고정) */
 .mbdb-shot {
   position: relative;
   width: 375px;
 }
+.mbdb-shot .proto-img {width: 100%;}
+
 
 /* ─────────────────────────────
     TabOutlinedItem - 무배당발 (Figma 9424-28730 / 9424-28732)

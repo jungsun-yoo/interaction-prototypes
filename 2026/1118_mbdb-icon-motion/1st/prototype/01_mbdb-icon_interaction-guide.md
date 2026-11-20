@@ -1,12 +1,22 @@
-# [무배당발] 랭킹판·세일판 무배당발 아이콘 모션 — 인터랙션 정의
+# 01_mbdb-icon · 무배당발 아이콘 모션 — 인터랙션 가이드
+
+개발 전달용 인터랙션 가이드입니다.
 
 세일판 **무배당발 탭**과 랭킹판 **무배당발 띠배너**의 무배당발 아이콘(트럭)에 모션을 넣습니다. 필터(퀵필터)에 적용된 무배당발 아이콘 모션과 같은 움직임이고, 한 바퀴 뒤에 정지 구간을 두고 반복합니다.
 
-- 프로토타입: `Type_1.html` (위: 로티 버전 / 아래: CSS animation 버전)
+### 전달 범위
+
+| 항목 | 앱 (iOS · Android) | 웹 (MW · PC) |
+|---|---|---|
+| 트럭 아이콘 모션 (반복) | **로티 제공** — `mbdb_icon.json` · `mbdb_icon_white.json` · `mbdb_icon_gray500.json` | **코드로 처리** — `src/mbdb-icon-motion.css` + 트럭 이미지 |
+| 상태에 맞는 색 고르기 (선택 · 미선택 · 체크) | 코드로 처리 — 상태별 로티 파일 바꿔 끼우기 | 코드로 처리 — 상태별 이미지 |
+| 상태가 바뀔 때 처음부터 다시 재생 | 코드로 처리 | 코드로 처리 |
+
+- 프로토타입: `Type_1.html` (맨 위 지면 탭 세일판 · 랭킹판 → 위: Lottie 버전 / 아래: CSS animation 버전)
 - Figma: https://www.figma.com/design/o0jTKUbX15ampUa9e8VUEP/MDS-2.0-%EB%B3%80%EA%B2%BD-%EB%A1%9C%EA%B7%B8-%EA%B3%B5%EC%9C%A0?node-id=9424-5613
 - Jira: https://musinsa-oneteam.atlassian.net/browse/FT-826
 - 기준 코드: 앱 `src/lottie/*.json` / 웹 `src/mbdb-icon-motion.css`
-- 수정일: 2026-11-18
+- 수정일: 2026-11-20
 
 ---
 
