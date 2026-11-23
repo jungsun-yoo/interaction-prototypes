@@ -423,7 +423,7 @@
       title: '[앱바] 2026 리캡 아이콘',
       sub: '26-1123 · Prototype',
       label: 'TYPES',
-      version: '20261123-09',
+      version: '20261123-11',
       qrHost: '172.30.1.42', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: '',
       jira: '',
@@ -433,9 +433,6 @@
       locked: [], // 예: ['spec', 'download'] → 버튼만 보이고 흐리게 (최종 전)
       /* 뱃지 문구: 값은 영문·숫자만 넘길 수 있어 코드로 넘기고, 프로토타입이 문구로 바꿈 (type_1.js BADGE_TEXT) */
       options: [
-        { section: '아이콘 형태', card: true },
-        { id: 'icon', label: '아이콘', default: '2d',
-          choices: [{ value: '2d', label: '2D 쉐입' }, { value: '3d', label: '3D 이미지' }] },
         { section: '문구', card: true },
         { id: 'badge-text', label: '뱃지 문구', default: 'event',
           choices: [{ value: 'event', label: '이벤트' }, { value: '2026', label: '2026' }, { value: 'log', label: '쇼핑로그' }, { value: 'recap', label: 'RECAP' }] }

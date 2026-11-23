@@ -155,16 +155,3 @@ body {
 .appbar-icon--checkin {
   z-index: 2;
 }
-
-/* 아이콘 형태 (인덱스 옵션 '아이콘 형태'): 2D 쉐입(ic_event.svg) ↔ 3D 이미지(ic_event_3d.png, 120×120 → 28×28) */
-.appbar-event-3d {
-  display: none;
-}
-
-:root[data-icon="3d"] .appbar-event-2d {
-  display: none;
-}
-
-:root[data-icon="3d"] .appbar-event-3d {
-  display: block;
-}

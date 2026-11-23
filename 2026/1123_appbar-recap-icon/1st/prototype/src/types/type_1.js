@@ -125,7 +125,7 @@
         renderer: 'svg',
         loop: true,
         autoplay: false,
-        path: 'src/lottie/ic_appbar_apptech_white.json?v=20261123-09'
+        path: 'src/lottie/ic_appbar_apptech_white.json?v=20261123-11'
     });
     animation.addEventListener('DOMLoaded', function () {
         container.parentNode.classList.add('is-lottie');
