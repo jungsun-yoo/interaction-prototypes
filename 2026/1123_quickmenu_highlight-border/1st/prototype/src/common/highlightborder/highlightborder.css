@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════════════
    highlightborder.css — 하이라이트 보더 (공통 효과)
    1px 테두리 위로 그라디언트 빛이 흐름. 무신사 웹 필터칩(스토어) · 2024 가이드 'CSS background' 타입과 같은 값
-   쓰는 법: 테두리를 줄 요소에 class="highlight-border" 만 추가 (설명은 highlight-border_motion-guide.md)
+   쓰는 법: 테두리를 줄 요소에 class="highlight-border" 만 추가 (설명은 Type_1.html 옆 highlight-border_motion-guide.md)
    필요: common.css (MDS 색), mds-motion.css (이징). 각 영역 CSS 뒤에 불러옴 (요소의 border 색을 덮어씀)
    ════════════════════════════════════════════════════ */
 .highlight-border {
