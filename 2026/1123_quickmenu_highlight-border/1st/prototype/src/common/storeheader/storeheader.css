@@ -1,0 +1,103 @@
+/* ════════════════════════════════════════════════════
+   storeheader.css — 무신사 홈 헤더: 헤더 색 · 헤더 · 앱바 · 검색창 · 탭
+   상태바(common.css)부터 탭까지 같은 색이 이어지는 상단 영역 전체. 동작은 storeheader.js
+   ════════════════════════════════════════════════════ */
+
+/* 헤더 색 (MDS 2.0 Multi Store Component · 무신사)
+   쓰는 곳: 상태바(common.css) · 헤더 배경, 앱바 아이콘, 탭 */
+.phone {
+  --header-bg: #1A1B1F;
+  --header-ink: #fff;            /* 상태바 글자 · 앱바 아이콘 */
+  --ad-color-rgb: 107, 78, 162;  /* 광고판 색(#6B4EA2): 헤더 · 광고판 노티스 공통. 실제는 소재의 bannerNoticeBackgroundColor */
+}
+.phone.is-ad-board { --header-bg: rgb(var(--ad-color-rgb)); } /* 광고판 진입 시 헤더색 전환 */
+
+.status-bar, .header {background: var(--header-bg);}
+
+/* ════════════════════════════════════════════════════
+   헤더: 앱바 + 검색창 + 탭 한 덩어리
+   --header-offset만큼 위로 올라감 (storeheader.js가 스크롤에 맞춰 0 → -(앱바 + 검색창))
+   HTML: header.header > .appbar + .search-bar + nav.tab-underline
+   ════════════════════════════════════════════════════ */
+.header {
+  --header-offset: 0px;
+  position: absolute;
+  top: var(--status-bar-h);   /* status-bar 아래부터 시작 */
+  left: 0;
+  width: 100%;
+  height: calc(var(--appbar-h) + var(--search-h) + var(--tab-h));
+  z-index: 20;
+  transform: translateY(var(--header-offset));
+  will-change: transform;
+}
+
+/* 모바일: 문서 스크롤이라 화면 위에 fixed (최대 --mobile-max-w, 가운데), 위 안전영역만큼 아래로 */
+@media (hover: none), (pointer: coarse) {
+  .header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    min-width: var(--mobile-min-w);
+    max-width: var(--mobile-max-w);
+    margin: 0 auto;
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(var(--appbar-h) + var(--search-h) + var(--tab-h) + env(safe-area-inset-top, 0px));
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   앱바 (MDS AppBar type=homeMusinsa)
+   좌우 16 · 로고 + 게이트웨이 로티와 아이콘 3개(앱테크 로티 · 알림 · 장바구니) 양끝 정렬
+   HTML: .appbar > .appbar-brand(img.appbar-logo + .appbar-gateway) + .appbar-icons > .appbar-icon × 3
+   ════════════════════════════════════════════════════ */
+:root {
+  --appbar-h: 52px;
+}
+
+.appbar {display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; height: var(--appbar-h); padding: 0 16px;} /* gap: 로고 묶음과 아이콘 사이 최소 간격 (앱 캡처에 맞춘 값) */
+/* 좁은 화면(최소 320): 서비스 StoreAppbar와 같이 로고만 줄어듦, 높이 20 유지 */
+.appbar-brand {display: flex; align-items: center; flex: 0 1 auto; min-width: 0;}
+.appbar-logo {display: block; flex: 0 1 auto; min-width: 0; height: 20px; object-fit: contain;}
+.appbar-gateway {flex: none; width: 28px; height: 24px;} /* 게이트웨이 버튼 로티: 로고 오른쪽에 갭 없이, 줄어들지 않음 */
+.appbar-icons {display: flex; align-items: center; gap: 8px; flex-shrink: 0; color: var(--header-ink);}
+.appbar-icon {width: 28px; height: 28px;} /* 앱테크 로티 원본 84×84 → 28 */
+.appbar-gateway svg, .appbar-icon svg {display: block;}
+
+/* ════════════════════════════════════════════════════
+   검색창 (MDS TextFieldSearch)
+   좌우 16, 필드 패딩 6/8, 문구 14/20, 렌즈 로티 · 돋보기 아이콘 24
+   HTML: .search-bar > .search-field(.search-text + .search-lens + svg.search-icon)
+   ════════════════════════════════════════════════════ */
+:root {
+  --search-h: 36px;
+}
+
+.search-bar {display: flex; align-items: center; width: 100%; height: var(--search-h); padding: 0 16px;}
+.search-field {display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; height: 100%; padding: 6px 8px; border-radius: 4px; background: #fff; color: #666;}
+.search-text {flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; font-weight: 400; line-height: 20px; color: #8A8A8A;}
+.search-lens {flex: none; width: 24px; height: 24px;}
+.search-lens svg, .search-icon {display: block; flex: none;}
+
+/* ════════════════════════════════════════════════════
+   탭 (MDS TabUnderline · 광고탭 TabUnderlineItemAD)
+   좌우 패딩 8, 아이템 높이 48 · 글자 좌우 7
+   unselected: 14/20 흰색 60% / selected: Bold 14/20 흰색 + 밑줄 2 (좌우 8 안쪽)
+   HTML: nav.tab-underline > button.tab-item (.is-clickable · .is-selected · .tab-item--ad)
+   ════════════════════════════════════════════════════ */
+:root {
+  --tab-h: 48px;
+}
+
+.tab-underline {display: flex; align-items: flex-start; width: 100%; height: var(--tab-h); padding: 0 8px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none;} /* 폭이 모자라면 가로 스크롤 */
+.tab-underline::-webkit-scrollbar {display: none;}
+.tab-item {position: relative; display: block; flex: none; height: 48px; padding: 14px 7px; border: 0; background: transparent; color: rgba(255, 255, 255, 0.6); font-family: inherit; font-size: 14px; font-weight: 400; line-height: 20px; white-space: nowrap; pointer-events: none; -webkit-tap-highlight-color: transparent;} /* 기본은 클릭 안 됨 */
+.tab-item.is-clickable {pointer-events: auto; cursor: pointer;} /* 추천 · 광고탭만 클릭 */
+.tab-item.is-selected {color: #fff; font-weight: 700;}
+.tab-item.is-selected::after {content: ''; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: #fff;}
+/* 광고탭: 크기·위치는 플러그인 TabAD 기준. 폭 109 = 왼쪽 8 + (로티 81 + 좌우 2) + 오른쪽 16. 로티 원본 243×144의 1/3
+   선택 표시(밑줄 = 로티 + 4)와 AD 색은 MDS TabUnderlineItemAD 기준 */
+.tab-item.tab-item--ad {width: 109px; padding: 0;}
+.tab-item--ad.is-selected::after {left: 8px; right: 16px;}
+.tab-ad-lottie {position: absolute; top: 0; left: 10px; width: 81px; height: 48px;}
+.tab-ad-lottie svg {display: block;}
+.tab-ad-label {position: absolute; top: 14px; right: 4px; z-index: 2; color: rgba(255, 255, 255, 0.6); font-size: 8px; font-weight: 600; line-height: 6px;}

@@ -1,0 +1,223 @@
+/* ════════════════════════════════════════════════════
+   bottomnavi.css — 하단 영역 207px: FAB(112) + 바텀네비게이션(Glass pill, 95)
+   이 파일 하나에 바텀네비와 FAB가 함께 있음 (아래 FAB 구간)
+   HTML: .bottom-navigation > .fab(아래 FAB 구간) + .tabbar(.tabbar-scrim + .navigation > .navigation-glass + .nav-selection + .nav-items > .nav-item × 5)
+   동작: bottomnavi.js (스크롤 내리면 바텀네비 페이드아웃 · FAB 내려감)
+   ════════════════════════════════════════════════════ */
+.bottom-navigation {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 207px; /* fab(112) + tabbar(95) */
+  z-index: 20;
+  pointer-events: none;
+}
+/* 모바일: 문서 스크롤이라 화면 하단에 fixed (최대 --mobile-max-w, 가운데) */
+@media (hover: none), (pointer: coarse) {
+  .bottom-navigation {
+    position: fixed;
+    right: 0;
+    max-width: var(--mobile-max-w);
+    margin: 0 auto;
+  }
+}
+
+.tabbar {
+  position: relative;
+  width: 100%;
+  height: 95px;
+  padding-top: 12px;
+  padding-bottom: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 하단 그라디언트 스크림 */
+.tabbar-scrim {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Navigation Pill ─────────────────────────
+    max 333px, 반응형: calc(100% - 42px)
+    Glass Effect: backdrop-filter 직접 적용
+─────────────────────────────────────────── */
+.navigation {
+  position: relative;
+  width: calc(100% - 42px);
+  height: 62px;
+  border-radius: 1000px;
+  overflow: hidden;
+  z-index: 1;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.5);
+  transition: opacity 0.2s ease;
+}
+
+/* 좌우 테두리 하이라이트 */
+.navigation-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 1000px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+/* 선택 pill: 홈 기준 (x=130, y=4, 73×54, #000 10%) */
+.nav-selection {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 73px;
+  height: 54px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.nav-items {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  right: 8px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  z-index: 4;
+}
+
+.nav-item {
+  flex: 1;
+  height: 54px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item img {
+  width: 63.4px;
+  height: 54px;
+  display: block;
+}
+
+/* ════════════════════════════════════════════════════
+   FAB (공유 · 성별 토글 · 맨 위로 · 최근 본 상품), 바텀네비 위 112px
+   HTML: .fab > .fab-share + .fab-gender + .fab-right(.fab-top + .fab-recent > img × 2)
+   .bottom-navigation 안에 둠 / 필요: mds-motion.css / 동작: bottomnavi.js
+   ════════════════════════════════════════════════════ */
+.fab {
+  position: relative;
+  width: 100%;
+  padding: 12px 10px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  transition: transform 0.4s cubic-bezier(0.22, 1.00, 0.36, 1.00);
+  z-index: 1;
+}
+
+/* 스크롤 다운 시 FAB 숨김: safe-area + 12px 위치까지 내려감 */
+.fab.is-hidden {
+  transform: translateY(calc(95px - var(--safe-area-bottom) - 12px));
+}
+
+/* FAB 공통  */
+.fab-item-base {
+  --fab-item-size: 44px;
+  --fab-item-border: #ebebeb;              /* gray200 */
+  --fab-item-bg: rgba(255, 255, 255, 0.92);
+  --fab-item-icon-size: 28px;
+  width: var(--fab-item-size);
+  height: var(--fab-item-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fab-item-bg);
+  border: 1px solid var(--fab-item-border);
+  border-radius: 100px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fab-item-base > img {
+  width: var(--fab-item-icon-size);
+  height: var(--fab-item-icon-size);
+  display: block;
+}
+
+.fab-share { cursor: pointer;}
+
+/* 젠더 토글: 144×44 */
+.fab-gender {
+  width: 144px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s linear;
+}
+.fab-gender img {
+  height: 100%;
+  display: block;
+}
+
+.fab.is-hidden .fab-gender {
+  opacity: 0;
+}
+
+/* 우측 컬럼: top + recent 세로 배치 */
+.fab-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 탑버튼  */
+.fab-top {
+  /* 상단이동 spring.normal */
+  --fab-top-spring-stiffness: var(--mds-motion-spring-normal-stiffness);
+  --fab-top-spring-damping: var(--mds-motion-spring-normal-damping);
+  pointer-events: none;   /* 숨김 중에는 클릭 안 됨 */
+  opacity: 0;
+  transition: opacity 0.1s linear;
+  cursor: pointer;
+}
+.fab-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 최근 본 상품 (크기·보더·배경은 .fab-item-base): 이미지 위로 롤링 (bottomnavi.js에서 변수 읽어 반복) */
+.fab-recent {
+  --fab-recent-hold: 2.5s;   /* 이미지 고정 시간 */
+  --fab-recent-roll: 0.6s;   /* 상하 전환 시간 */
+  position: relative;
+}
+.fab-recent img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translateY(100%);   /* 대기: 아래 */
+  transition: transform var(--fab-recent-roll) var(--mds-motion-power3-easeInOut);
+}
+.fab-recent img.is-current { transform: translateY(0); }
+.fab-recent img.is-leaving { transform: translateY(-100%); }   /* 위로 나감 */
+.fab-recent img.is-instant { transition: none; }   /* 다음 진입 전 아래로 즉시 복귀 */
