@@ -86,9 +86,9 @@
         loop();
     }
 
-    /* 뱃지 문구: 인덱스 옵션 카드 '문구' (<html data-badge-text="event | 2026 | log | recap">)
+    /* 뱃지 문구: 인덱스 옵션 카드 '문구' (<html data-badge-text="event | log | recap">)
        문구가 바뀌면 글자를 바꾸고 배지를 처음(딜레이)부터 다시 재생 */
-    var BADGE_TEXT = { event: '이벤트', '2026': '2026', log: '쇼핑로그', recap: 'RECAP' };
+    var BADGE_TEXT = { event: '이벤트', log: '쇼핑로그', recap: 'RECAP' };
     function applyText() {
         var text = BADGE_TEXT[document.documentElement.getAttribute('data-badge-text')] || BADGE_TEXT.event;
         if (badge.textContent === text) return false;
@@ -125,7 +125,7 @@
         renderer: 'svg',
         loop: true,
         autoplay: false,
-        path: 'src/lottie/ic_appbar_apptech_white.json?v=20261123-11'
+        path: 'src/lottie/ic_appbar_apptech_white.json?v=20261123-12'
     });
     animation.addEventListener('DOMLoaded', function () {
         container.parentNode.classList.add('is-lottie');
