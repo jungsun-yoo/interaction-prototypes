@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-index-path="../../index.html"> <!-- AI 사진 분석: 무신사 렌즈 로딩 → 결과 화면 + 옆 옵션창 (375×812). 이 폴더가 AI 사진 분석 전부 (확정 값은 css/values.css, 인터랙션 가이드는 aiPhotoAnalysis_interaction-guide.md) -->
+<html lang="ko" data-index-path="../../index.html"> <!-- AI 사진 분석: 무신사 렌즈 로딩 → 결과 화면 (375×812). 옵션 · 개발 전달 파일은 인덱스 오른쪽 카드 (index.html items[].options · files). 이 폴더가 AI 사진 분석 전부 (확정 값은 css/values.css, 인터랙션 가이드는 aiPhotoAnalysis_interaction-guide.md) -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -10,16 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="AI 사진 분석"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261124-1">
-  <link rel="stylesheet" href="../src/common/common.css?v=20261124-1">
+  <link rel="stylesheet" href="../src/common/mds-motion.css?v=20261124-2">
+  <link rel="stylesheet" href="../src/common/common.css?v=20261124-2">
   <!-- 가운데 AI 아이콘: AI 로딩 아이콘과 같은 IMG CSS Animation -->
-  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261124-1">
+  <link rel="stylesheet" href="../src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261124-2">
   <!-- AI 사진 분석 (이 폴더) -->
-  <link rel="stylesheet" href="./css/values.css?v=20261124-1">    <!-- 조절 값: 수치는 여기서 -->
-  <link rel="stylesheet" href="./css/loading.css?v=20261124-1">   <!-- 로딩 화면 -->
-  <link rel="stylesheet" href="./css/result.css?v=20261124-1">    <!-- 결과 화면 -->
-  <link rel="stylesheet" href="./css/layout.css?v=20261124-1">    <!-- 화면 배치 · 휴대폰 -->
-  <link rel="stylesheet" href="./css/controls.css?v=20261124-1">  <!-- 옵션창 -->
+  <link rel="stylesheet" href="./css/values.css?v=20261124-2">    <!-- 조절 값: 수치는 여기서 -->
+  <link rel="stylesheet" href="./css/loading.css?v=20261124-2">   <!-- 로딩 화면 -->
+  <link rel="stylesheet" href="./css/result.css?v=20261124-2">    <!-- 결과 화면 -->
+  <link rel="stylesheet" href="./css/layout.css?v=20261124-2">    <!-- 화면 배치 · 휴대폰 -->
 </head>
 <body>
 
@@ -129,40 +128,6 @@
         </div>
       </figure>
 
-      <!-- 옵션창 (PC에서 폰 옆, 휴대폰에서는 숨김): css/controls.css · js/flow.js — 로딩·결과 흐름 확인용 -->
-      <div class="lens-controls">
-      <!-- 개발 전달 (FILES): 공유 틀 FILES 카드와 같은 모양 — 가이드 md(보조 버튼) 위, zip(주 버튼) 아래. zip 은 _html/1st 에서 python3 pack.py --screen aiPhotoAnalysis -->
-      <aside class="lens-control" aria-label="개발 전달 파일">
-        <p class="lens-control-title">FILES</p>
-        <div class="lens-control-files">
-          <a class="lens-control-file is-sub" href="aiPhotoAnalysis_interaction-guide.md" download="aiPhotoAnalysis_interaction-guide.md"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg><span>interaction-guide.md</span></a>
-          <a class="lens-control-file" href="../../download/aiPhotoAnalysis.zip" download="무신사렌즈_AI사진분석_prototype.zip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg><span>Download (.zip)</span></a>
-        </div>
-        <p class="lens-control-download-note">압축 파일 안의 <strong>aiPhotoAnalysis_interaction-guide.md</strong>를 확인해 주세요.</p>
-      </aside>
-      <aside class="lens-control" aria-label="옵션 컨트롤"> <!-- 디자인: 공유 틀 오른쪽 카드와 같음 (css/controls.css) -->
-        <p class="lens-control-title">AI 사진 분석</p>
-        <div class="lens-control-row"><span class="lens-control-label">상태</span><span class="lens-control-value" id="lensState">로딩 중</span></div>
-        <!-- 로딩만 보기 (기본 끔): 켜면 분석 시간·[로딩 완료]를 끄고 로딩 화면만 계속 ([다시 로딩]만 사용) -->
-        <label class="lens-control-row"><span class="lens-control-label">로딩만 보기</span><input class="lens-control-switch" type="checkbox" id="lensLoadingOnly"></label>
-        <!-- 분석 시간: 이 시간이 지나면 자동으로 로딩 완료 (1~10초, 기본 6초. 슬라이더 · ▲▼ 0.5초 단위, 숫자 칸 직접 입력도 가능) -->
-        <div class="lens-control-row is-slider" id="lensDurationField">
-          <span class="lens-control-label">분석 시간</span>
-          <div class="lens-control-slider-line">
-            <input class="lens-control-range" id="lensDurationRange" type="range" min="1" max="10" step="0.5" value="6" aria-label="분석 시간 (초)">
-            <span class="lens-control-number">
-              <label class="lens-control-field"><input id="lensDurationInput" type="number" min="1" max="10" step="0.5" value="6" inputmode="decimal" aria-label="분석 시간 (초)"><span class="lens-control-unit">초</span></label>
-              <span class="lens-control-step"><button type="button" data-step="1" aria-label="올리기"></button><button type="button" data-step="-1" aria-label="내리기"></button></span>
-            </span>
-          </div>
-        </div>
-        <div class="lens-control-actions">
-          <button class="lens-control-btn is-primary" id="lensComplete" type="button">로딩 완료</button>
-          <button class="lens-control-btn" id="lensRestart" type="button">다시 로딩</button>
-        </div>
-      </aside>
-
-      </div>
     </div>
   </div>
 
@@ -186,10 +151,9 @@
     ]
   }
   </script>
-  <script src="../src/common/common.js?v=20261124-1"></script>
+  <script src="../src/common/common.js?v=20261124-2"></script>
   <!-- 순서대로: 결과 화면 → 로딩·결과 흐름 → QR·휴대폰 동기화 -->
-  <script src="./js/result.js?v=20261124-1"></script>
-  <script src="./js/flow.js?v=20261124-1"></script>
-  <script src="./js/sync.js?v=20261124-1"></script>
+  <script src="./js/result.js?v=20261124-2"></script>
+  <script src="./js/flow.js?v=20261124-2"></script>
 </body>
 </html>

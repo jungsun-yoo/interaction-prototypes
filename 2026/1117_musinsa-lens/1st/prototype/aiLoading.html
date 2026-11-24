@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-preload="src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-1"> <!-- 폰 크기: 375×812 + 오른쪽 설명창 (아래 <style>에서 지정) -->
+<html lang="ko" data-preload="src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-2"> <!-- 폰 크기: 375×812 (아래 <style>에서 지정). 개발 전달 파일 · 재생 방식은 인덱스 오른쪽 FILES · MOTION 카드 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -15,24 +15,22 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-180x180.png">
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-1">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261124-1">
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-2">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261124-2">
   <!-- AI 로딩 아이콘 원본 (AI 사진 분석 로딩 화면과 같은 파일) -->
-  <link rel="stylesheet" href="./src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261124-1">
-  <link rel="stylesheet" href="./src/components/ProtoSpec/proto-spec.css?v=20261124-1"> <!-- 폰 오른쪽 개발 전달용 설명창 (29CM 렌즈와 같은 컴포넌트) -->
+  <link rel="stylesheet" href="./src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261124-2">
   <style>
     /* ════════════════════════════════════════════════════
        AI 로딩 아이콘 — 빈 화면 가운데, 로티 원본 vs IMG CSS 방식 비교
        아이콘 모션 자체는 src/components/IconAILoading/ 의 원본이 담당. 여기서는 비교 배치만 정함
-       개발 전달 파일(lottie json · CSS zip)은 폰 오른쪽 설명창에서 받음
+       개발 전달 파일(lottie json · CSS zip)은 인덱스 오른쪽 FILES 카드에서 받음
        ════════════════════════════════════════════════════ */
     :root {
-      /* 폰 크기: 폰 화면 375×812 + 오른쪽 설명창 (index가 --phone-w·--phone-h를 읽어 프레임을 맞추고, 툴바는 --phone-screen-w 오른쪽에 붙임) */
-      --phone-screen-w: 375px;
-      --phone-w: 627px;   /* 폰 375 + 간격 12 + 설명창 240 (틀 카드 너비) (index가 숫자로 읽어서 calc 대신 값으로 적음) */
+      /* 폰 크기: 375×812 (index가 --phone-w·--phone-h를 읽어 프레임을 맞춤) · 모서리는 AI 사진 분석 화면과 같은 48 */
+      --phone-w: 375px;
       --phone-h: 812px;
-      --phone-radius: 0px;
-      --proto-loading-radius: 48px;   /* 페이지 로딩 가림막 모서리 = 폰 화면(.proto-screen) 모서리 */
+      --phone-radius: 48px;
+      --proto-loading-radius: 48px;   /* 페이지 로딩 가림막 모서리 = 폰 모서리 */
 
       /* 아이콘 크기와 재생 시간 (원본 기준: 32px, 로티 108f @60fps = 1.8s) */
       --IconAILoading-size: 32px;
@@ -41,14 +39,7 @@
     body {-webkit-font-smoothing: antialiased;}
     /* 페이지 로딩이 끝나 화면이 보일 때까지 IMG 아이콘을 멈춰 둠 → 로티와 같이 시작 */
     html:not(.proto-play) .IconAILoading.is-playing > span {animation-play-state: paused;}
-    /* 폰 틀(.phone)은 폰 화면 + 설명창을 담는 투명 상자 (proto-spec.css) */
-    .phone {
-      width: var(--phone-w);
-      min-width: 0;
-      max-width: var(--phone-w);
-      height: var(--phone-h);
-    }
-    .proto-screen {background: #fff;}
+    .phone {background: #fff;}
 
     /* ---------- 비교 배치: 세로로 2개, 화면 가운데 ---------- */
     .loading-compare {
@@ -86,9 +77,7 @@
 <body>
 
   <!-- 빈 화면 가운데에 로티 원본과 IMG 방식을 비교 (SVG Inline은 매 프레임 다시 그려 튀는 문제로 제외) -->
-  <main class="phone has-spec">
-   <div class="proto-layout">
-    <div class="proto-screen">
+  <main class="phone">
     <section class="loading-compare" aria-label="AI 로딩 아이콘 구현 방식 비교">
 
       <!-- 1. 로티 원본: lottie/IconAILoading.json (아래 <script>에서 재생) -->
@@ -113,28 +102,11 @@
       </div>
 
     </section>
-    </div>
-
-    <!-- 개발 전달용 설명창 (폰 오른쪽, index 툴바 아래) -->
-    <aside class="proto-spec" aria-label="개발 전달 사항">
-      <p class="proto-spec-title">AI 로딩 아이콘</p>
-      <div class="proto-spec-files">
-        <a class="proto-spec-file" href="src/components/IconAILoading/lottie/IconAILoading.json" download="IconAILoading.json">lottie 다운로드</a>
-        <a class="proto-spec-file" href="../download/IconAILoading-img-css.zip" download="IconAILoading-img-css.zip">CSS 다운로드</a>
-      </div>
-
-      <h3>재생 방식</h3>
-      <ol>
-        <li><strong>로티</strong>(<code>IconAILoading.json</code>) 또는 <strong>IMG CSS Animation</strong> 중 개발 편의에 맞춰 진행</li>
-        <li>1.8초 주기 <strong>무한 반복</strong></li>
-      </ol>
-    </aside>
-   </div>
   </main>
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
-  <script src="./src/common/common.js?v=20261124-1"></script>
+  <script src="./src/common/common.js?v=20261124-2"></script>
   <script>
     /* 로티 원본만 JS로 재생 (무한 반복). IMG 는 원본 CSS의 is-playing 으로 재생. index 다시 재생(R)으로 처음부터 */
     (function () {
@@ -145,7 +117,7 @@
             renderer: 'svg',
             loop: true,
             autoplay: false,
-            path: 'src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-1' /* 페이지 로딩이 미리 받는 주소와 같게 (<html data-preload>) */
+            path: 'src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-2' /* 페이지 로딩이 미리 받는 주소와 같게 (<html data-preload>) */
         });
         /* 로티 파일을 다 읽고 + 페이지 로딩이 끝나 화면이 보이면 재생 (IMG 아이콘과 같은 때 시작) */
         var loaded = new Promise(function (resolve) { anim.addEventListener('DOMLoaded', resolve); });

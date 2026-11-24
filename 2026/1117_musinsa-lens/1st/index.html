@@ -227,6 +227,15 @@
     .option-choice {flex: 1; min-width: 0; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; font: var(--ui-caption); color: var(--ui-muted); cursor: pointer; transition: background 0.15s linear, color 0.15s linear;}
     .option-choice[aria-pressed="true"] {background: #fff; color: var(--ui-accent); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);}
     .option-row.is-disabled {opacity: 0.35;}
+    /* 상태 표시 { id, status }: 이름(왼쪽) + 프로토타입이 알려 준 값(오른쪽, 파랑) */
+    .option-row.is-status {cursor: default;}
+    .option-status {flex: none; font: var(--ui-value); color: var(--ui-accent);}
+    /* 버튼 { id, button }: 이어진 버튼은 한 묶음. 주 버튼(primary) 검정 · 보조 흰 바탕 + 검정 테두리 (FLOW 버튼과 같은 크기) */
+    .option-actions {display: grid; gap: 6px; margin-top: 8px;}
+    .option-action {display: flex; align-items: center; justify-content: center; width: 100%; height: 36px; margin: 0; padding: 0 12px; border: 0; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px var(--ui-text); font: var(--ui-label); color: var(--ui-text); cursor: pointer;}
+    .option-action.is-primary {background: var(--ui-text); box-shadow: none; color: #fff;}
+    .option-action:focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 2px;}
+    .option-action:disabled {opacity: 0.3; cursor: not-allowed;}
     /* FLOW 자동 재생 (26-1116 취향선택브랜드에서 공통으로): ▶ 자동 재생 → ■ 정지(빨강, 재생 중 옵션 카드 흐리게) → ↺ 처음으로
        프로토타입에 시나리오(src/types/type_N_autoplay.js)가 없으면 버튼만 흐리게 · 못 누름 */
     .autoplay-card .option-title {margin-bottom: 8px;}
@@ -408,6 +417,13 @@
                  notice: '중요 조건' 을 넣으면 주황 i 아이콘 + 연주황 바탕 캡션 (꼭 지켜야 할 값. 예: notice: '최소 3초 노출')
                  when: { id, value } 를 넣으면 그 옵션이 그 값일 때만 쓸 수 있음 (아니면 흐리게)
                  group: '이름' 을 같은 값으로 준 스위치끼리는 하나만 켜짐 (켜면 나머지 꺼짐. 예: 화면 바로보기 스위치들)
+                 항목별: items[].options 에 적으면 그 화면에서만 보임 (없으면 CONFIG.options, options: [] 면 그 화면만 숨김)
+                 버튼:   { id, button: '로딩 완료', primary: true } → 누르면 프로토타입 window 에 'proto-action' 이벤트 (e.detail.id)
+                         QR로 연결된 폰에도 보냄 (폰 동기화가 켜져 있을 때만). 이어서 적은 버튼은 한 묶음
+                 상태:   { id, status: '상태', default: '로딩 중' } → 프로토타입이 protoOptions.report({ id: '로딩 완료' }) 로 알려 주면 값이 바뀜 (파랑)
+                 unless: { id, value } 를 넣으면 그 값일 때 흐리게 (when 의 반대). when · unless 는 배열로 여러 개, value 도 배열 가능
+                         옵션 값 · 상태 값 모두 볼 수 있음. 예) unless: [{ id: 'loading-only', value: 'on' }, { id: 'state', value: '로딩 완료' }]
+                 프로토타입 JS 는 window 'proto-options' 이벤트로 값이 바뀐 걸 알 수 있음 (protoOptions.get('id') 로 지금 값)
                  예) { id: 'preview', label: '로딩 바로보기', on: 'on', off: 'off', default: 'off' },
                      { id: 'stagger', label: '스태거 (초)', default: '150', when: { id: 'preview', value: 'on' },
                        choices: [{ value: '100', label: '0.1' }, { value: '150', label: '0.15' }, { value: '200', label: '0.2' }] }
@@ -429,7 +445,7 @@
       title: '무신사 렌즈',
       sub: '26-1117 · Prototype',
       label: 'TYPES',
-      version: '20261124-1',
+      version: '20261124-2',
       qrHost: '', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: 'https://www.figma.com/design/gFaXkGfdt0Z8oEktTll4wW/-26-3Q--%EB%AC%B4%EC%8B%A0%EC%82%AC-%EB%A0%8C%EC%A6%88?node-id=3402-109358', // [26-3Q] 무신사 렌즈
       jira: '',
@@ -444,10 +460,26 @@
       files: [],
       fileNote: '',
       items: [
-        /* AI 로딩 아이콘: 바뀐 아이콘 (로티 원본 vs IMG CSS 비교). 개발 전달 파일은 프로토타입 안 폰 오른쪽 설명창 (29CM 렌즈와 같은 방식) */
-        { id: 'aiLoading', title: 'AI 로딩 아이콘', file: 'prototype/aiLoading.html' },
-        /* AI 사진 분석: 로딩 → 결과 (2026-11-17 확정, 인터랙션 가이드 prototype/aiPhotoAnalysis/aiPhotoAnalysis_interaction-guide.md) */
-        { id: 'aiPhotoAnalysis', title: 'AI 사진 분석', file: 'prototype/aiPhotoAnalysis/index.html' }
+        /* AI 로딩 아이콘: 바뀐 아이콘 (로티 원본 vs IMG CSS 비교). 개발 전달 파일 · 재생 방식은 오른쪽 FILES · MOTION 카드 */
+        { id: 'aiLoading', title: 'AI 로딩 아이콘', file: 'prototype/aiLoading.html',
+          files: [{ label: 'Lottie (.json)', file: 'prototype/src/components/IconAILoading/lottie/IconAILoading.json' },
+                  { label: 'IMG CSS (.zip)', file: 'download/IconAILoading-img-css.zip' }],
+          motion: [{ title: '재생 방식', items: ['로티(IconAILoading.json) 또는 IMG CSS Animation 중 개발 편의에 맞춰 진행', '1.8초 주기 무한 반복'] }] },
+        /* AI 사진 분석: 로딩 → 결과 (2026-11-17 확정, 인터랙션 가이드 prototype/aiPhotoAnalysis/aiPhotoAnalysis_interaction-guide.md)
+           옵션은 이 화면에서만 (items[].options) — 프로토타입 js/flow.js 가 proto-options · proto-action 을 받고 상태를 protoOptions.report 로 알림 */
+        { id: 'aiPhotoAnalysis', title: 'AI 사진 분석', file: 'prototype/aiPhotoAnalysis/index.html',
+          files: [{ label: 'interaction-guide.md', file: 'prototype/aiPhotoAnalysis/aiPhotoAnalysis_interaction-guide.md', sub: true },
+                  { label: 'Download (.zip)', file: 'download/aiPhotoAnalysis.zip', name: '무신사렌즈_AI사진분석_prototype.zip' }], // pack.py --screen aiPhotoAnalysis
+          fileNote: '<span class="file-note-info">압축 파일 안의 <b>aiPhotoAnalysis_interaction-guide.md</b>를 확인해 주세요.</span>',
+          options: [
+            { id: 'lens-state', status: '상태', default: '로딩 중' },
+            { id: 'loading-only', label: '로딩만 보기', on: 'on', off: 'off', default: 'off', note: '켜면 결과 화면으로 넘어가지 않고 로딩 화면만 계속' },
+            { id: 'analysis-time', label: '분석 시간', unit: '초', min: 1, max: 10, step: 0.5, default: '6',
+              note: '이 시간이 지나면 결과 화면으로', unless: { id: 'loading-only', value: 'on' } },
+            { id: 'complete', button: '로딩 완료', primary: true,
+              unless: [{ id: 'loading-only', value: 'on' }, { id: 'lens-state', value: '로딩 완료' }] },
+            { id: 'restart', button: '다시 로딩' }
+          ] }
       ]
     };
     // ================================================================================================= //
@@ -479,8 +511,33 @@
       });
 
       /* 옵션 상태 (CONFIG.options 기본값으로 시작 → 서버에 저장된 값이 있으면 그 값) */
-      var OPTION_LINES = CONFIG.options || [];                                    /* 섹션 줄 포함 (그리기용) */
-      var OPTIONS = OPTION_LINES.filter(function (o) { return o.id; });           /* 값이 있는 옵션만 */
+      /* 항목별 옵션: items[].options 가 있으면 그 화면에서는 그 옵션만 (없으면 CONFIG.options, options: [] 면 그 화면만 숨김) */
+      var OPTION_LINES = CONFIG.options || [];                                    /* 지금 화면 옵션, 섹션 줄 포함 (그리기용 · select 때 바뀜) */
+      function linesOf(type) { return (type && type.options !== undefined ? type.options : CONFIG.options) || []; }
+      function isValueOption(o) { return !!o.id && !o.button && o.status == null; } /* 버튼 · 상태 표시는 값을 저장하지 않음 */
+      var OPTIONS = [];                                                           /* 값이 있는 옵션 전부 (모든 화면, 같은 id 는 처음 것) */
+      [CONFIG.options || []].concat(CONFIG.items.map(function (t) { return t.options || []; })).forEach(function (lines) {
+        lines.forEach(function (o) {
+          if (isValueOption(o) && !OPTIONS.some(function (x) { return x.id === o.id; })) OPTIONS.push(o);
+        });
+      });
+      function activeOptions() { return OPTION_LINES.filter(isValueOption); }      /* 지금 화면의 값 옵션 (QR 주소 · 리셋) */
+      /* 상태 표시 { id, status }: 프로토타입이 protoOptions.report({ id: '값' }) 로 알려 줌 (서버 저장 · QR 주소에 넣지 않음) */
+      var statusValues = {};
+      function resetStatus() {
+        statusValues = {};
+        OPTION_LINES.forEach(function (o) { if (o.id && o.status != null) statusValues[o.id] = o.default != null ? String(o.default) : ''; });
+      }
+      /* 조건 when · unless: { id, value } 하나 또는 배열, value 도 값 하나 또는 배열 (옵션 값 · 상태 값 모두)
+         when 이 모두 맞을 때만 쓸 수 있음 / unless 중 하나라도 맞으면 흐리게 */
+      function condMatch(c) {
+        var v = c.id in statusValues ? statusValues[c.id] : optionValues[c.id];
+        return Array.isArray(c.value) ? c.value.indexOf(v) !== -1 : v === c.value;
+      }
+      function condList(c) { return !c ? [] : Array.isArray(c) ? c : [c]; }
+      function isDisabled(o) {
+        return condList(o.when).some(function (c) { return !condMatch(c); }) || condList(o.unless).some(condMatch);
+      }
       var optionValues = {};
       function isSlider(o) { return o.max != null; }
       function defaultOf(o) {
@@ -513,7 +570,7 @@
       var optionScope = location.pathname.replace(/\/[^\/]*$/, '') || '/'; /* 회차 폴더 (/1st) */
 
       function optionQuery() {
-        return OPTIONS.map(function (o) { return '&opt-' + o.id + '=' + encodeURIComponent(optionValues[o.id]); }).join('');
+        return activeOptions().map(function (o) { return '&opt-' + o.id + '=' + encodeURIComponent(optionValues[o.id]); }).join('');
       }
 
       function fileUrl(type) {
@@ -639,6 +696,9 @@
       function select(id) {
         stopAutoplay(); /* 다른 타입으로 바꾸면 자동 재생 끝냄 */
         current = findType(id);
+        OPTION_LINES = linesOf(current); /* 항목별 옵션 (items[].options) */
+        resetStatus();
+        renderOptions();
         protoParams = {};
         loadFrame(fileUrl(current));
         renderQr(current);
@@ -697,6 +757,7 @@
 
       /* 리셋 아이콘: 그 묶음 옵션을 기본값으로 (이미 모두 기본값이면 흐림) */
       function resetButton(options, name) {
+        options = options.filter(isValueOption); /* 버튼 · 상태 표시는 되돌릴 값이 없음 */
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'option-reset';
@@ -755,7 +816,16 @@
             var box = document.createElement('div');
             box.className = 'option-section';
             if (s.title) box.appendChild(headRow('option-section-title', s.title, s.options));
-            s.options.forEach(function (o) { box.appendChild(optionRow(o)); });
+            var actions = null; /* 이어진 버튼(button)은 한 묶음 */
+            s.options.forEach(function (o) {
+              if (o.button) {
+                if (!actions) { actions = document.createElement('div'); actions.className = 'option-actions'; box.appendChild(actions); }
+                actions.appendChild(actionButton(o));
+                return;
+              }
+              actions = null;
+              box.appendChild(optionRow(o));
+            });
             el.appendChild(box);
           });
           optionCards.appendChild(el);
@@ -764,6 +834,7 @@
 
       /* 옵션 한 줄: 선택(choices) 또는 스위치 */
       function optionRow(o) {
+          if (o.status != null) return statusRow(o);
           if (o.choices) return choiceRow(o);
           if (isSlider(o)) return sliderRow(o);
           var isOn = optionValues[o.id] === o.on;
@@ -775,6 +846,7 @@
           addNote(row.querySelector('.option-text'), o);
           var input = row.querySelector('.option-switch');
           input.checked = isOn;
+          if (isDisabled(o)) { row.classList.add('is-disabled'); input.disabled = true; } /* when · unless 조건 */
           input.addEventListener('change', function () {
             optionValues[o.id] = input.checked ? o.on : o.off;
             /* group: 같은 묶음의 스위치는 하나만 켜짐 → 나머지 끔 */
@@ -785,6 +857,46 @@
           });
           return row;
       }
+
+      /* 상태 표시 한 줄: 이름 + 프로토타입이 알려 준 값 (protoOptions.report) */
+      function statusRow(o) {
+        var row = document.createElement('div');
+        row.className = 'option-row is-status';
+        row.innerHTML = '<span class="option-text"><span class="option-label"></span></span><span class="option-status" aria-live="polite"></span>';
+        row.querySelector('.option-label').textContent = o.status;
+        addNote(row.querySelector('.option-text'), o);
+        row.querySelector('.option-status').textContent = statusValues[o.id] || '';
+        return row;
+      }
+      /* 버튼: 누르면 프로토타입에 'proto-action' (+ 연결된 폰에도, 폰 동기화가 켜져 있을 때만 · 서버 없으면 PC만) */
+      function actionButton(o) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-action' + (o.primary ? ' is-primary' : '');
+        btn.textContent = o.button;
+        btn.disabled = isDisabled(o);
+        if (o.note) btn.title = o.note.replace(/<[^>]+>/g, '');
+        btn.addEventListener('click', function () { sendAction(o.id); });
+        return btn;
+      }
+      function sendAction(id) {
+        try {
+          var win = frame.contentWindow;
+          if (win && win.protoOptions && win.protoOptions.action) win.protoOptions.action(id);
+        } catch (e) { /* 다른 출처 */ }
+        if (window.fetch) fetch('/api/action?scope=' + encodeURIComponent(optionScope) + '&id=' + encodeURIComponent(id), { method: 'POST' }).catch(function () {});
+      }
+      /* 프로토타입 → 상태 표시 (protoOptions.report → postMessage 'proto-status') */
+      window.addEventListener('message', function (e) {
+        if (e.origin !== location.origin || e.source !== frame.contentWindow) return;
+        if (!e.data || e.data.type !== 'proto-status' || !e.data.values || typeof e.data.values !== 'object') return;
+        var changed = false;
+        Object.keys(e.data.values).forEach(function (id) {
+          var v = e.data.values[id];
+          if (id in statusValues && typeof v === 'string' && statusValues[id] !== v) { statusValues[id] = v; changed = true; }
+        });
+        if (changed) renderOptions(); /* 값 · 조건(unless 등) 다시 반영 */
+      });
 
       /* MOTION 카드: 선택한 항목의 motion = [{ title, note?, items: ['문장' | { text, sub: ['보충'] }] }], 없으면 숨김 */
       function renderMotion(type) {
@@ -875,7 +987,7 @@
         }
         var row = document.createElement('div');
         row.className = 'option-row is-slider';
-        var off = o.when && optionValues[o.when.id] !== o.when.value;
+        var off = isDisabled(o); /* when · unless 조건 */
         if (off) row.classList.add('is-disabled');
         row.innerHTML = '<div class="option-head-line"><span class="option-label"></span></div>'
           + '<div class="option-slider-line"><input class="option-range" type="range">'
@@ -931,7 +1043,7 @@
       function choiceRow(o) {
         var row = document.createElement('div');
         row.className = 'option-row is-choice';
-        if (o.when && optionValues[o.when.id] !== o.when.value) row.classList.add('is-disabled');
+        if (isDisabled(o)) row.classList.add('is-disabled'); /* when · unless 조건 */
         row.innerHTML = '<span class="option-label"></span><div class="option-choices" role="group"></div>';
         row.querySelector('.option-label').textContent = o.label;
         addNote(row.querySelector('.option-label'), o, true);
@@ -1177,13 +1289,14 @@
       function zoomScale(frameW, frameH, pad) {
         var phoneW = frameW - pad * 2;
         var full = Math.min((stage.clientWidth - 48) / phoneW, (stage.clientHeight - 48) / (frameH - pad * 2));
-        var controls = !!sideStack.querySelector('#optionCards .option-card, #autoplayCard:not([hidden])');
+        var controls = hasControls();
         var room = Math.min(full, (stage.clientWidth - ZOOM_SIDE * 2) / phoneW);
         stage.classList.toggle('is-no-controls', !controls);
         optionsFolded = controls && room < full * ZOOM_KEEP;
         return controls && !optionsFolded ? room : full;
       }
-      /* 접힌 옵션 카드 펼치기 · 접기 (확대 중 자리가 모자랄 때만 동작) */
+      function hasControls() { return !!sideStack.querySelector('#optionCards .option-card, #autoplayCard:not([hidden])'); }
+      /* 접힌 옵션 카드 펼치기 · 접기 (확대 중 · 좁은 창에서 자리가 모자랄 때만 동작) */
       function toggleOptions(open) {
         open = optionsFolded && (typeof open === 'boolean' ? open : !sideStack.classList.contains('is-open'));
         sideStack.classList.toggle('is-open', open);
@@ -1203,9 +1316,6 @@
         if (!zoomed) optionsFolded = false;
         var scale = zoomed ? zoomScale(frameW, frameH, pad) : Math.min(1, stage.clientWidth / frameW, stage.clientHeight / frameH);
         frame.style.setProperty('--frame-scale', scale);
-        stage.classList.toggle('is-options-folded', optionsFolded);
-        optionsTools.hidden = !optionsFolded;
-        if (!optionsFolded) toggleOptions(false);
 
         /* QR 카드 단계: 폰 왼쪽 여백(바탕 왼쪽 24 + 폰과 간격 16 제외)에 맞춰 전체 → 작은 카드 → 툴바 버튼
            (프레임 안 그림자 여백 --frame-pad 제외한 실제 폰 왼쪽 기준) */
@@ -1253,11 +1363,16 @@
            - 카드 1~2개: 툴바 아래 12px (툴바 왼쪽 선에 맞춤)
            - 카드 3개 이상: 툴바 오른쪽 12px · 폰 윗선부터
            - 폰 옆 패널이 있으면: 패널과 겹치지 않게 프레임 오른쪽 · 폰 윗선부터 */
-        var stackTop = phoneScreenW || cardsBeside ? phoneTop : tools.offsetTop + tools.offsetHeight + 12;
-        if (optionsFolded) stackTop = optionsTools.offsetTop + optionsTools.offsetHeight + 8; /* 접힘: 옵션 버튼 아래에 펼침 */
         var stackX = phoneScreenW ? frameRight : cardsBeside ? phoneRight + 12 + tools.offsetWidth : phoneRight;
         var stackAttached = (phoneScreenW || attached) && stackX + 12 + 240 + 16 <= stage.clientWidth;
+        /* 창이 좁아 폰 옆에 카드 자리가 없으면(바탕 오른쪽 위로 밀려 폰과 겹침) 확대가 아니어도 카드 묶음(FILES · MOTION · OPTIONS · FLOW)을 접어 옵션 버튼(O)으로 */
+        if (!zoomed && !stackAttached && cardCount > 0) optionsFolded = true;
+        stage.classList.toggle('is-options-folded', optionsFolded);
+        optionsTools.hidden = !optionsFolded;
+        if (!optionsFolded) toggleOptions(false);
         if (optionsFolded) stackAttached = false; /* 접힘: 폰 옆이 아니라 바탕 오른쪽(툴바 아래)에 폰 위로 겹쳐 펼침 */
+        var stackTop = phoneScreenW || cardsBeside ? phoneTop : tools.offsetTop + tools.offsetHeight + 12;
+        if (optionsFolded) stackTop = optionsTools.offsetTop + optionsTools.offsetHeight + 8; /* 접힘: 옵션 버튼 아래에 펼침 */
         sideStack.classList.toggle('is-attached', stackAttached);
         sideStack.style.left = stackAttached ? stackX + 12 - 24 + 'px' : ''; /* 그림자 여백 24 만큼 왼쪽으로 */
         sideStack.style.top = stackTop + 'px';
@@ -1286,6 +1401,8 @@
         var doc = frame.contentDocument;
         if (!doc) return;
         doc.addEventListener('keydown', onKey); /* 폰 안에 포커스가 있어도 단축키 동작 */
+        resetStatus(); /* 다시 불러오면 상태 표시는 처음 값 → 프로토타입이 protoOptions.report 로 다시 알려 줌 */
+        renderOptions();
         applyOptionsToFrame();
         var phone = getComputedStyle(doc.documentElement);
         var w = parseFloat(phone.getPropertyValue('--phone-w'));
