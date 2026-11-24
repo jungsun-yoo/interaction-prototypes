@@ -438,7 +438,7 @@
       title: '[앱바] 2026 리캡 아이콘',
       sub: '26-1123 · Prototype',
       label: 'TYPES',
-      version: '20261124-17',
+      version: '20261124-19',
       qrHost: '172.30.1.42', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: '',
       jira: '',
@@ -455,7 +455,9 @@
           choices: [{ value: 'log', label: '쇼핑로그' }, { value: 'recap', label: 'Recap' }] },
         { id: 'mode-slide', label: '상하전환', on: 'on', off: 'off', default: 'off', group: 'mode' },
         { id: 'slide-type', label: '상하전환 문구', attach: true, default: 'log', when: { id: 'mode-slide', value: 'on' },
-          choices: [{ value: 'log', label: '쇼핑로그' }, { value: 'recap', label: 'Recap' }, { value: 'mix', label: 'Mix' }] }
+          choices: [{ value: 'log', label: '쇼핑로그' }, { value: 'recap', label: 'Recap' }, { value: 'mix', label: 'Mix' }] },
+        /* 상하전환 로티 재생 속도 (100% = 원래 속도 ≒ 9.7초 한 바퀴 · 기본 130% ≒ 7.4초). 디졸브 · 앱테크 코인에는 적용 안 함 */
+        { id: 'slide-speed', label: '재생 속도', unit: '%', min: 100, max: 200, step: 10, default: '130', when: { id: 'mode-slide', value: 'on' } }
       ],
       files: [],
       fileNote: '',

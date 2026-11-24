@@ -22,6 +22,7 @@
        recap : 2026 ↔ RECAP
        mix   : 2026 → RECAP → 쇼핑로그 → 2026 (상하전환만)
      랜딩하자마자 0프레임부터 재생 → 끝나면 쉬지 않고 계속 루핑
+     상하전환은 재생 속도를 바꿀 수 있음: <html data-slide-speed="100 ~ 200"> (%, 기본 130 · 디졸브는 항상 100%)
    앱테크 코인
      랜딩 후 4.5초 동안 첫 프레임에서 정지 → 재생 시작 → 계속 루핑
    delay : 화면이 보인 뒤 첫 재생까지 (초). 그동안은 첫 프레임에서 정지
@@ -29,19 +30,19 @@
 var RECAP_LOTTIE = {
     paths: {
         dissolve: {
-            log: 'src/lottie/ic_appbar_recap_dissolve_log.json?v=20261124-17',
-            recap: 'src/lottie/ic_appbar_recap_dissolve_recap.json?v=20261124-17'
+            log: 'src/lottie/ic_appbar_recap_dissolve_log.json?v=20261124-19',
+            recap: 'src/lottie/ic_appbar_recap_dissolve_recap.json?v=20261124-19'
         },
         slide: {
-            log: 'src/lottie/ic_appbar_recap_slide_log.json?v=20261124-17',
-            recap: 'src/lottie/ic_appbar_recap_slide_recap.json?v=20261124-17',
-            mix: 'src/lottie/ic_appbar_recap_slide_mix.json?v=20261124-17'
+            log: 'src/lottie/ic_appbar_recap_slide_log.json?v=20261124-19',
+            recap: 'src/lottie/ic_appbar_recap_slide_recap.json?v=20261124-19',
+            mix: 'src/lottie/ic_appbar_recap_slide_mix.json?v=20261124-19'
         }
     },
     delay: 0
 };
 var APPTECH_LOTTIE = {
-    path: 'src/lottie/ic_appbar_apptech_white.json?v=20261124-17',
+    path: 'src/lottie/ic_appbar_apptech_white.json?v=20261124-19',
     delay: 4.5
 };
 
@@ -66,6 +67,8 @@ function loadIconLottie(container, path) {
             container.parentNode.classList.remove('is-lottie');
             resolve(false);
         });
+        /* 다 불러오기 전에 다른 파일로 바뀌어 지워진 경우에도 끝냄 (안 그러면 첫 재생 시작이 영영 기다림) */
+        animation.addEventListener('destroy', function () { resolve(false); });
     });
     return { animation: animation, ready: ready };
 }
@@ -87,6 +90,15 @@ function loadIconLottie(container, path) {
         return RECAP_LOTTIE.paths[mode][root.getAttribute('data-' + mode + '-type')] || RECAP_LOTTIE.paths[mode].log;
     }
 
+    /* 리캡 로티 재생 속도: 상하전환일 때만 옵션 값(%), 그 밖에는 원래 속도 */
+    function recapSpeed() {
+        var percent = parseFloat(root.getAttribute('data-slide-speed'));
+        return root.getAttribute('data-mode-slide') === 'on' && percent > 0 ? percent / 100 : 1;
+    }
+    function applyRecapSpeed() {
+        if (recap.lottie) recap.lottie.animation.setSpeed(recapSpeed());
+    }
+
     var recap = { config: RECAP_LOTTIE, path: null, lottie: null, loaded: false };
     var apptech = { config: APPTECH_LOTTIE, lottie: loadIconLottie(apptechBox, APPTECH_LOTTIE.path), loaded: false };
     var items = [recap, apptech];
@@ -94,6 +106,7 @@ function loadIconLottie(container, path) {
     var started = false; /* 화면이 보인 뒤부터 true */
 
     function start() {
+        applyRecapSpeed();
         timers.forEach(clearTimeout);
         timers = items.filter(function (item) { return item.loaded; }).map(function (item) {
             var animation = item.lottie.animation;
@@ -136,6 +149,9 @@ function loadIconLottie(container, path) {
             loadRecap().then(function (changed) { if (changed && started) start(); });
         });
     }).observe(root, { attributes: true, attributeFilter: ['data-mode-dissolve', 'data-mode-slide', 'data-dissolve-type', 'data-slide-type'] });
+
+    /* 속도만 바꾸면 처음부터 다시 재생하지 않고 그 자리에서 속도만 바뀜 */
+    new MutationObserver(applyRecapSpeed).observe(root, { attributes: true, attributeFilter: ['data-slide-speed'] });
 
     Promise.all([loadRecap(), track(apptech), window.protoReady || Promise.resolve()]).then(function () {
         started = true;
