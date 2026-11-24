@@ -29,19 +29,19 @@
 var RECAP_LOTTIE = {
     paths: {
         dissolve: {
-            log: 'src/lottie/ic_appbar_recap_dissolve_log.json?v=20261124-14',
-            recap: 'src/lottie/ic_appbar_recap_dissolve_recap.json?v=20261124-14'
+            log: 'src/lottie/ic_appbar_recap_dissolve_log.json?v=20261124-16',
+            recap: 'src/lottie/ic_appbar_recap_dissolve_recap.json?v=20261124-16'
         },
         slide: {
-            log: 'src/lottie/ic_appbar_recap_slide_log.json?v=20261124-14',
-            recap: 'src/lottie/ic_appbar_recap_slide_recap.json?v=20261124-14',
-            mix: 'src/lottie/ic_appbar_recap_slide_mix.json?v=20261124-14'
+            log: 'src/lottie/ic_appbar_recap_slide_log.json?v=20261124-16',
+            recap: 'src/lottie/ic_appbar_recap_slide_recap.json?v=20261124-16',
+            mix: 'src/lottie/ic_appbar_recap_slide_mix.json?v=20261124-16'
         }
     },
     delay: 0
 };
 var APPTECH_LOTTIE = {
-    path: 'src/lottie/ic_appbar_apptech_white.json?v=20261124-14',
+    path: 'src/lottie/ic_appbar_apptech_white.json?v=20261124-16',
     delay: 4.5
 };
 

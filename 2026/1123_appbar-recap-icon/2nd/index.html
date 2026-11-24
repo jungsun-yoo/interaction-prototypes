@@ -283,8 +283,15 @@
     /* 자동 재생 중: 프로토타입 안을 사람이 만지지 못하게 (클릭 · 터치 · 휠 · 키보드 모두 막음, 자동 재생의 가짜 탭 · 스크롤은 그대로) */
     .stage.is-autoplaying .stage-frame {pointer-events: none;}
     .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(-50%, -50%) scale(var(--frame-scale, 1));}
-    /* 확대 보기 (툴바 돋보기 · Z): 폰을 바탕에 꽉 차게 (위아래 여백 24, 스크롤 없음). 오른쪽 카드 · QR은 가림 */
-    .stage.is-zoomed .side-stack, .stage.is-zoomed .qr-card {display: none;}
+    /* 확대 보기 (툴바 돋보기 · Z): 폰을 바탕에 꽉 차게 (위아래 여백 24, 스크롤 없음). QR · MOTION · FILES 카드는 가림
+       조작용 카드(OPTIONS · FLOW)는 남김: 폰 옆에 자리가 나면 그대로 두고(폰을 조금 덜 키움 · script zoomScale),
+       자리가 모자라면 접어 두고(.is-options-folded) 툴바 아래 옵션 버튼(O)으로 폰 위에 펼침(.is-open) */
+    .stage.is-zoomed .qr-card, .stage.is-zoomed .motion-card, .stage.is-zoomed .files-card {display: none;}
+    .stage.is-zoomed.is-no-controls .side-stack {display: none;}
+    .stage.is-options-folded .side-stack {z-index: 2;}
+    .stage.is-options-folded .side-stack:not(.is-open) {display: none;}
+    .stage.is-options-open #optionsButton {background: rgba(0, 0, 0, 0.06);}
+    .options-tools[hidden] {display: none;}
     .zoom-button.is-on {background: rgba(0, 0, 0, 0.06);}
     .zoom-button .zoom-minus {display: none;}
     .zoom-button.is-on .zoom-plus {display: none;}
@@ -345,6 +352,8 @@
         <button class="tool-button" type="button" id="replayButton" data-tip="다시 재생 (R)" aria-label="다시 재생"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
         <button class="tool-button" type="button" id="qrButton" data-tip="QR 코드" aria-label="QR 코드" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M21 21h-4v-4"/></svg></button>
       </div>
+      <!-- 옵션 버튼: 확대 중 옵션 카드가 접혔을 때만 툴바 아래에 따로 뜸 (위치는 script fitFrame). 누르면 카드가 그 아래에 펼쳐짐 -->
+      <div class="stage-tools options-tools" id="optionsTools" hidden><button class="tool-button" type="button" id="optionsButton" data-tip="옵션 (O)" aria-label="옵션" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9"/><path d="M17 7h3"/><circle cx="15" cy="7" r="2"/><path d="M4 17h3"/><path d="M11 17h9"/><circle cx="9" cy="17" r="2"/></svg></button></div>
       <!-- 오른쪽 카드 묶음: 옵션 카드(script가 CONFIG.options로 그림) → FILES 카드 -->
       <div class="side-stack" id="sideStack">
         <!-- MOTION: 선택한 타입의 모션 설명 (CONFIG.items[].motion). 없으면 숨김 -->
@@ -426,7 +435,7 @@
       title: '[앱바] 2026 리캡 아이콘',
       sub: '26-1123 · Prototype',
       label: 'TYPES',
-      version: '20261124-14',
+      version: '20261124-16',
       qrHost: '172.30.1.42', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: '',
       jira: '',
@@ -1142,6 +1151,7 @@
         if (e.key === 'r' || e.key === 'R') { replayAll(); return; }
         if (e.key === 'p' || e.key === 'P') { toggleSync(); return; }
         if (e.key === 'z' || e.key === 'Z') { toggleZoom(); return; }
+        if (e.key === 'o' || e.key === 'O') { toggleOptions(); return; } /* 확대 중 접힌 옵션 카드 펼치기 · 접기 */
         var index = TYPES.indexOf(current);
         var next = null;
         if (e.key === 'ArrowDown') next = TYPES[(index + 1) % TYPES.length];
@@ -1174,15 +1184,31 @@
         fitFrame();
       }
       zoomButton.addEventListener('click', toggleZoom);
-      /* 확대: 폰(그림자 여백 빼고)이 바탕 위아래 24px 안에 꽉 차게. 툴바는 바탕 우상단 */
-      function fitZoom(frameW, frameH, pad) {
-        var scale = Math.min((stage.clientWidth - 48) / (frameW - pad * 2), (stage.clientHeight - 48) / (frameH - pad * 2));
-        frame.style.setProperty('--frame-scale', scale);
-        var tools = document.getElementById('stageTools');
-        tools.classList.remove('is-attached');
-        tools.style.left = tools.style.top = '';
-        qrButton.hidden = true;
+      /* 확대 배율: 폰(그림자 여백 빼고)이 바탕 위아래 24px 안에 꽉 차게
+         조작용 카드(OPTIONS · FLOW)가 있으면 폰 양옆에 카드 자리(ZOOM_SIDE)를 남기고 키움 → 폰과 카드가 겹치지 않음
+         그러느라 폰이 꽉 찬 크기의 ZOOM_KEEP 보다 작아지면 자리를 포기하고 꽉 채운 뒤 카드를 접음 (optionsFolded → 툴바 아래 옵션 버튼 · O) */
+      var ZOOM_KEEP = 0.85;          /* 카드 자리를 남겨도 이 비율 이상으로 커질 때만 카드를 옆에 둠 */
+      var ZOOM_SIDE = 12 + 240 + 16; /* 폰과 간격 + 카드 너비 + 바탕 오른쪽 여백 */
+      var optionsFolded = false;
+      var optionsButton = document.getElementById('optionsButton');
+      var optionsTools = document.getElementById('optionsTools'); /* 옵션 버튼 상자: 툴바와 따로, 툴바 아래에 */
+      function zoomScale(frameW, frameH, pad) {
+        var phoneW = frameW - pad * 2;
+        var full = Math.min((stage.clientWidth - 48) / phoneW, (stage.clientHeight - 48) / (frameH - pad * 2));
+        var controls = !!sideStack.querySelector('#optionCards .option-card, #autoplayCard:not([hidden])');
+        var room = Math.min(full, (stage.clientWidth - ZOOM_SIDE * 2) / phoneW);
+        stage.classList.toggle('is-no-controls', !controls);
+        optionsFolded = controls && room < full * ZOOM_KEEP;
+        return controls && !optionsFolded ? room : full;
       }
+      /* 접힌 옵션 카드 펼치기 · 접기 (확대 중 자리가 모자랄 때만 동작) */
+      function toggleOptions(open) {
+        open = optionsFolded && (typeof open === 'boolean' ? open : !sideStack.classList.contains('is-open'));
+        sideStack.classList.toggle('is-open', open);
+        stage.classList.toggle('is-options-open', open);
+        optionsButton.setAttribute('aria-expanded', String(open));
+      }
+      optionsButton.addEventListener('click', function () { toggleOptions(); });
 
       /* 폰 옆 패널(옵션창·설명창)이 있는 화면: 프로토타입 :root 에 --phone-w(폰 + 간격 + 패널) · --phone-screen-w(폰 화면 너비)
          → 툴바는 폰 화면 오른쪽에, 오른쪽 카드 묶음은 패널 오른쪽에. 0 이면 프레임 전체가 폰 */
@@ -1194,9 +1220,12 @@
         var pad = parseFloat(style.getPropertyValue('--frame-pad'));
         var frameW = parseFloat(style.getPropertyValue('--phone-w')) + pad * 2; /* CSS --frame-w와 같은 식 */
         var frameH = parseFloat(style.getPropertyValue('--phone-h')) + pad * 2;
-        var scale = Math.min(1, stage.clientWidth / frameW, stage.clientHeight / frameH);
-        if (zoomed) return fitZoom(frameW, frameH, pad);
+        if (!zoomed) optionsFolded = false;
+        var scale = zoomed ? zoomScale(frameW, frameH, pad) : Math.min(1, stage.clientWidth / frameW, stage.clientHeight / frameH);
         frame.style.setProperty('--frame-scale', scale);
+        stage.classList.toggle('is-options-folded', optionsFolded);
+        optionsTools.hidden = !optionsFolded;
+        if (!optionsFolded) toggleOptions(false);
 
         /* QR 카드 단계: 폰 왼쪽 여백(바탕 왼쪽 24 + 폰과 간격 16 제외)에 맞춰 전체 → 작은 카드 → 툴바 버튼
            (프레임 안 그림자 여백 --frame-pad 제외한 실제 폰 왼쪽 기준) */
@@ -1205,8 +1234,8 @@
         var folded = qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w'));
         qrCard.classList.toggle('is-mini', !folded && qrRoom < parseFloat(style.getPropertyValue('--qr-card-w')));
         qrCard.classList.toggle('is-folded', folded);
-        qrButton.hidden = !folded || qrCard.hidden;
-        if (!folded) qrCard.classList.remove('is-open');
+        qrButton.hidden = zoomed || !folded || qrCard.hidden; /* 확대 중엔 QR 숨김 */
+        if (!folded || zoomed) qrCard.classList.remove('is-open');
 
         /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단
            프로토타입이 --phone-screen-w를 정하면(폰 옆에 옵션창·설명창이 있어 --phone-w가 더 넓을 때) 그 폰 화면 오른쪽에 붙임 */
@@ -1218,6 +1247,10 @@
         tools.classList.toggle('is-attached', attached);
         tools.style.left = attached ? phoneRight + 12 + 'px' : '';
         tools.style.top = attached ? phoneTop + 'px' : '';
+        /* 옵션 버튼(확대 중 카드가 접혔을 때만): 툴바 아래 8px, 툴바와 같은 왼쪽 선 */
+        optionsTools.classList.toggle('is-attached', attached);
+        optionsTools.style.left = attached ? tools.style.left : '';
+        optionsTools.style.top = tools.offsetTop + tools.offsetHeight + 8 + 'px';
         /* 폰 옆 패널이 툴바 바로 아래(8px)에 오도록 지금 툴바 높이를 프로토타입에 알려 줌 (--index-tools-h, 프로토타입 px)
            프로토타입 패널 CSS: margin-top: calc(var(--index-tools-h, 92px) + 8px) → 툴바 버튼 수가 바뀌어도(QR 접힘 등) 가려지지 않음 */
         try {
@@ -1226,8 +1259,10 @@
         } catch (e) { /* 다른 출처 */ }
         /* 오른쪽 카드 묶음: 툴바 아래. 폰 옆 패널이 있으면 패널과 겹치지 않게 프레임 오른쪽에 (폰 윗선부터) */
         var stackTop = phoneScreenW ? phoneTop : tools.offsetTop + tools.offsetHeight + 12;
+        if (optionsFolded) stackTop = optionsTools.offsetTop + optionsTools.offsetHeight + 8; /* 접힘: 옵션 버튼 아래에 펼침 */
         var stackX = phoneScreenW ? frameRight : phoneRight;
         var stackAttached = phoneScreenW ? stackX + 12 + 240 + 16 <= stage.clientWidth : attached;
+        if (optionsFolded) stackAttached = false; /* 접힘: 폰 옆이 아니라 바탕 오른쪽(툴바 아래)에 폰 위로 겹쳐 펼침 */
         sideStack.classList.toggle('is-attached', stackAttached);
         sideStack.style.left = stackAttached ? stackX + 12 - 24 + 'px' : ''; /* 그림자 여백 24 만큼 왼쪽으로 */
         sideStack.style.top = stackTop + 'px';
