@@ -8,7 +8,8 @@
  1) prototypes/<이름>/ 폴더를 통째로 담음 (interaction.md 포함)
  2) index.html 이 쓰는 ../src/… 공용 파일(common · components)만 찾아 zip 안 shared/ 에 넣고 경로를 고침
     → 압축을 풀고 index.html 을 바로 열면 됨
- 3) 옵션창은 인덱스 오른쪽 카드라(index.html items[].options) 프로토타입 폴더에 없음 → 따로 뺄 것 없음
+ 3) 페이지 로딩을 끔: index.html <html> 에 data-loading="off" (로딩은 보기용)
+ 4) 옵션창은 인덱스 오른쪽 카드라(index.html items[].options) 프로토타입 폴더에 없음 → 따로 뺄 것 없음
 표준 라이브러리만 사용
 """
 import argparse
@@ -57,6 +58,10 @@ def main():
                     text = open(path, encoding='utf-8').read()
                     if rel == 'index.html':
                         text = re.sub(r'\sdata-index-path="[^"]*"', ' data-index-path=""', text)   # zip 에는 인덱스가 없음 → 제목 읽기 생략
+                        # 페이지 로딩 끄기 (로딩은 프로토타입 '보기용'이라 개발 전달물에는 넣지 않음 · 공유 틀 tools/make_prototype_zip.py 와 같은 규칙)
+                        text, n = re.subn(r'<html\b[^>]*>', lambda m: re.sub(r'\sdata-loading="[^"]*"', '', m.group(0))[:-1].rstrip() + ' data-loading="off">', text, count=1)
+                        if n != 1:
+                            sys.exit('index.html 에서 <html> 태그를 못 찾았어요')
                     if not rel.endswith('.md'):          # 명세 안 경로 글자는 파일 참조가 아님
                         needed.update(shared_refs(text))
                     text = text.replace('../src/', './shared/')

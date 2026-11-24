@@ -126,7 +126,7 @@
         if (time0 != null) analysisSec = clampSec(time0);
     }
     setDone(false);
-    armTimer();
+    (window.protoReady || Promise.resolve()).then(armTimer);   /* 분석 시간은 페이지 로딩이 끝나 화면이 보인 뒤부터 잼 (common.js protoReady) */
 
     /* ---------- 휴대폰(QR로 열기)에서 화면 너비가 390보다 좁으면 폰 화면을 너비에 맞게 줄임 ---------- */
     var touch = window.matchMedia('(hover: none), (pointer: coarse)');

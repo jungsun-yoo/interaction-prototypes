@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"> <!-- 폰 크기: 390×844 고정 (배경 이미지 780×1688 @2x 기준, 아래 <style>에서 지정) -->
+<html lang="ko" data-preload="src/img/tutorial_lens.json?v=20261124-2"> <!-- 폰 크기: 390×844 고정 (배경 이미지 780×1688 @2x 기준, 아래 <style>에서 지정) -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -11,8 +11,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="사진 검색 가이드"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-1">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261124-1">
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-2">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261124-2">
   <style>
     /* ════════════════════════════════════════════════════
        화면 스타일 — 사진 검색 가이드 (화면 이미지 + 가이드 로티)
@@ -65,7 +65,7 @@
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
-  <script src="./src/common/common.js?v=20261124-1"></script>
+  <script src="./src/common/common.js?v=20261124-2"></script>
   <script>
     /* 화면 동작 — 사진 검색 가이드
        로티: 화면 진입과 함께 tutorial_lens.json 재생, 무한 반복
@@ -74,13 +74,16 @@
         var box = document.getElementById('guideLottie');
         if (!box || !window.lottie) return;
 
-        lottie.loadAnimation({
+        var anim = lottie.loadAnimation({
             container: box,
             renderer: 'svg',
             loop: true,
-            autoplay: true,
-            path: 'src/img/tutorial_lens.json?t=' + Date.now() /* 로티를 다시 내보내도 바로 반영되게 캐시 방지 */
+            autoplay: false,
+            path: 'src/img/tutorial_lens.json?v=20261124-2' /* 페이지 로딩이 미리 받는 주소와 같게 (<html data-preload>) */
         });
+        /* 로티 파일을 다 읽고 + 페이지 로딩이 끝나 화면이 보이면 재생 (common.js protoReady) */
+        var loaded = new Promise(function (resolve) { anim.addEventListener('DOMLoaded', resolve); });
+        Promise.all([loaded, window.protoReady || Promise.resolve()]).then(function () { anim.goToAndPlay(0, true); });
     })();
   </script>
 </body>

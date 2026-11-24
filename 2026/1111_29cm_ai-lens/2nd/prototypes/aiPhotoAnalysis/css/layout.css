@@ -8,6 +8,7 @@
   --phone-w: 390px;         /* index.html이 읽어 프레임 크기를 맞춤 */
   --phone-h: 844px;
   --phone-radius: 0px;
+  --proto-loading-radius: 48px;  /* 페이지 로딩 가림막 모서리 = 폰 화면 모서리 */
 }
 
 body {-webkit-font-smoothing: antialiased;}
