@@ -86,3 +86,23 @@ function playLottie(container, file) {
         playLottie(container, container.dataset.lottie);
     });
 })();
+
+/* 폰 동기화 (공유 틀 common.js 와 같음): 혼자 열린 화면(QR로 연 폰)은 서버 /api/live/stream 을 받아
+   파일 저장 · 인덱스 다시 재생(R) · 동기화 다시 켜기 때 새로 불러옴. 인덱스에서 동기화를 끄면 서버가 신호를 보내지 않음
+   인덱스 파일(index.html)만 바뀐 경우는 건너뜀. 서버 없이 열면(깃헙 페이지 등) 조용히 연결 포기 */
+(function () {
+    var inIndex = false;
+    try { inIndex = window.parent !== window && !!window.parent.CONFIG; } catch (e) { /* 다른 출처 */ }
+    if (inIndex || !window.EventSource) return;
+    var scope = location.pathname.replace(/\/[^\/]*$/, '').replace(/\/prototypes?$/, '') || '/';
+    var live = new EventSource('/api/live/stream?role=phone&scope=' + encodeURIComponent(scope));
+    live.onmessage = function (e) {
+        var msg;
+        try { msg = JSON.parse(e.data); } catch (err) { return; }
+        var onlyIndex = msg.type === 'change' && (msg.files || []).every(function (f) { return /\/index\.html$/.test(f) && f.split('/').length === 3; });
+        if ((msg.type === 'replay' || msg.type === 'change') && !onlyIndex) location.reload();
+    };
+    live.onerror = function () {
+        if (live.readyState === EventSource.CLOSED) live.close();
+    };
+})();
