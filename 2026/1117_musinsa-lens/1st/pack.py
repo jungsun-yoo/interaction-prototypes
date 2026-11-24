@@ -4,9 +4,12 @@
     python3 pack.py                   # download/prototype.zip
     python3 pack.py --with-controls   # AI 사진 분석 옵션창 · QR 동기화까지 넣기
     python3 pack.py --out ~/Desktop   # 다른 곳에 만들기
+    python3 pack.py --screen aiPhotoAnalysis   # 화면 하나만 → download/aiPhotoAnalysis.zip (그 화면 폴더 + 공용 src/)
+                                               #  AI 사진 분석 옵션창 위 FILES 카드의 Download (.zip) 이 이 파일
 
 하는 일
- 1) prototype/ 폴더를 통째로 담음 (AI 로딩 아이콘 · AI 사진 분석 + interaction.md + 공용 src/)
+ 1) prototype/ 폴더를 통째로 담음 (AI 로딩 아이콘 · AI 사진 분석 + aiPhotoAnalysis_interaction-guide.md + 공용 src/)
+    --screen 이면 그 화면 폴더(prototype/<화면>/) + 공용 src/ 만
  2) AI 로딩 아이콘 설명창의 CSS zip 링크(../download/IconAILoading-img-css.zip)가 풀어서도 열리게 download/ 에 같이 넣음
  3) 기본은 프로토타입 전용 장치를 뺌: AI 사진 분석 옵션창(css/controls.css) · QR/휴대폰 동기화(js/sync.js)
     빼면 폰 화면만 보이도록 css/layout.css 의 --phone-w 를 폰 너비(375)로 바꿈
@@ -67,11 +70,14 @@ def main():
     ap = argparse.ArgumentParser(description='prototype/ 폴더를 개발 전달용 zip 으로')
     ap.add_argument('--with-controls', action='store_true', help='옵션창 · QR 동기화까지 넣기')
     ap.add_argument('--out', default=os.path.join(HERE, 'download'), help='zip 을 만들 폴더')
+    ap.add_argument('--screen', help='화면 폴더 하나만 (예: aiPhotoAnalysis) → <화면>.zip')
     args = ap.parse_args()
+    if args.screen and not os.path.isdir(os.path.join(PROTO, args.screen)):
+        sys.exit('없는 화면 폴더: prototype/' + args.screen)
 
     out_dir = os.path.expanduser(args.out)
     os.makedirs(out_dir, exist_ok=True)
-    zip_path = os.path.join(out_dir, 'prototype.zip')
+    zip_path = os.path.join(out_dir, (args.screen or 'prototype') + '.zip')
     skip = set() if args.with_controls else set(PROTO_ONLY)
     count = 0
 
@@ -83,6 +89,8 @@ def main():
                     continue
                 path = os.path.join(folder, f)
                 rel = os.path.relpath(path, PROTO).replace(os.sep, '/')
+                if args.screen and not rel.startswith((args.screen + '/', 'src/')):
+                    continue   # 화면 하나만: 그 화면 폴더 + 공용 src/
                 if rel in skip:
                     continue
                 arc = 'prototype/' + rel
@@ -118,7 +126,7 @@ def main():
                     z.write(path, arc)
                 count += 1
 
-        for rel in EXTRA:
+        for rel in ([] if args.screen else EXTRA):
             path = os.path.join(HERE, rel)
             if not os.path.isfile(path):
                 sys.exit('없는 파일: ' + rel)
@@ -126,14 +134,14 @@ def main():
             count += 1
 
         z.writestr('README.txt',
-                   '무신사 렌즈 프로토타입\n만든 날: %s\n\n'
-                   '- prototype/aiLoading.html: AI 로딩 아이콘 (로티 · IMG CSS 비교, 오른쪽 설명창에서 파일 받기)\n'
+                   '무신사 렌즈 프로토타입\n만든 날: %s\n\n%s'
                    '- prototype/aiPhotoAnalysis/index.html: AI 사진 분석 (분석 중 → 분석 완료)\n'
-                   '- 인터랙션 명세: prototype/aiPhotoAnalysis/interaction.md\n'
-                   '- 조절 값: prototype/aiPhotoAnalysis/css/values.css (명세 절 순서와 같음)\n'
+                   '- 인터랙션 가이드: prototype/aiPhotoAnalysis/aiPhotoAnalysis_interaction-guide.md\n'
+                   '- 조절 값: prototype/aiPhotoAnalysis/css/values.css (가이드 절 순서와 같음)\n'
                    '- prototype/src/: 같이 쓰는 공용 파일 (MDS 모션 토큰, AI 로딩 아이콘, 설명창)\n'
                    '- html 파일을 브라우저(Chrome · Safari)로 열면 됩니다.\n%s'
                    % (datetime.date.today().isoformat(),
+                      '' if args.screen else '- prototype/aiLoading.html: AI 로딩 아이콘 (로티 · IMG CSS 비교, 오른쪽 설명창에서 파일 받기)\n',
                       '' if args.with_controls else '- AI 사진 분석의 옵션창 · QR 동기화(프로토타입 전용)는 뺐습니다. 6초 뒤 결과 화면으로 넘어가고, 새로고침하면 처음부터 다시 재생됩니다.\n'))
 
     print('만들었어요:', zip_path)
