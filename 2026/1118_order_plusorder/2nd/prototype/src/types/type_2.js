@@ -2,6 +2,7 @@
    TitleSection 로고 = 로티 (src/lottie/logo_plusdelivery-plusorder.json, 60fps · 0 ~ 870)
    재생: 처음 한 번 0 → loopEnd 까지 재생 → 그다음부터 loopStart ~ loopEnd 구간만 계속 반복
    구간은 로티 마커 이름(loopStart · loopEnd)에서 읽음 → 마커 위치가 바뀌어도 그대로 동작
+   재생은 페이지 로딩이 끝난 뒤(protoReady, 화면이 보인 뒤) 시작 — common.js
    동작 줄이기 설정이면 재생하지 않고 loopEnd 프레임(완성된 로고)에 멈춤 */
 (function () {
     var box = document.getElementById('plusLogoLottie');
@@ -12,7 +13,7 @@
         renderer: 'svg',
         loop: false,
         autoplay: false,
-        path: './src/lottie/logo_plusdelivery-plusorder.json?v=20261118-02'
+        path: './src/lottie/logo_plusdelivery-plusorder.json?v=20261124-01' /* Type_2.html data-preload 와 같은 주소 */
     });
 
     function markerFrame(name, fallback) {
@@ -39,7 +40,9 @@
             anim.loop = true;
             anim.playSegments([loopStart, loopEnd], true);
         });
-        anim.playSegments([0, loopEnd], true);
+        (window.protoReady || Promise.resolve()).then(function () { /* 이전 common.js 여도 동작 */
+            anim.playSegments([0, loopEnd], true);
+        });
 
         window.plusLogoLottie = { anim: anim, loopStart: loopStart, loopEnd: loopEnd };
     });
