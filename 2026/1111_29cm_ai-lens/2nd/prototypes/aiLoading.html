@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-preload="src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-2"> <!-- 폰 크기: 390×844 고정 (아래 <style>에서 지정) -->
+<html lang="ko" data-preload="src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-3"> <!-- 폰 크기: 390×844 고정 (아래 <style>에서 지정) -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -11,10 +11,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="AI 로딩 아이콘"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-2">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261124-2">
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-3">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261124-3">
   <!-- AI 로딩 아이콘 원본 (MusinsaStore/AIEffect/IconAILoading 복사본 — 원본이 바뀌면 이 폴더째 덮어쓰기) -->
-  <link rel="stylesheet" href="./src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261124-2">
+  <link rel="stylesheet" href="./src/components/IconAILoading/img-css/icon-ai-loading-img.css?v=20261124-3">
   <style>
     /* ════════════════════════════════════════════════════
        화면 스타일 — AI 로딩 아이콘 (빈 화면 가운데, 로티 원본 vs IMG 방식 비교)
@@ -77,7 +77,8 @@
       line-height: 16px;
     }
     /* 페이지 로딩이 끝나 화면이 보일 때까지 IMG 아이콘을 멈춰 둠 → 로티와 같이 시작 (common.js proto-play) */
-    html:not(.proto-play) .IconAILoading.is-playing > span {animation-play-state: paused;}
+    html:not(.proto-play) .IconAILoading.is-playing > span,
+    html:not(.proto-play) .IconAILoading.is-playing img {animation-play-state: paused;}   /* 위치(span) · 크기(img) 둘 다 멈춰야 같이 시작 (하나만 멈추면 로딩 시간만큼 어긋나 튐) */
   </style>
 </head>
 <body>
@@ -113,7 +114,7 @@
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
-  <script src="./src/common/common.js?v=20261124-2"></script>
+  <script src="./src/common/common.js?v=20261124-3"></script>
   <script>
     /* 화면 동작 — AI 로딩 아이콘
        로티 원본만 JS로 재생 (무한 반복). IMG 는 원본 CSS의 is-playing 으로 재생
@@ -127,7 +128,7 @@
             renderer: 'svg',
             loop: true,
             autoplay: false,
-            path: 'src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-2' /* 페이지 로딩이 미리 받는 주소와 같게 (<html data-preload>) */
+            path: 'src/components/IconAILoading/lottie/IconAILoading.json?v=20261124-3' /* 페이지 로딩이 미리 받는 주소와 같게 (<html data-preload>) */
         });
         /* 로티 파일을 다 읽고 + 페이지 로딩이 끝나 화면이 보이면 재생 (common.js protoReady) */
         var loaded = new Promise(function (resolve) { anim.addEventListener('DOMLoaded', resolve); });
