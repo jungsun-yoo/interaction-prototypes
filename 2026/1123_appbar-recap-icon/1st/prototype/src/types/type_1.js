@@ -110,7 +110,9 @@
 
     window.playCheckinBadge = restart;
     checkin.addEventListener('click', restart);
-    document.fonts.ready.then(function () { placeBadge(); restart(); }); /* 폰트 적용 후 폭을 재서 위치를 잡고 시작 */
+    /* 폰트 적용 후 폭을 재서 위치를 잡고, 화면이 다 보인 뒤(페이지 로딩 끝 · protoReady) 시작 */
+    Promise.all([document.fonts.ready, window.protoReady || Promise.resolve()])
+        .then(function () { placeBadge(); restart(); });
 })();
 
 /* 앱테크 아이콘 로티 (26-1105 앱테크진입점모션 2nd 와 같은 규칙)
@@ -125,7 +127,7 @@
         renderer: 'svg',
         loop: true,
         autoplay: false,
-        path: 'src/lottie/ic_appbar_apptech_white.json?v=20261123-12'
+        path: 'src/lottie/ic_appbar_apptech_white.json?v=20261124-17'
     });
     animation.addEventListener('DOMLoaded', function () {
         container.parentNode.classList.add('is-lottie');

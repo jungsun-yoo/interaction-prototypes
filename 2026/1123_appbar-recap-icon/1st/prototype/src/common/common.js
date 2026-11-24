@@ -51,6 +51,176 @@ var pageScroll = (function () {
         .catch(function () {});
 })();
 
+/* 페이지 로딩: 화면에 쓰는 이미지·폰트(+ data-preload 파일)를 미리 받은 뒤 시작 (모양은 common.css '페이지 로딩')
+   - 0.3초 안에 준비되면 로딩 표시 없이 바로 시작 (새로고침·다시 재생은 브라우저가 기억해 둔 파일이라 보통 이 경우)
+   - 0.3초를 넘기면 로고 로딩 표시 → 준비되면 0.1s linear 페이드로 사라짐 (상태바도 이때 함께 나타남)
+   - 못 받은 파일이 있어도 끝난 것으로 셈 · 최대 5초 뒤에는 무조건 시작 · 못 받은 파일은 콘솔에 남김
+   - 사용: 진입 모션은 protoReady.then(function () { …시작… }) 안에서 시작 (그래야 첫 부분이 가림막 뒤에서 지나가지 않음)
+     모션으로 나타날 요소는 CSS에서 처음부터 숨긴 상태(opacity 0 등)로 둘 것 — 페이드 0.1s 동안 기본 모습이 비치지 않게
+     신호는 화면이 다 보인 뒤에 옴: 로딩을 보여 줬으면 페이드(0.1s)가 끝난 뒤, 아니면 바로 → '랜딩 0.5초 후' = 화면이 보이고 0.5초 후
+   - 끄기: <html data-loading="off"> / 더 기다릴 파일: <html data-preload="src/lottie/a.json, src/img/b.png">
+   - 시험 모드: 주소 뒤 ?loading=slow (2초) 또는 ?loading=3 (초) → 일부러 그만큼 늦게 준비시켜 로딩·페이드를 확인
+     인덱스 주소에 붙여도 됨 (예: /1st/?loading=slow#type1 → 안의 프로토타입에 적용). 다시 재생(R)해도 유지 */
+var protoReady = (function () {
+    var root = document.documentElement;
+    var SLOW_MS = 300;
+    var MAX_MS = 5000;
+    var FADE_MS = 100; /* common.css 페이지 로딩 페이드(0.1s linear)와 같게 */
+    var missing = [];
+    var slowTimer = null;
+    var resolveReady;
+    var ready = new Promise(function (resolve) { resolveReady = resolve; });
+
+    function finish() {
+        if (root.classList.contains('proto-ready')) return;
+        clearTimeout(slowTimer);
+        root.classList.add('proto-ready'); /* 가림막 치움 (로딩을 보여 줬으면 여기서 페이드 시작) */
+        if (missing.length) console.warn('[protoReady] 불러오지 못한 파일:', missing);
+        /* 준비 끝 신호는 화면이 다 보인 뒤: 페이드가 있으면 끝난 다음, 없으면 같은 순간에 바로
+           (바로 보낼 때는 가림막이 걷힌 화면이 그려지기 전에 모션 시작 코드가 먼저 돎) */
+        function signal() {
+            root.classList.add('proto-play'); /* CSS 진입 애니메이션 시작 표시 (common.css '페이지 로딩' 참고) */
+            window.dispatchEvent(new Event('proto:ready'));
+            resolveReady();
+        }
+        if (root.classList.contains('proto-slow')) setTimeout(signal, FADE_MS);
+        else signal();
+    }
+
+    if (root.getAttribute('data-loading') === 'off') { finish(); return ready; }
+
+    /* 시험 모드: ?loading=slow | 초 — 이 화면 주소 또는 감싸고 있는 인덱스 주소에서 읽음 */
+    function testDelayMs() {
+        var value = new URLSearchParams(location.search).get('loading');
+        try {
+            if (!value && window.parent !== window) value = new URLSearchParams(window.parent.location.search).get('loading');
+        } catch (e) { /* 다른 출처면 인덱스 주소를 못 읽음 */ }
+        if (!value) return 0;
+        var seconds = value === 'slow' ? 2 : parseFloat(value);
+        return isFinite(seconds) && seconds > 0 ? Math.min(seconds, 30) * 1000 : 0;
+    }
+    var testMs = testDelayMs();
+    if (testMs) console.info('[protoReady] 시험 모드: ' + testMs / 1000 + '초 늦게 준비');
+
+    /* 한 파일 기다리기: 받음·실패 모두 "끝" */
+    function waitFile(url) {
+        return new Promise(function (resolve) {
+            if (/\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i.test(url)) {
+                var img = new Image();
+                img.onload = resolve;
+                img.onerror = function () { missing.push(url); resolve(); };
+                img.src = url;
+            } else {
+                fetch(url).then(function (res) { if (!res.ok) missing.push(url); })
+                    .catch(function () { missing.push(url); }).then(resolve);
+            }
+        });
+    }
+    /* 화면의 <img>: 이미 끝났으면 바로, 아니면 load·error 를 기다림 */
+    function waitImage(img) {
+        if (img.complete) {
+            if (img.currentSrc && !img.naturalWidth) missing.push(img.currentSrc);
+            return Promise.resolve();
+        }
+        return new Promise(function (resolve) {
+            img.addEventListener('load', resolve, { once: true });
+            img.addEventListener('error', function () { missing.push(img.currentSrc || img.src); resolve(); }, { once: true });
+        });
+    }
+
+    var extra = (root.getAttribute('data-preload') || '').split(',')
+        .map(function (s) { return s.trim(); }).filter(Boolean);
+    var tasks = [].map.call(document.images, waitImage).concat(extra.map(waitFile));
+    if (document.fonts && document.fonts.ready) tasks.push(document.fonts.ready);
+    if (testMs) tasks.push(new Promise(function (resolve) { setTimeout(resolve, testMs); }));
+
+    /* 기준 시간은 페이지를 열기 시작한 때부터 (앞의 CDN 스크립트를 받는 시간도 포함) */
+    var elapsed = window.performance ? performance.now() : 0;
+    slowTimer = setTimeout(function () { root.classList.add('proto-slow'); }, Math.max(0, SLOW_MS - elapsed));
+    setTimeout(finish, Math.max(0, Math.max(MAX_MS, testMs + 500) - elapsed)); /* 시험 모드가 5초보다 길면 그만큼 기다림 */
+    Promise.all(tasks).then(finish, finish);
+
+    return ready;
+})();
+
+/* 뒤에서 받기: 첫 화면이 보인 뒤(protoReady) 다음 페이지 이미지 등을 조용히 받아 둠 → 첫 화면은 빨리, 이동할 땐 이미 받아진 상태
+   적는 법 (둘 다 선택)
+   - <img data-src="src/img/detail.png" …> : src 대신 data-src 로 적은 이미지는 처음엔 받지 않고(첫 화면 로딩이 기다리지 않음) 준비 끝 뒤에 받음
+       숨겨 둔 다음 페이지(.proto-page[hidden])의 이미지에 씀. 크기는 CSS로 고정해 둘 것 (빈 자리 커짐 방지)
+   - <html data-prefetch="src/img/a.png, src/lottie/b.json"> : <img> 가 아닌 파일(로티 json · CSS 배경 · JS가 나중에 넣는 이미지)
+   이동하기 전에 확실히 받아 두고 싶으면
+     protoPrefetch.wait(다음페이지요소).then(function () { protoPage.push(뒤, 앞); });
+     → 그 요소 안 이미지가 다 받아지면(실패 포함, 최대 5초) 진행. 이미 받아졌으면 바로 */
+var protoPrefetch = (function () {
+    var root = document.documentElement;
+    var WAIT_MAX_MS = 5000;
+    var started = false;
+    var files = {}; /* 주소 → Promise (data-prefetch 파일) */
+
+    function loadFile(url) {
+        if (files[url]) return files[url];
+        files[url] = new Promise(function (resolve) {
+            if (/\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i.test(url)) {
+                var img = new Image();
+                img.fetchPriority = 'low';
+                img.onload = img.onerror = resolve;
+                img.src = url;
+            } else {
+                fetch(url, { priority: 'low' }).then(resolve, resolve);
+            }
+        });
+        return files[url];
+    }
+
+    /* data-src 이미지에 src 를 넣어 받기 시작 */
+    function startImage(img) {
+        if (!img.dataset.src || img.getAttribute('src')) return;
+        img.fetchPriority = 'low';
+        img.src = img.dataset.src;
+    }
+
+    function start() {
+        if (started) return;
+        started = true;
+        [].forEach.call(document.querySelectorAll('img[data-src]'), startImage);
+        (root.getAttribute('data-prefetch') || '').split(',')
+            .map(function (s) { return s.trim(); }).filter(Boolean).forEach(loadFile);
+    }
+
+    function waitImage(img) {
+        startImage(img); /* 아직 시작 전이면 지금 받기 시작 */
+        if (img.complete && img.getAttribute('src')) return Promise.resolve();
+        return new Promise(function (resolve) {
+            img.addEventListener('load', resolve, { once: true });
+            img.addEventListener('error', resolve, { once: true });
+        });
+    }
+
+    /* 요소(페이지) 안 이미지 또는 주소 목록이 다 받아질 때까지 (최대 5초) */
+    function wait(target) {
+        var tasks;
+        if (typeof target === 'string' || Array.isArray(target)) {
+            tasks = [].concat(target).map(loadFile);
+        } else {
+            var el = target || document;
+            var imgs = el.tagName === 'IMG' ? [el] : [].slice.call(el.querySelectorAll('img'));
+            tasks = imgs.filter(function (img) { return img.dataset.src || img.getAttribute('src'); }).map(waitImage);
+        }
+        return Promise.race([
+            Promise.all(tasks),
+            new Promise(function (resolve) { setTimeout(resolve, WAIT_MAX_MS); })
+        ]);
+    }
+
+    /* 화면이 보인 뒤 + 페이지 스크립트가 다 돈 뒤(DOMContentLoaded)에 시작
+       로딩을 끄면(data-loading="off", 개발 전달 zip) protoReady 가 바로 끝나 common.js 뒤 스크립트가 만드는 data-src 이미지를 놓칠 수 있음 */
+    var parsed = document.readyState === 'loading'
+        ? new Promise(function (resolve) { document.addEventListener('DOMContentLoaded', resolve, { once: true }); })
+        : Promise.resolve();
+    Promise.all([window.protoReady || Promise.resolve(), parsed]).then(start);
+    return { wait: wait, start: start };
+})();
+
 /* 프로토타입 옵션: 인덱스 오른쪽 옵션 컨트롤 값 → <html data-옵션이름="값"> (CSS가 :root[data-옵션="값"] 으로 받음)
    값이 들어오는 길
    ① 주소 ?opt-옵션=값 — QR·새 창으로 열 때
