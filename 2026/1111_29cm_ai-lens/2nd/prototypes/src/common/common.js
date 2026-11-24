@@ -75,7 +75,21 @@ var protoOptions = (function () {
             root.setAttribute('data-' + key, value);
             if (NUMBER_RE.test(value)) root.style.setProperty('--opt-' + key, value);
         });
+        /* 값이 바뀐 걸 JS 로 알아야 하는 프로토타입용 (타이머 등): window 'proto-options' 이벤트 */
+        try { window.dispatchEvent(new CustomEvent('proto-options', { detail: { options: options || {} } })); } catch (e) { /* 아주 옛 브라우저 */ }
     }
+    /* 인덱스 옵션 카드 버튼 → window 'proto-action' 이벤트 (e.detail.id). 인덱스가 바로 부르거나, 폰은 서버 라이브 신호로 */
+    function action(id) {
+        if (typeof id !== 'string' || !KEY_RE.test(id)) return;
+        try { window.dispatchEvent(new CustomEvent('proto-action', { detail: { id: id } })); } catch (e) { /* 아주 옛 브라우저 */ }
+    }
+    /* 프로토타입 상태 → 인덱스 옵션 카드 상태 표시 { id, status }: protoOptions.report({ state: '로딩 완료' }). 인덱스 밖(폰)에서는 아무 일 없음 */
+    function report(values) {
+        if (window.parent === window || !values || typeof values !== 'object') return;
+        try { window.parent.postMessage({ type: 'proto-status', values: values }, location.origin); } catch (e) { /* 다른 출처 */ }
+    }
+    /* 지금 옵션 값 (<html data-id>) */
+    function get(id) { return root.getAttribute('data-' + id); }
 
     var fromUrl = {};
     new URLSearchParams(location.search).forEach(function (value, key) {
@@ -106,6 +120,7 @@ var protoOptions = (function () {
         live.onmessage = function (e) {
             var msg;
             try { msg = JSON.parse(e.data); } catch (err) { return; }
+            if (msg.type === 'action') { action(msg.id); return; } /* 인덱스 옵션 카드 버튼 */
             var onlyIndex = msg.type === 'change' && (msg.files || []).every(function (f) { return /\/index\.html$/.test(f) && f.split('/').length === 3; });
             if ((msg.type === 'replay' || msg.type === 'change') && !onlyIndex) location.reload();
         };
@@ -114,7 +129,7 @@ var protoOptions = (function () {
         };
     }
 
-    return { apply: apply };
+    return { apply: apply, action: action, report: report, get: get };
 })();
 
 /* 페이지 전환: iOS 내비게이션 push(새 페이지로) / pop(뒤로) — iPhone 화면 녹화 실측 (2026-11-14)

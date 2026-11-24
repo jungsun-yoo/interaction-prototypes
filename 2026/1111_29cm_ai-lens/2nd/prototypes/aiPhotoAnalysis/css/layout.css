@@ -1,15 +1,13 @@
 /* ════════════════════════════════════════════════════
    layout.css — 화면 배치
-   PC: 폰 화면(390×844) 오른쪽에 옵션창 (index 툴바는 폰 화면 오른쪽 12px, 옵션창은 그 아래)
-   휴대폰(QR로 열기): 폰 화면만 꽉 차게, 옵션창·상태바 이미지 숨김
+   PC: 폰 화면(390×844). 옵션 · 개발 전달 파일은 인덱스 오른쪽 카드 (index.html items[].options · files)
+   휴대폰(QR로 열기): 폰 화면만 꽉 차게, 상태바 이미지 숨김
    ════════════════════════════════════════════════════ */
 
 :root {
-  --phone-w: 642px;         /* 폰 390 + 간격 12 + 옵션창 240 (틀 카드 너비). index.html이 읽어 프레임 크기를 맞춤 */
-  --phone-screen-w: 390px;  /* index 툴바를 붙일 폰 화면 너비 (index.html이 읽음) */
+  --phone-w: 390px;         /* index.html이 읽어 프레임 크기를 맞춤 */
   --phone-h: 844px;
   --phone-radius: 0px;
-  --lens-gap: 12px;         /* 폰 ↔ 옵션창 (index 툴바와 같은 12px) */
 }
 
 body {-webkit-font-smoothing: antialiased;}
@@ -26,7 +24,6 @@ body {-webkit-font-smoothing: antialiased;}
 }
 .lens-pair {
   display: flex;
-  gap: var(--lens-gap);
 }
 .lens-device {margin: 0;}
 .lens-device[hidden] {display: none;}
@@ -41,7 +38,6 @@ body {-webkit-font-smoothing: antialiased;}
   body {background: #000;}
   .phone {width: 100%; max-width: none; height: auto; min-height: 100svh; background: #000; overflow: hidden;}
   .lens-pair {justify-content: center;}
-  .lens-pair .lens-controls {display: none;}   /* controls.css(PC)보다 우선 → 빈 상자가 폰 화면을 밀지 않게 */
   .lens-device .lens-screen,
   .lens-device .lens-result {border-radius: 0; box-shadow: none;}
 

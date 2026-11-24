@@ -11,9 +11,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="[검색] 검색창 렌즈아이콘"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
   <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
-  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261118-2">
-  <link rel="stylesheet" href="./src/common/common.css?v=20261118-2">
-  <link rel="stylesheet" href="./src/components/ProtoSpec/proto-spec.css?v=20261118-2"> <!-- 폰 오른쪽 개발 전달용 설명창 -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261124-1">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261124-1">
   <style>
     /* ════════════════════════════════════════════════════
        화면 스타일 — [검색] 검색창 렌즈아이콘 (화면 이미지 + 렌즈 아이콘 로티 + 툴팁)
@@ -21,25 +20,17 @@
        ════════════════════════════════════════════════════ */
 
     :root {
-      /* 폰 크기: 폰 화면 390×844 + 오른쪽 설명창 (index가 --phone-w·--phone-h를 읽어 프레임을 맞추고, 툴바는 --phone-screen-w 오른쪽에 붙임) */
-      --phone-screen-w: 390px;
-      --phone-w: 642px;   /* 폰 390 + 간격 12 + 설명창 240 (틀 카드 너비) (index가 숫자로 읽어서 calc 대신 값으로 적음) */
+      /* 폰 크기: 390×844 (index가 --phone-w·--phone-h를 읽어 프레임을 맞춤) · 모서리 48 (AI 사진 분석 화면과 같음). 개발 전달 파일 · 재생 방식은 인덱스 오른쪽 FILES · MOTION 카드 */
+      --phone-w: 390px;
       --phone-h: 844px;
-      --phone-radius: 0px;
+      --phone-radius: 48px;
     }
 
     body {
       -webkit-font-smoothing: antialiased;
     }
 
-    /* 폰 틀(.phone)은 폰 화면 + 설명창을 담는 투명 상자 (proto-spec.css). 폰 화면은 390×844 고정 */
-    .phone {
-      width: var(--phone-w);
-      min-width: 0;
-      max-width: var(--phone-w);
-      height: var(--phone-h);
-    }
-    .proto-screen {background: #fff;}
+    .phone {background: #fff;}
     .phone-bg {
       position: absolute;
       top: 0;
@@ -95,9 +86,7 @@
 <body>
 
   <!-- 상태바 요소 없음: 배경 search_start_page.png(780×1688 @2x)에 상태바까지 그려져 있음 -->
-  <main class="phone has-spec">
-   <div class="proto-layout">
-    <div class="proto-screen">
+  <main class="phone">
     <img class="phone-bg" src="src/img/search_start_page.png" alt="">
 
     <!-- 렌즈 아이콘 로티 (96×96 → 24×24, 중심 x324 y76: 검색창 돋보기 왼쪽)
@@ -112,29 +101,11 @@
       <svg width="38" height="6" viewBox="0 0 38 6" fill="none" aria-hidden="true"><path d="M24 6L19.7682 0.921865C19.3684 0.442111 18.6316 0.442112 18.2318 0.921866L14 6H24Z" fill="#000"/></svg>
       <div class="search-tip-body">사진 검색으로<br>비슷한 상품을 찾아보세요</div>
     </div>
-    </div>
-
-    <!-- 개발 전달용 설명창 (폰 오른쪽, index 툴바 아래) -->
-    <aside class="proto-spec" aria-label="개발 전달 사항">
-      <p class="proto-spec-title">[검색] 검색창 렌즈아이콘</p>
-      <div class="proto-spec-files">
-        <a class="proto-spec-file" href="src/img/lens_emphasis.json" download="lens_emphasis.json">lens_emphasis 다운로드</a>
-        <a class="proto-spec-file" href="src/img/lens_default.json" download="lens_default.json">lens_default 다운로드</a>
-      </div>
-
-      <h3>재생 방식</h3>
-      <ol>
-        <li><code>lens_emphasis</code> <strong>1회 재생</strong> (약 4초)</li>
-        <li>끝나면 <code>lens_default</code>로 바꿔 <strong>무한 반복</strong> (한 번에 약 5초)</li>
-      </ol>
-      <p class="proto-spec-note">기본 로티를 미리 불러와 두고, 강조 로티가 끝나는 순간 바꾸면 깜빡임이 없어요.</p>
-    </aside>
-   </div>
   </main>
 
   <!-- 라이브러리: 필요할 때만 CDN으로 붙임 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
-  <script src="./src/common/common.js?v=20261118-2"></script>
+  <script src="./src/common/common.js?v=20261124-1"></script>
   <script>
     /* 화면 동작 — [검색] 검색창 렌즈아이콘 툴팁 + 로티
        툴팁: 홈 검색아이콘과 같음. 화면 진입 0.4초 뒤 등장, 4초 노출 후 사라짐

@@ -2,24 +2,19 @@
    flow.js — 로딩 → 결과 흐름
    - 분석 시간(기본 6초)이 지나면 자동으로 결과 화면 (AUTO_COMPLETE)
    - [로딩 완료]: 바로 결과 화면 / [다시 로딩]·분석 시간 변경: 로딩부터 다시
-   - 로딩만 보기: 켜면 분석 시간·[로딩 완료]를 끄고 자동 완료 없이 로딩 화면만 계속 ([다시 로딩]만 사용)
+   - 로딩만 보기: 켜면 자동 완료 없이 로딩 화면만 계속
    - 결과로 넘어갈 때 로딩 사진의 지금 배율(등장 줌아웃·숨쉬기 중)에서 결과 크기로 이어서 줄어듦 → 튀지 않음
-   사람이 바꾼 동작은 'aiphoto:change' 이벤트로 알림 (sync.js가 받아 QR·휴대폰에 전달)
-   다른 파일에서 쓰는 것: AIPhoto.flow.complete · restart · getTime · setTime · DEFAULT_TIME · isLoadingOnly · setLoadingOnly
+   조작은 인덱스 오른쪽 옵션 카드 (index.html items[].options, 공유 틀 common.js protoOptions):
+     - 값: loading-only(on/off) · analysis-time(초) → <html data-…> 로 들어오고 window 'proto-options' 이벤트
+     - 버튼: complete · restart → window 'proto-action' 이벤트 (QR로 연결된 폰에도, 폰 동기화가 켜졌을 때)
+     - 상태: lens-state(로딩 중 · 로딩 완료) → protoOptions.report 로 인덱스 카드에 알림
+   다른 파일에서 쓰는 것: AIPhoto.flow.complete · restart
    ════════════════════════════════════════════════════ */
 (function () {
     var result = window.AIPhoto.result;
     var loadingScreen = document.getElementById('lensLoadingScreen');
     var resultScreen = document.getElementById('lensResultScreen');
     var resultEl = document.getElementById('lensResult');
-    var state = document.getElementById('lensState');
-    var completeBtn = document.getElementById('lensComplete');
-    var restartBtn = document.getElementById('lensRestart');
-    var durationRange = document.getElementById('lensDurationRange');
-    var durationInput = document.getElementById('lensDurationInput');
-    var durationField = document.getElementById('lensDurationField');
-    var loadingOnlyBox = document.getElementById('lensLoadingOnly');
-    var stepButtons = durationField ? durationField.querySelectorAll('.lens-control-step button') : [];   /* ▲ 올리기 · ▼ 내리기 */
 
     var AUTO_COMPLETE = true;   /* 켜 두면 분석 시간 뒤 자동으로 결과 화면 (false면 [로딩 완료]를 눌러야 넘어감) */
     var TIME_MIN = 1;
@@ -30,50 +25,24 @@
     var LOADING_ONLY_DEFAULT = false;  /* 로딩만 보기 기본값: 끔 (분석 시간 뒤 결과 화면으로) */
     var loadingOnly = LOADING_ONLY_DEFAULT;
 
-    function emit(action) {     /* 사람이 바꾼 동작 알림: complete · restart · time · loadingOnly */
-        document.dispatchEvent(new CustomEvent('aiphoto:change', { detail: { action: action } }));
-    }
-
     var isDone = false;
+    var protoOptions = window.protoOptions || null;   /* 공유 틀 common.js (인덱스 옵션 카드와 연결) */
     function setDone(done) {
         isDone = done;
-        if (state) state.textContent = done ? '로딩 완료' : '로딩 중';
-        /* 로딩만 보기: [로딩 완료]·분석 시간은 끄고 [다시 로딩]은 늘 켬 */
-        if (completeBtn) completeBtn.disabled = done || loadingOnly;
-        if (restartBtn) restartBtn.disabled = !done && !loadingOnly;
-        if (durationRange) durationRange.disabled = loadingOnly;
-        if (durationInput) durationInput.disabled = loadingOnly;
-        if (durationField) durationField.classList.toggle('is-disabled', loadingOnly);
-        showSec();   /* ▲▼ 켜기/끄기 */
+        if (protoOptions && protoOptions.report) protoOptions.report({ 'lens-state': done ? '로딩 완료' : '로딩 중' });   /* 인덱스 카드 '상태' */
     }
 
-    /* ---------- 분석 시간 (1~10초, 0.5초 단위, 입력창 직접 입력 가능) ---------- */
+    /* ---------- 분석 시간 (1~10초, 인덱스 슬라이더 0.5초 단위) ---------- */
     function clampSec(value) {
         var n = parseFloat(value);
         if (isNaN(n)) return analysisSec;                              /* 잘못 입력하면 이전 값 유지 */
         return Math.round(Math.min(TIME_MAX, Math.max(TIME_MIN, n)) * 10) / 10;
-    }
-    var TIME_STEP = 0.5;
-    function showSec() {
-        if (durationRange) {
-            durationRange.value = analysisSec;
-            durationRange.style.setProperty('--fill', (analysisSec - TIME_MIN) / (TIME_MAX - TIME_MIN) * 100 + '%');   /* 슬라이더 채운 부분 (파랑) */
-        }
-        if (durationInput) {
-            durationInput.value = String(analysisSec);                                  /* 6 · 6.5 (틀 숫자 칸처럼 끝 0 없이) */
-            durationInput.style.width = Math.max(String(analysisSec).length, 1) * 0.62 + 0.3 + 'em';   /* 숫자 길이만큼 → 단위 '초'와 붙어서 가운데 */
-        }
-        if (stepButtons.length) {
-            stepButtons[0].disabled = loadingOnly || analysisSec >= TIME_MAX;
-            stepButtons[1].disabled = loadingOnly || analysisSec <= TIME_MIN;
-        }
     }
     function armTimer() {
         clearTimeout(analysisTimer);
         if (!AUTO_COMPLETE || loadingOnly) return;   /* 로딩만 보기: 시간 재지 않고 로딩 화면 계속 */
         analysisTimer = setTimeout(function () {
             complete();
-            emit('complete');
         }, analysisSec * 1000);
     }
 
@@ -116,7 +85,6 @@
     /* 로딩만 보기 켜기/끄기: 켜면 결과 화면이었어도 로딩부터 다시, 끄면 지금부터 분석 시간을 다시 잼 */
     function setLoadingOnly(on) {
         on = !!on;
-        if (loadingOnlyBox) loadingOnlyBox.checked = on;
         if (on === loadingOnly) return false;
         loadingOnly = on;
         if (on && isDone) restart();
@@ -129,39 +97,34 @@
         var sec = clampSec(value);
         var changed = sec !== analysisSec;
         analysisSec = sec;
-        showSec();
         if (changed) restart();
         return changed;
     }
 
-    /* ---------- 옵션창 버튼·슬라이더 ---------- */
-    if (completeBtn) completeBtn.addEventListener('click', function () { complete(); emit('complete'); });
-    if (restartBtn) restartBtn.addEventListener('click', function () { restart(); emit('restart'); });
-    function onTimeInput(e) {       /* 같은 값이어도 사람이 움직이면 로딩부터 다시 */
-        analysisSec = clampSec(e.target.value);
-        showSec();
-        restart();
-        emit('time');
+    /* ---------- 인덱스 옵션 카드 → 이 화면 ---------- */
+    /* 값: <html data-loading-only> · data-analysis-time (주소 ?opt-…, 인덱스, 폰은 서버 실시간으로 들어옴) */
+    function readOptions() {
+        if (!protoOptions) return;
+        var only = protoOptions.get('loading-only');
+        var time = protoOptions.get('analysis-time');
+        if (only != null) setLoadingOnly(only === 'on');
+        if (time != null) setTime(time);        /* 바뀌었을 때만 로딩부터 다시 */
     }
-    if (durationRange) durationRange.addEventListener('input', onTimeInput);
-    Array.prototype.forEach.call(stepButtons, function (btn) {   /* ▲▼: 0.5초씩 */
-        btn.addEventListener('click', function () {
-            onTimeInput({ target: { value: analysisSec + Number(btn.dataset.step) * TIME_STEP } });
-        });
-    });
-    if (durationInput) durationInput.addEventListener('change', onTimeInput);   /* 입력 후 Enter·포커스 이동 때 */
-    if (loadingOnlyBox) loadingOnlyBox.addEventListener('change', function () {
-        setLoadingOnly(loadingOnlyBox.checked);
-        emit('loadingOnly');
+    window.addEventListener('proto-options', readOptions);
+    /* 버튼: 로딩 완료 · 다시 로딩 */
+    window.addEventListener('proto-action', function (e) {
+        var id = e.detail && e.detail.id;
+        if (id === 'complete') complete();
+        else if (id === 'restart') restart();
     });
 
-    /* 시작: 주소에 ?time= · ?loadingOnly=0|1 이 있으면 그대로 (QR로 연 휴대폰이 PC와 같은 값) */
-    var url = new URLSearchParams(location.search);
-    if (url.get('time') != null) analysisSec = clampSec(url.get('time'));
-    var urlLoadingOnly = url.get('loadingOnly');
-    loadingOnly = urlLoadingOnly == null ? LOADING_ONLY_DEFAULT : urlLoadingOnly === '1';
-    if (loadingOnlyBox) loadingOnlyBox.checked = loadingOnly;
-    showSec();
+    /* 시작: 이미 들어와 있는 옵션 값(주소 ?opt-…) 그대로 */
+    if (protoOptions) {
+        var only0 = protoOptions.get('loading-only');
+        var time0 = protoOptions.get('analysis-time');
+        if (only0 != null) loadingOnly = only0 === 'on';
+        if (time0 != null) analysisSec = clampSec(time0);
+    }
     setDone(false);
     armTimer();
 
@@ -178,12 +141,6 @@
 
     window.AIPhoto.flow = {
         complete: complete,
-        restart: restart,
-        getTime: function () { return analysisSec; },
-        setTime: setTime,
-        DEFAULT_TIME: DEFAULT_TIME,
-        isLoadingOnly: function () { return loadingOnly; },
-        LOADING_ONLY_DEFAULT: LOADING_ONLY_DEFAULT,
-        setLoadingOnly: setLoadingOnly
+        restart: restart
     };
 })();
