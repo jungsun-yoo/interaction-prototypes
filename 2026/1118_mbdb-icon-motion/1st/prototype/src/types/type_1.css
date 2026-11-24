@@ -177,3 +177,6 @@ html, body, .phone {background: var(--mds-color-gray100);}
   inset: 0;
 }
 .mbdb-lottie svg {display: block;}
+
+/* 페이지 로딩: 화면이 보일 때(proto-play)까지 CSS 모션 멈춤 → 로티와 같은 때 0초부터 시작 */
+html:not(.proto-play) .mbdb-icon-motion img {animation-play-state: paused;}

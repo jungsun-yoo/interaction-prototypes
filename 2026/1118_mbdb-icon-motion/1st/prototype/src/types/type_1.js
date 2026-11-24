@@ -1,7 +1,8 @@
 /* type_1.js — Type 1 전용 동작
    1. 로티 버전: [data-lottie] 칸마다 src/lottie/<이름>.json 을 반복 재생
    2. 무배당발 탭(TabOutlinedItem): 누르면 선택 ↔ 미선택 (aria-pressed)
-      명세 6장 — 상태가 바뀌면 모션을 처음(0초)부터 다시 재생 (로티 · CSS 둘 다) */
+      가이드 6장 — 상태가 바뀌면 모션을 처음(0초)부터 다시 재생 (로티 · CSS 둘 다)
+   3. 페이지 로딩(protoReady)이 끝나 화면이 보인 뒤 로티 재생 시작 (CSS 는 common.css proto-play 로 같은 때 시작) */
 (function () {
     var lottieAnims = [];   /* { el, anim } */
 
@@ -13,12 +14,16 @@
                     container: el,
                     renderer: 'svg',
                     loop: true,
-                    autoplay: true,
+                    autoplay: false, /* 화면이 보인 뒤(protoReady) 재생 */
                     path: './src/lottie/' + el.dataset.lottie + '.json'
                 })
             });
         });
     }
+
+    (window.protoReady || Promise.resolve()).then(function () {
+        lottieAnims.forEach(function (item) { item.anim.goToAndPlay(0, true); });
+    });
 
     function restartMotion(root) {
         /* 로티: 0프레임부터 다시 */
