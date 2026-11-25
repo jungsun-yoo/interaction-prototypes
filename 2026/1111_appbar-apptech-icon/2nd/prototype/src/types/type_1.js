@@ -1,24 +1,34 @@
 /* Type 1 전용 동작
    각 영역(앱바 · 헤더 · 빅배너 · 퀵메뉴 · 캠페인 섹션 · 광고판 · FAB · 바텀네비 등)은 src/common/영역.js */
 
-/* 체크인 아이콘 켜기 · 끄기 (옵션 컨트롤 '이벤트 아이콘' 체크박스 → window.setCheckin)
-   끄면 .phone에 is-no-checkin (type_1.css가 체크인 칸을 숨김) + 'checkinchange' 이벤트 (detail: 켜짐 여부)
-   주소 ?checkin=0 이면 꺼진 채로 열림 (새로고침 · QR 공유에도 유지) */
+/* 인덱스 OPTIONS 카드 → 프로토타입 (프로토타입 안에는 옵션창을 두지 않음 · 공용 틀 규칙)
+   '이벤트 아이콘'(checkin: on · off) · '스토어'(store) 값은 common.js protoOptions가 <html data-checkin · data-store>에 넣음
+   (인덱스 · 주소 ?opt-checkin=off&opt-store=kids · 폰 동기화 모두 같은 길)
+   - 이벤트 아이콘 끔: .phone에 is-no-checkin (type_1.css가 체크인 칸을 숨김) + 'checkinchange' 이벤트 (detail: 켜짐 여부)
+   - 스토어: common.js setStore → 'storechange' */
 (function () {
   var phone = document.querySelector('.phone');
+  var root = document.documentElement;
   if (!phone) return;
-  phone.classList.toggle('is-no-checkin', new URLSearchParams(location.search).get('checkin') === '0');
 
   window.isCheckinOn = function () { return !phone.classList.contains('is-no-checkin'); };
   window.setCheckin = function (on) {
     if (on === window.isCheckinOn()) return;
     phone.classList.toggle('is-no-checkin', !on);
-    var url = new URL(location.href);
-    if (on) url.searchParams.delete('checkin');
-    else url.searchParams.set('checkin', '0');
-    history.replaceState(null, '', url);
     window.dispatchEvent(new CustomEvent('checkinchange', { detail: on }));
   };
+
+  function syncFromOptions() {
+    var store = root.getAttribute('data-store');
+    if (store && store !== phone.dataset.store && window.setStore) window.setStore(store);
+    phone.classList.toggle('is-no-checkin', root.getAttribute('data-checkin') === 'off'); /* 처음 값 (이벤트 없이) */
+  }
+  syncFromOptions();
+  new MutationObserver(function () {
+    var store = root.getAttribute('data-store');
+    if (store && store !== phone.dataset.store && window.setStore) window.setStore(store);
+    window.setCheckin(root.getAttribute('data-checkin') !== 'off');
+  }).observe(root, { attributes: true, attributeFilter: ['data-store', 'data-checkin'] });
 })();
 
 /* 앱바 체크인 "이벤트" 배지 모션 (모양 · 시간 값은 type_1.css 변수)
@@ -87,7 +97,7 @@
 
   window.addEventListener('storechange', start);
   window.addEventListener('checkinchange', start); /* 다시 켜면 랜딩처럼 1초 후 첫 등장부터 */
-  start();
+  (window.protoReady || Promise.resolve()).then(start); /* 처음 랜딩은 페이지 로딩이 끝난 뒤부터 (common.js) */
 })();
 
 /* 모든 스토어: 아이콘 색별 앱테크 아이콘 로티(src/lottie/ic_appbar_apptech_white · black · kids.json)를 체크인 배지에 맞춰 재생
@@ -106,18 +116,19 @@
     kids: 'kids'
   };
   var DEFAULT_FILE = 'white';
-  var VERSION = '?v=20261118-01';
+  var VERSION = '?v=20261125-01';
   var phone = document.querySelector('.phone');
   var container = document.getElementById('rewardLottie');
   if (!container || !window.lottie) return;
 
   var animation = null;
   var loadedFile = null;
+  var landed = false; /* 페이지 로딩이 끝났는지 (그 전엔 첫 프레임에서 멈춰 둠) */
 
   /* 랜딩 시작점: 체크인 있으면 첫 프레임에서 대기(배지 기다림), 없으면 바로 루프 재생 */
   function land() {
     if (!animation || !animation.isLoaded) return;
-    if (window.isCheckinOn()) animation.goToAndStop(0, true);
+    if (!landed || window.isCheckinOn()) animation.goToAndStop(0, true);
     else animation.goToAndPlay(0, true);
   }
 
@@ -149,4 +160,6 @@
   window.addEventListener('checkinchange', land);
   window.addEventListener('checkinbadge', playFromStart);
   load();
+  /* 처음 랜딩은 페이지 로딩이 끝난 뒤 (common.js). 그 전엔 체크인이 없어도 첫 프레임에서 멈춰 있음 */
+  (window.protoReady || Promise.resolve()).then(function () { landed = true; land(); });
 })();

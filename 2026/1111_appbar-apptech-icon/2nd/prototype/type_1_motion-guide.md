@@ -1,12 +1,36 @@
-# [앱바] 앱테크 아이콘 모션 — 인터랙션 정의
+# Type_1 · 앱테크 아이콘 — 모션 가이드
 
-앱바 오른쪽 **앱테크 아이콘(로티)** 과 그 왼쪽 **이벤트 아이콘(체크인) 배지**의 인터랙션 기준입니다.
+> 개발 전달용 모션 가이드입니다. 값은 MDS 모션 토큰(`src/common/mds-motion.css`) 기준입니다.
+> 모션 라이브러리: **Motion** (motion.dev) — 웹 `motion`, React `motion/react`. 스프링 값은 두 환경 공통입니다.
+
+앱바 오른쪽 **앱테크 아이콘(로티)** 과 그 왼쪽 **이벤트 아이콘(체크인) 배지**의 모션 기준입니다.
 
 - 프로토타입: `Type_1.html`
 - Figma: https://www.figma.com/design/o0jTKUbX15ampUa9e8VUEP/MDS-2.0-%EB%B3%80%EA%B2%BD-%EB%A1%9C%EA%B7%B8-%EA%B3%B5%EC%9C%A0?node-id=9373-12156&t=Xd5vaxGnlqC6HeJw-4
 - Jira: https://jira.team.musinsa.com/browse/PD-10142
 - 기준 코드: `src/types/type_1.js`, `src/types/type_1.css`
-- 수정일: 2026-11-12
+- 수정일: 2026-11-25
+
+## 전달 범위
+
+| 항목 | 처리 |
+|---|---|
+| 앱테크 아이콘 모션 | **로티 제공** (`src/lottie/ic_appbar_apptech_white · black · kids.json`, 아래 1) |
+| 앱테크 로티 재생 타이밍 | **코드로 처리** (아래 2) |
+| 이벤트 배지 등장 · 사라짐 반복 | **코드로 처리** (Motion 스프링, 아래 3) |
+
+---
+
+## 이 화면의 핵심 모션 — 이것만 구현
+
+1. **앱테크 로티 재생** — 291프레임(약 9.7초) 반복. 이벤트 아이콘이 있으면 배지가 사라진 순간부터, 없으면 랜딩하자마자 (2)
+2. **이벤트 배지 등장** — 랜딩 1초 후 · scale `mds.spring.bouncy` + opacity 0.15s linear (3)
+3. **이벤트 배지 사라짐** — 노출 3초 후 · scale `mds.spring.bouncy` + opacity 0.15s linear, 6초 뒤 다시 등장 · 반복 (3)
+
+- 이징 · 스프링은 MDS 모션 토큰 이름입니다. 개발 쪽 같은 이름의 토큰을 쓰면 됩니다 (프로토타입 값은 `src/common/mds-motion.css`).
+- 세부 수치(스토어별 로티 · 배지 모양 · 색)는 본문에 있습니다. 위 목록은 범위와 시간 · 이징만 요약합니다.
+- 그 외 파일(공통 `common.*`의 폰 프레임 · 상태바 · 페이지 로딩 · 옵션 · 폰 동기화, 헤더 · 빅배너 · 퀵메뉴 · 캠페인 · 광고판 · 바텀네비 등 목업 화면)은 **프로토타입 확인용**입니다. 옮기지 않습니다.
+- **실서비스로 바꿀 값**: 이벤트 아이콘(체크인) 노출 여부 — 프로토타입은 옵션 스위치, 실서비스는 이벤트 진행 여부로 정함.
 
 ---
 
@@ -108,9 +132,9 @@ Motion.animate(badge, { scale: [1, 0], opacity: [1, 0] }, {
 | `--checkin-badge-fade` | 0.15s | opacity linear 시간 |
 | `--checkin-badge-spring-stiffness` / `-damping` | 322 / 26 | scale `mds.spring.bouncy` |
 
-## 6. 프로토타입 전용 (실제 앱 UI 아님)
+## 6. 프로토타입 확인용 (실제 앱 UI 아님)
 
-- **스토어 · 이벤트 아이콘 옵션:** 인덱스(`index.html`) 오른쪽 OPTIONS 카드에서 바꿉니다. 프로토타입 페이지만 열면 데스크탑은 폰 오른쪽 창, 모바일은 빅배너 위 가로 줄에서 바꿉니다.
+- **스토어 · 이벤트 아이콘 옵션:** 인덱스(`index.html`) 오른쪽 OPTIONS 카드에서 바꿉니다. 프로토타입 안에는 옵션창이 없습니다 (QR로 연 폰은 인덱스에서 고른 값을 따라감).
 - **이벤트 아이콘:** 끄면 체크인 아이콘이 없는 경우를 보여주고, 로티는 2장의 "없음" 규칙으로 재생합니다.
 - **QR 주소:** 고른 값이 `?opt-store=값&opt-checkin=on|off`로 붙습니다.
 
