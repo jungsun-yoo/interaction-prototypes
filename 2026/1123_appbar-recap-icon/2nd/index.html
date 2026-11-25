@@ -438,7 +438,7 @@
       title: '[앱바] 2026 리캡 아이콘',
       sub: '26-1123 · Prototype',
       label: 'TYPES',
-      version: '20261124-19',
+      version: '20261125-20',
       qrHost: '172.30.1.42', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: '',
       jira: '',
@@ -447,13 +447,15 @@
       downloadNote: '압축 파일 안의 <b>*_motion-guide.md</b>를 확인해 주세요.', // zip 버튼 아래 안내 (비우면 숨김). 조작이 있는 화면이면 *_interaction-guide.md
       locked: [], // 예: ['spec', 'download'] → 버튼만 보이고 흐리게 (최종 전)
       /* 전환 타입: 리캡 아이콘 로티를 고름. 스위치(디졸브 · 상하전환)는 둘 중 하나만 켜지고, 켠 쪽의 문구만 고를 수 있음 (attach: true = 라벨·구분선 없이 스위치 아래에 붙임 · label 은 읽어주기용)
-         값은 <html data-mode-dissolve · data-dissolve-type · data-mode-slide · data-slide-type> 로 넘어가고 type_1.js 가 로티 파일을 바꿈 */
+         값은 <html data-mode-dissolve · data-dissolve-type · data-mode-slide · data-slide-type> 로 넘어가고 type_1.js 가 로티 파일을 바꿈
+         확정안(2026-11-25): 상하전환 · 쇼핑로그 · 130% → 기본값. 처음 열면 이 조합으로 보임
+         */
       options: [
         { section: '전환 타입', card: true },
-        { id: 'mode-dissolve', label: '디졸브', on: 'on', off: 'off', default: 'on', group: 'mode' },
+        { id: 'mode-dissolve', label: '디졸브', on: 'on', off: 'off', default: 'off', group: 'mode' },
         { id: 'dissolve-type', label: '디졸브 문구', attach: true, default: 'log', when: { id: 'mode-dissolve', value: 'on' },
           choices: [{ value: 'log', label: '쇼핑로그' }, { value: 'recap', label: 'Recap' }] },
-        { id: 'mode-slide', label: '상하전환', on: 'on', off: 'off', default: 'off', group: 'mode' },
+        { id: 'mode-slide', label: '상하전환', on: 'on', off: 'off', default: 'on', group: 'mode' },
         { id: 'slide-type', label: '상하전환 문구', attach: true, default: 'log', when: { id: 'mode-slide', value: 'on' },
           choices: [{ value: 'log', label: '쇼핑로그' }, { value: 'recap', label: 'Recap' }, { value: 'mix', label: 'Mix' }] },
         /* 상하전환 로티 재생 속도 (100% = 원래 속도 ≒ 9.7초 한 바퀴 · 기본 130% ≒ 7.4초). 디졸브 · 앱테크 코인에는 적용 안 함 */
