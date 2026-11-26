@@ -73,7 +73,7 @@
      랜딩 1초 후 등장(scale 0→1 mds.spring.bouncy + opacity 0→1 0.15s linear) → 3초 노출
      → 사라짐(같은 이징 반대로) → 6초 후 다시 등장, 반복 (값은 type_1.css --checkin-badge-*)
      필요: Motion (CDN) */
-var VERSION = '?v=20261126-2';
+var VERSION = '?v=20261126-5';
 /* 스토어 → 아이콘 색 (흰 아이콘 white · 검정 아이콘 black · 키즈 주황 kids). 앱테크 코인이 씀 */
 var STORE_COLOR = {
   musinsa: 'white', beauty: 'white', outlet: 'white', boutique: 'white', kicks: 'white',
