@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko" data-phone="375" data-preload="src/lottie/ic_appbar_recap_white.json?v=20261125-45, src/lottie/ic_appbar_recap_black_mat_thin.json?v=20261125-45, src/lottie/ic_appbar_apptech_white.json?v=20261125-45, src/lottie/ic_appbar_apptech_black.json?v=20261125-45"> <!-- data-preload: 페이지 로딩이 함께 기다릴 파일 (type_1.js 와 같은 주소) · 폰 크기 375 -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1B1F"> <!-- 사파리 상단·전체 화면 상태바 색: 처음엔 무신사 헤더 색, 지면이 바뀌면 type_1.js 가 그 지면 색으로 바꿈 -->
+  <title>리캡 아이콘 로티</title>
+  <!-- 홈 화면 아이콘으로 열면 사파리 없이 전체 화면 (링크로 열면 기존처럼 사파리)
+       상태바 default: 흰 바탕·검정 글자, 콘텐츠는 상태바 아래부터 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="리캡 아이콘 로티"> <!-- 홈 화면에 추가 기본 이름: common.js가 인덱스 CONFIG.title로 바꿈 -->
+  <!-- 파비콘: 무신사 (CDN) -->
+  <link rel="icon" type="image/svg+xml" href="https://image.msscdn.net/static/assets/bi/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://image.msscdn.net/static/assets/bi/favicon/favicon-180x180.png">
+  <link rel="stylesheet" href="https://static.msscdn.net/skin/musinsa/css/dsFont-1.5.css"> <!-- 폰트: Pretendard (무신사 CDN) -->
+  <link rel="stylesheet" href="./src/common/mds-motion.css?v=20261125-45">
+  <link rel="stylesheet" href="./src/common/common.css?v=20261125-45"> <!-- 폰 프레임 · 스크롤 영역 · 상태바 -->
+  <!-- 영역별 스타일: src/common/영역/ 폴더 단위로 떼어 다른 프로젝트에 재사용 (각 파일 맨 위에 HTML 구조 적어 둠) -->
+  <link rel="stylesheet" href="./src/common/storeheader/storeheader.css?v=20261125-45">
+  <link rel="stylesheet" href="./src/common/bottomnavi/bottomnavi.css?v=20261125-45">
+  <link rel="stylesheet" href="./src/types/type_1.css?v=20261125-45">
+</head>
+<body>
+
+  <!-- data-store: 보여줄 전문관 (musinsa · beauty · sports · outlet · kids · boutique · kicks · used) -->
+  <div class="phone" data-store="musinsa">
+
+    <!-- status-bar: PC 폰 프레임 전용 (모바일은 숨기고 영역도 없앰). 잉크색은 전문관 색(--store-status)
+         Figma: 1_디자인 싱크 > StatusBar / iPhone 14 (node 30120-64398). 시간·아이콘을 양 끝에 붙여 폰 너비가 바뀌어도 정렬 유지 -->
+    <div class="status-bar" aria-hidden="true">
+      <span class="status-bar-time">9:41</span>
+      <svg class="status-bar-icons" width="51.4012" height="13" viewBox="26 0 51.4012 13" fill="none">
+        <!-- wifi -->
+        <path d="M32.1152 10.085C33.535 8.85937 35.6144 8.8595 37.0342 10.085C37.1056 10.1509 37.1474 10.2445 37.1494 10.3428C37.1514 10.441 37.1136 10.5357 37.0449 10.6045L34.8213 12.8945C34.7562 12.9617 34.6678 12.9999 34.5752 13C34.4825 13 34.3933 12.9618 34.3281 12.8945L32.1045 10.6045C32.0359 10.5356 31.998 10.441 32 10.3428C32.002 10.2445 32.0437 10.1508 32.1152 10.085ZM29.1094 7.26172C32.1685 4.35713 36.9058 4.35713 39.9648 7.26172C40.0339 7.32982 40.0732 7.42351 40.0742 7.52148C40.0751 7.61935 40.0373 7.71377 39.9697 7.7832L38.6846 9.1084C38.5521 9.24367 38.338 9.24698 38.2021 9.11523C37.1977 8.1868 35.8912 7.67185 34.5361 7.67188C33.1818 7.67245 31.876 8.18733 30.8721 9.11523C30.7362 9.24697 30.5221 9.24374 30.3896 9.1084L29.1045 7.7832C29.0367 7.71385 28.9992 7.61941 29 7.52148C29.0009 7.42352 29.0404 7.32981 29.1094 7.26172ZM26.1074 4.44238C30.7993 -0.147226 38.2007 -0.147163 42.8926 4.44238C42.9605 4.51057 42.9994 4.60393 43 4.70117C43.0005 4.79826 42.9625 4.89204 42.8955 4.96094L41.6094 6.28613C41.4768 6.42211 41.2616 6.42382 41.127 6.29004C39.3393 4.55527 36.9666 3.588 34.5 3.58789C32.0334 3.58801 29.6608 4.55527 27.873 6.29004C27.7385 6.42393 27.523 6.42228 27.3906 6.28613L26.1035 4.96094C26.0365 4.89201 25.9995 4.79823 26 4.70117C26.0006 4.60393 26.0395 4.51052 26.1074 4.44238Z" fill="currentColor"/>
+        <!-- battery -->
+        <mask id="statusBarBatteryMask" fill="white">
+          <path d="M50 4C50 1.79086 51.7909 0 54 0H71C73.2091 0 75 1.79086 75 4V9C75 11.2091 73.2091 13 71 13H54C51.7909 13 50 11.2091 50 9V4Z" fill-rule="evenodd" clip-rule="evenodd"/>
+        </mask>
+        <path opacity="0.35" d="M54 13H71C73.2091 13 75 11.2091 75 9V4C75 1.79086 73.2091 0 71 0H54C51.7909 0 50 1.79086 50 4V9C50 11.2091 51.7909 13 54 13Z" stroke-width="2.11017" stroke="currentColor" mask="url(#statusBarBatteryMask)"/>
+        <path opacity="0.4" d="M76 5V9.22034C76.8491 8.86291 77.4012 8.0314 77.4012 7.11017C77.4012 6.18894 76.8491 5.35744 76 5" fill="currentColor"/>
+        <path d="M52 4C52 2.89543 52.8954 2 54 2H71C72.1046 2 73 2.89543 73 4V9C73 10.1046 72.1046 11 71 11H54C52.8954 11 52 10.1046 52 9V4Z" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- header: 앱바 + 검색창 + 탭 한 덩어리. 상태바 바로 아래, 스크롤 시 탭만 상태바 밑에 남음 (--header-offset) -->
+    <header class="header">
+      <div class="appbar">
+        <!-- 로고: 앞부분 + 뒷부분 (무신사스토어는 앞부분만) + 게이트웨이 버튼 로티 (갭 없이 붙임) -->
+        <div class="appbar-brand">
+        <div class="appbar-logo" data-logo="musinsa">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_musinsa.svg" alt="MUSINSA" width="81" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="beauty">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_beauty.svg" alt="MUSINSA" width="108" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_beauty.svg" alt="BEAUTY" width="96" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="sports">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_sports.svg" alt="MUSINSA" width="82" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_sports.svg" alt="SPORTS" width="69.7" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="outlet">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_outlet.svg" alt="MUSINSA" width="82" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_outlet.svg" alt="OUTLET" width="68" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="kids">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_kids.svg" alt="musinsa" width="98" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_kids.svg" alt="kids" width="51.4" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="boutique">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_boutique.svg" alt="MUSINSA" width="85" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_boutique.svg" alt="BOUTIQUE" width="97.16" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="kicks">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_kicks.svg" alt="MUSINSA" width="82" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_kicks.svg" alt="KICKS" width="51.2" height="20">
+        </div>
+        <div class="appbar-logo" data-logo="used">
+          <img class="appbar-logo-front" src="src/img/appbar/logo_front_used.svg" alt="MUSINSA" width="82" height="20">
+          <img class="appbar-logo-back" src="src/img/appbar/logo_back_used.svg" alt="USED beta" width="71" height="20">
+        </div>
+        <div class="appbar-gateway" id="appbarGateway" aria-hidden="true"></div>
+        </div>
+
+        <div class="appbar-icons">
+          <!-- 리캡 아이콘 (체크인 자리, 모든 스토어) · 로티로 제공
+               로티 파일: src/lottie/ic_appbar_recap_white · black_mat_thin · kids.json (원본의 용량 최적화본) · 어떤 지면이 어떤 파일인지는 type_1.js RECAP_FILE
+               설정은 type_1.js 의 RECAP_LOTTIE
+               아래 정지 이미지(ic_event_2026.png)는 평소엔 숨김 · 로티 파일을 못 불러올 때만 보임 -->
+          <button class="appbar-icon appbar-icon--recap" id="recapIcon" type="button" aria-label="2026 리캡">
+            <img class="appbar-recap-still" src="src/img/appbar/ic_event_2026.png?v=20261125-45" alt="" width="28" height="28">
+            <span class="appbar-recap-lottie" id="recapLottie" aria-hidden="true"></span>
+          </button>
+          <!-- 체크인 아이콘 (인덱스 옵션 '아이콘' = 체크인일 때 리캡 아이콘 자리에 대신 보임 · type_1.css .is-checkin)
+               핀 아이콘 + "이벤트" 배지 (26-1106 체크인진입모션 · 26-1105 앱테크진입점모션 2nd 와 같은 모양 · 모션). 핀은 svg를 마스크로 써서 아이콘 색을 따름 -->
+          <div class="appbar-icon appbar-icon--checkin">
+            <span class="appbar-checkin-pin" role="img" aria-label="체크인"></span>
+            <span class="appbar-checkin-badge">이벤트</span>
+          </div>
+          <div class="appbar-icon appbar-icon--reward">
+            <span class="appbar-reward-dot" aria-hidden="true"></span> <!-- 앱테크 아이콘 오른쪽 위 점 (모든 스토어, 1st Type 3과 같은 4px) · 색은 type_1.css -->
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M19.3333 10.15L16.4707 18.8722C16.4678 18.881 16.4554 18.881 16.4525 18.8722L14.0091 11.3114C14.0062 11.3026 13.9938 11.3026 13.9909 11.3114L11.5475 18.8722C11.5446 18.881 11.5322 18.881 11.5293 18.8722L8.66667 10.15M10 14.3028H7M21 14.3028H18" stroke="currentColor" stroke-width="1.4"/>
+              <circle cx="14" cy="14" r="9.8" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+            <!-- 앱테크 아이콘 모션: 모든 스토어, 아이콘 색별 투명 로티 (src/lottie/ic_appbar_apptech_white · black · kids.json)
+                 배경 투명. 어떤 스토어가 어떤 파일인지 · 재생 딜레이(옆 아이콘이 뱃지 모션 4.5초 · 로티 2.8초 · 없음 0초 · 정지 이미지 0초)는 type_1.js 의 COIN_DELAY -->
+            <span class="appbar-reward-lottie" id="rewardLottie" aria-hidden="true"></span>
+          </div>
+          <div class="appbar-icon appbar-icon--alarm">
+            <svg width="28" height="28" viewBox="36 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M54.2 19.6C54.2 21.9196 52.3196 23.8 50 23.8C47.6804 23.8 45.8 21.9196 45.8 19.6M43 11.2C43 7.33402 46.134 4.20001 50 4.20001C53.866 4.20001 57 7.33402 57 11.2V16.52C57 17.4363 58.2289 18.3482 59.2303 18.9391C59.5101 19.1042 59.3927 19.6 59.0678 19.6H40.9322C40.6073 19.6 40.4899 19.1042 40.7697 18.9391C41.7711 18.3482 43 17.4363 43 16.52V11.2Z" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+            <span class="appbar-badge"></span>
+          </div>
+          <div class="appbar-icon appbar-icon--cart">
+            <svg width="28" height="28" viewBox="72 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M82.5 10.5V7.70001C82.5 5.76702 84.067 4.20001 86 4.20001C87.933 4.20001 89.5 5.76702 89.5 7.70001V10.5M94.4 10.8V22.8C94.4 22.9657 94.2657 23.1 94.1 23.1H77.9C77.7343 23.1 77.6 22.9657 77.6 22.8V10.8C77.6 10.6343 77.7343 10.5 77.9 10.5H94.1C94.2657 10.5 94.4 10.6343 94.4 10.8Z" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 검색창: 문구는 전문관별로 type_1.js에서 채움. 양끝 도형은 스포츠, 렌즈 로티는 무신사 전용 -->
+      <div class="search-bar">
+        <img class="search-shape" src="src/img/search/sports_left.svg" alt="" width="8" height="36">
+        <div class="search-field">
+          <span class="search-text" id="searchText"></span>
+          <div class="search-lens" id="searchLens" aria-hidden="true"></div>
+          <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M14.4 14.4L19.8 19.8M16.2 10.2C16.2 13.5137 13.5137 16.2 10.2 16.2C6.8863 16.2 4.20001 13.5137 4.20001 10.2C4.20001 6.8863 6.8863 4.20001 10.2 4.20001C13.5137 4.20001 16.2 6.8863 16.2 10.2Z" stroke="currentColor"/>
+          </svg>
+        </div>
+        <img class="search-shape" src="src/img/search/sports_right.svg" alt="" width="8" height="36">
+      </div>
+
+      <!-- 탭: 전문관별 TabUnderline. 광고탭 로티는 전문관별로 storeheader.js에서 교체. 이 프로토타입은 광고판 없음 → 광고탭은 눌리지 않음 -->
+      <nav class="tab-underline" aria-label="전문관 메뉴">
+        <button class="tab-item" type="button">콘텐츠</button>
+        <button class="tab-item is-clickable is-selected" id="tabRecommend" type="button" aria-current="page">추천</button>
+        <button class="tab-item tab-item--ad" type="button" aria-label="광고 CHANEL">
+          <span class="tab-ad-lottie" id="tabAdLottie" aria-hidden="true"></span>
+          <span class="tab-ad-label" aria-hidden="true">AD</span>
+        </button>
+        <button class="tab-item" type="button">랭킹</button>
+        <button class="tab-item" type="button">세일</button>
+        <button class="tab-item" type="button">발매</button>
+      </nav>
+    </header>
+
+    <!-- 마이페이지 앱바 (Figma 26 4Q 연말결산 2026 Recap · AppBar 3170:52318): 인덱스 옵션 '지면'에서 마이를 고르면 스토어 헤더 대신 보임 (type_1.css .is-my)
+         gray100 바탕 · 제목 "마이"(16 Medium) · 오른쪽 아이콘(리캡 · 앱테크 · 알림 · 설정 · 장바구니, 28, 간격 8) · 앱테크 · 알림에 파란 점
+         앱테크 아이콘 로티는 검정(ic_appbar_apptech_black.json) · 재생은 type_1.js -->
+    <header class="my-header" aria-hidden="true">
+      <div class="my-appbar">
+        <p class="my-appbar-title">마이</p>
+        <div class="my-appbar-icons">
+          <!-- 리캡 아이콘: black mat 로티(ic_appbar_recap_black_mat_thin.json) · 앱테크 아이콘 왼쪽 (피그마 마이 앱바에는 없던 자리, 추가) -->
+          <button class="appbar-icon appbar-icon--recap" id="myRecapIcon" type="button" aria-label="2026 리캡">
+            <img class="appbar-recap-still" src="src/img/appbar/ic_event_2026.png?v=20261125-45" alt="" width="28" height="28">
+            <span class="appbar-recap-lottie" id="myRecapLottie" aria-hidden="true"></span>
+          </button>
+          <!-- 체크인 아이콘 (인덱스 옵션 '아이콘' = 체크인일 때 리캡 아이콘 자리에 대신 보임 · type_1.css .is-checkin)
+               핀 아이콘 + "이벤트" 배지 (26-1106 체크인진입모션 · 26-1105 앱테크진입점모션 2nd 와 같은 모양 · 모션). 핀은 svg를 마스크로 써서 아이콘 색을 따름 -->
+          <div class="appbar-icon appbar-icon--checkin">
+            <span class="appbar-checkin-pin" role="img" aria-label="체크인"></span>
+            <span class="appbar-checkin-badge">이벤트</span>
+          </div>
+          <div class="appbar-icon my-appbar-reward">
+            <span class="my-appbar-dot" aria-hidden="true"></span>
+            <span class="my-appbar-lottie" id="myRewardLottie" aria-hidden="true"></span>
+          </div>
+          <div class="appbar-icon">
+            <svg width="28" height="28" viewBox="36 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M54.2 19.6C54.2 21.9196 52.3196 23.8 50 23.8C47.6804 23.8 45.8 21.9196 45.8 19.6M43 11.2C43 7.33402 46.134 4.20001 50 4.20001C53.866 4.20001 57 7.33402 57 11.2V16.52C57 17.4363 58.2289 18.3482 59.2303 18.9391C59.5101 19.1042 59.3927 19.6 59.0678 19.6H40.9322C40.6073 19.6 40.4899 19.1042 40.7697 18.9391C41.7711 18.3482 43 17.4363 43 16.52V11.2Z" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+            <span class="my-appbar-dot" aria-hidden="true"></span>
+          </div>
+          <div class="appbar-icon">
+            <!-- 설정: Figma 아이콘은 20 기준 그림 → 28 칸으로 1.4배 키움. 선 굵기는 20 기준 1 로 적어 화면에서 1.4px (알림 · 장바구니와 같게) -->
+            <svg width="28" height="28" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="설정">
+              <path d="M15.1349 10C15.1349 9.70216 15.1107 9.41012 15.0641 9.12582C15.059 9.09513 15.0682 9.06378 15.0893 9.04092L16.4506 7.56393C16.4801 7.53202 16.4855 7.48478 16.4642 7.44699L15.396 5.55544C15.3741 5.51652 15.3289 5.49691 15.2855 5.50741L13.3588 5.9731C13.3274 5.98067 13.2944 5.97263 13.2698 5.95182C12.8325 5.58219 12.3344 5.2852 11.793 5.07892C11.7634 5.06766 11.7407 5.04338 11.7318 5.01304L11.1622 3.07184C11.1497 3.02926 11.1106 3 11.0662 3H8.93378C8.8894 3 8.85032 3.02926 8.83783 3.07184L8.26823 5.01304C8.25933 5.04338 8.23658 5.06766 8.20703 5.07892C7.66564 5.2852 7.16747 5.58219 6.73019 5.95182C6.70557 5.97263 6.67255 5.98067 6.64122 5.9731L4.71452 5.50741C4.67107 5.49691 4.62593 5.51652 4.60395 5.55544L3.5358 7.44699C3.51446 7.48478 3.51994 7.53202 3.54935 7.56393L4.91072 9.04092C4.93179 9.06378 4.94097 9.09513 4.93594 9.12582C4.88934 9.41012 4.86508 9.70216 4.86508 10C4.86508 10.2978 4.88934 10.5899 4.93594 10.8742C4.94097 10.9049 4.93179 10.9362 4.91072 10.9591L3.54935 12.4361C3.51994 12.468 3.51446 12.5152 3.5358 12.553L4.60395 14.4446C4.62593 14.4835 4.67107 14.5031 4.71452 14.4926L6.64122 14.0269C6.67255 14.0193 6.70557 14.0274 6.73019 14.0482C7.16747 14.4178 7.66564 14.7148 8.20703 14.9211C8.23658 14.9323 8.25933 14.9566 8.26823 14.987L8.83782 16.9282C8.85032 16.9707 8.8894 17 8.93378 17H11.0662C11.1106 17 11.1497 16.9707 11.1622 16.9282L11.7318 14.987C11.7407 14.9566 11.7634 14.9323 11.793 14.9211C12.3344 14.7148 12.8325 14.4178 13.2698 14.0482C13.2944 14.0274 13.3274 14.0193 13.3588 14.0269L15.2855 14.4926C15.3289 14.5031 15.3741 14.4835 15.396 14.4446L16.4642 12.553C16.4855 12.5152 16.4801 12.468 16.4506 12.4361L15.0893 10.9591C15.0682 10.9362 15.059 10.9049 15.0641 10.8742C15.1107 10.5899 15.1349 10.2978 15.1349 10Z" stroke="currentColor" stroke-width="1"/>
+              <circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1"/>
+            </svg>
+          </div>
+          <div class="appbar-icon">
+            <svg width="28" height="28" viewBox="72 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M82.5 10.5V7.70001C82.5 5.76702 84.067 4.20001 86 4.20001C87.933 4.20001 89.5 5.76702 89.5 7.70001V10.5M94.4 10.8V22.8C94.4 22.9657 94.2657 23.1 94.1 23.1H77.9C77.7343 23.1 77.6 22.9657 77.6 22.8V10.8C77.6 10.6343 77.7343 10.5 77.9 10.5H94.1C94.2657 10.5 94.4 10.6343 94.4 10.8Z" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- content: 헤더 아래 영역. 페이지는 이미지 한 장으로 고정 (모든 스토어 같음), 스크롤 없음 (type_1.css) -->
+    <div class="scroll-area">
+      <div class="page-fixed">
+        <img class="page-content page-content--store" src="src/img/page_content.webp?v=20261125-45" alt="" width="375" height="1101">
+        <img class="page-content page-content--my" src="src/img/page_my.webp?v=20261125-45" alt="" width="375" height="958"> <!-- 마이페이지 콘텐츠 (783×2000) -->
+      </div>
+    </div>
+
+    <!-- 바텀네비 + FAB: 모든 전문관 공통 -->
+    <div class="bottom-navigation">
+
+      <div class="fab">
+        <div class="fab-item-base fab-share">
+          <img src="src/img/fab/ic_share.svg" alt="공유" width="28" height="28">
+        </div>
+
+        <div class="fab-gender">
+          <img src="src/img/fab/FABGenderItem.png" alt="성별 선택" width="144" height="44">
+        </div>
+
+        <div class="fab-right">
+          <div class="fab-item-base fab-top">
+            <img src="src/img/fab/ic_top.svg" alt="맨 위로" width="28" height="28">
+          </div>
+          <div class="fab-item-base fab-recent">
+            <img class="is-current" src="src/img/fab/FAB_Recent_1.png" alt="최근 본 상품" width="44" height="44">
+            <img src="src/img/fab/FAB_Recent_2.png" alt="최근 본 상품" width="44" height="44">
+          </div>
+        </div>
+      </div>
+
+      <div class="tabbar">
+        <div class="tabbar-scrim"></div>
+        <div class="navigation">
+          <div class="navigation-glass"></div>
+          <div class="nav-selection"></div>
+          <div class="nav-items">
+            <div class="nav-item" data-nav="cate"><img src="src/img/nav/nav_cate.png" alt="카테고리" width="64" height="54"></div>
+            <div class="nav-item" data-nav="snap"><img src="src/img/nav/nav_snap.png" alt="스냅" width="64" height="54"></div>
+            <!-- 홈 · 마이: 기본 / 활성 이미지 두 장 (.nav-img--default · --active). 선택 전환은 bottomNavi.select('home' | 'my') — bottomnavi.js
+                 스토어 지면은 홈, 마이페이지는 마이 (호출은 type_1.js) -->
+            <div class="nav-item is-active" data-nav="home">
+              <img class="nav-img--default" src="src/img/nav/nav_home.png?v=20261125-45" alt="" width="64" height="54">
+              <img class="nav-img--active" src="src/img/nav/nav_home_active.png?v=20261125-45" alt="홈" width="64" height="54">
+            </div>
+            <div class="nav-item" data-nav="like"><img src="src/img/nav/nav_like.png" alt="좋아요" width="64" height="54"></div>
+            <div class="nav-item" data-nav="my">
+              <img class="nav-img--default" src="src/img/nav/nav_my.png?v=20261125-45" alt="마이" width="64" height="54">
+              <img class="nav-img--active" src="src/img/nav/nav_my_active.png?v=20261125-45" alt="" width="64" height="54">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 라이브러리: 필요한 것만 CDN으로 붙임 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie_svg.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/motion@14.1.0/dist/motion.js"></script> <!-- 체크인 배지 모션 · 바텀네비 선택 이동 (스프링) -->
+  <script src="./src/common/common.js?v=20261125-45"></script> <!-- 제목 · 로티 · 전문관 전환 · 페이지 로딩 -->
+  <!-- 영역별 동작: 영역끼리는 'storechange' 이벤트로만 이어짐 -->
+  <script src="./src/common/storeheader/storeheader.js?v=20261125-45"></script>
+  <script src="./src/common/bottomnavi/bottomnavi.js?v=20261125-45"></script>
+  <script src="./src/types/type_1.js?v=20261125-45"></script>
+
+</body>
+</html>

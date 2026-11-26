@@ -1,0 +1,159 @@
+/* Type 1 전용 스타일 — 리캡 아이콘 로티 (스토어별 헤더)
+   헤더 · 바텀네비 · FAB 모양은 src/common/storeheader · bottomnavi (26-1105 앱테크진입점모션 2nd 에서 가져옴) */
+
+/* ════════════════════════════════════════════════════
+   페이지: 이미지 한 장으로 고정 (681×2000 → 폰 너비에 맞춤), 스크롤 없음
+   ════════════════════════════════════════════════════ */
+/* 스크롤 없음: 스크롤 영역 안에 넘치는 내용이 없게, 이미지를 화면 높이만큼만 보이는 칸(.page-fixed)에 넣어 자름
+   (overflow: hidden 만으로는 휠 넘기기 · 코드로 하는 스크롤이 그대로 먹음 → 넘치는 높이 자체를 없앰) */
+.scroll-area {box-sizing: border-box; overflow: hidden; padding-bottom: 0; background: #f5f5f5; overscroll-behavior: none;}
+.page-fixed {height: 100%; overflow: hidden;}
+.page-content {display: block; width: 100%; height: auto; aspect-ratio: 681 / 2000;}
+.page-content--my {display: none; aspect-ratio: 783 / 2000;}
+/* 실제 폰: 문서가 스크롤되지 않게 화면 높이로 자름 */
+@media (hover: none), (pointer: coarse) {
+  html, body {height: 100%; overflow: hidden; overscroll-behavior: none;}
+  .phone {height: 100vh; height: 100svh; overflow: hidden;}
+  .scroll-area {height: 100%; overflow: hidden;}
+}
+
+/* ════════════════════════════════════════════════════
+   사파리 상단(주소창 · 상태바) 색: 헤더 바탕이 그라디언트(뷰티) · 체크무늬(킥스)면 사파리가 색을 못 읽어 바뀌지 않음
+   → 무늬 아래에 스토어 단색을 바탕색으로 깔아 둠 (화면에 보이는 무늬는 그대로). 브라우저에 알려 주는 색 값은 type_1.js THEME_COLOR
+   ════════════════════════════════════════════════════ */
+.phone[data-store="beauty"] .header,
+.phone[data-store="beauty"] .status-bar {background-color: var(--mds-color-store-beauty);} /* #F2665E */
+.phone[data-store="kicks"] .header,
+.phone[data-store="kicks"] .status-bar {background-color: var(--mds-color-store-kicks);}   /* #009FF9 */
+
+/* ════════════════════════════════════════════════════
+   마이페이지 (인덱스 옵션 '지면' 의 마이 → .phone.is-my · type_1.js)
+   스토어 헤더(앱바 + 검색창 + 탭) 대신 마이 앱바(52)만. 상태바 · 앱바 바탕 gray100, 글자 · 아이콘 검정
+   앱바: Figma AppBar 3170:52318 — 좌우 16, 제목 16/22 Medium, 아이콘 28 · 간격 8, 점 4px blue(#245EFF) 오른쪽 위
+   ════════════════════════════════════════════════════ */
+.my-header {display: none; position: absolute; top: var(--status-bar-h); left: 0; z-index: 20; width: 100%; background: var(--mds-color-gray100, #f5f5f5);}
+.my-appbar {display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 16px;}
+.my-appbar-title {flex: 1 0 0; min-width: 1px; margin: 0; overflow: hidden; color: #000; font-family: var(--mds-font-family); font-size: 16px; font-weight: 500; line-height: 22px; text-overflow: ellipsis; white-space: nowrap;}
+.my-appbar-icons {display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0; color: #000;}
+.my-appbar-dot {position: absolute; top: 0; right: 0; z-index: 1; width: 4px; height: 4px; border-radius: 100px; background: #245EFF; pointer-events: none;}
+.my-appbar-lottie {display: block; width: 28px; height: 28px; pointer-events: none;}
+.my-appbar-lottie svg {display: block;}
+
+.phone.is-my .header {display: none;}
+.phone.is-my .my-header {display: block;}
+.phone.is-my .status-bar {background: var(--mds-color-gray100, #f5f5f5); color: #000;}
+.phone.is-my .scroll-area {padding-top: calc(var(--status-bar-h) + 52px);}
+.phone.is-my .page-content--store {display: none;}
+.phone.is-my .page-content--my {display: block;}
+@media (hover: none), (pointer: coarse) {
+  .my-header {position: fixed; top: 0; right: 0; min-width: var(--mobile-min-w); max-width: var(--mobile-max-w); margin: 0 auto; padding-top: env(safe-area-inset-top, 0px);}
+  .phone.is-my .scroll-area {padding-top: calc(52px + env(safe-area-inset-top, 0px));}
+}
+
+/* ════════════════════════════════════════════════════
+   리캡 아이콘 (체크인 자리, 모든 스토어): 로티로 그림 (28 칸) · 색은 스토어별 로티 파일(white · black · kids)로
+   정지 이미지는 처음부터 숨겨 두고(로티가 뜨기 전에 비치지 않게), 로티 파일을 못 불러올 때(.is-still)만 보여 줌
+   ════════════════════════════════════════════════════ */
+.appbar-icon--recap {
+  z-index: 2; /* 로티가 칸보다 클 때 옆 아이콘 위로 */
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.appbar-recap-still {position: absolute; top: 0; left: 0; display: block; width: 28px; height: 28px; visibility: hidden;}
+.appbar-icon--recap.is-still .appbar-recap-still {visibility: visible;}
+.appbar-recap-lottie {position: absolute; top: 50%; left: 50%; display: block; width: 28px; height: 28px; transform: translate(-50%, -50%); pointer-events: none;}
+.appbar-recap-lottie svg {display: block;}
+
+/* ════════════════════════════════════════════════════
+   체크인 아이콘 (인덱스 옵션 '아이콘' = 체크인 → .phone.is-checkin · type_1.js): 리캡 아이콘 자리에 대신 보임
+   모양 · 모션은 26-1106 체크인진입모션 / 26-1105 앱테크진입점모션 2nd 와 같음
+   핀: Figma 앱테크 2.0 94556:340387 (22 × 24 프레임, 28 칸 가운데) → 핀 16.17 × 22.56, 칸 기준 (5.83, 3.19)
+   "이벤트" 배지: 아이콘 기준 (15, -2), 높이 13, 여백 1.5 / 3, Pretendard Medium 8px. 중심점 좌하단
+   모션(type_1.js): 랜딩 1초 후 등장 → 3초 노출 → 사라짐 → 6초 후 다시 등장, 반복
+   ════════════════════════════════════════════════════ */
+.appbar-icon--checkin {display: none; z-index: 2;} /* 배지가 오른쪽 앱테크 로티 위에 보이도록 한 단계 위 */
+.phone.is-checkin .appbar-icon--checkin {display: block;}
+.phone.is-checkin .appbar-icon--recap {display: none;}
+/* 아이콘 옵션 '정지': 리캡 로티 대신 정지 이미지 / '없음': 아이콘 자리 자체를 없앰 (.phone[data-icon] · type_1.js) */
+.phone[data-icon="still"] .appbar-recap-still {visibility: visible;}
+.phone[data-icon="still"] .appbar-recap-lottie {display: none;}
+.phone[data-icon="none"] .appbar-icon--recap {display: none;}
+
+.appbar-checkin-pin {
+  position: absolute;
+  top: 3.19px;
+  left: 5.83px;
+  width: 16.1721px;
+  height: 22.5613px;
+  background: currentColor; /* 앱바 아이콘 색을 따름 (스토어 --store-icon · 마이 검정) */
+  -webkit-mask: url(../img/appbar/ic_checkin_pin.svg) no-repeat 0 0 / 100% 100%;
+  mask: url(../img/appbar/ic_checkin_pin.svg) no-repeat 0 0 / 100% 100%;
+}
+
+/* 배지 색: 기본(무신사) blue + 흰 글씨 / 진한 헤더(뷰티 · 킥스 · 부티크 · 아울렛)는 흰 배지 + 스토어 색 글씨
+   스포츠 · 키즈는 스토어 색, 유즈드는 검정 / 마이는 스토어와 상관없이 blue + 흰 글씨 */
+.phone {--checkin-badge-bg: #245EFF; --checkin-badge-text: #fff;}
+.phone[data-store="beauty"] {--checkin-badge-bg: #fff; --checkin-badge-text: var(--mds-color-store-beauty);}
+.phone[data-store="kicks"] {--checkin-badge-bg: #fff; --checkin-badge-text: var(--mds-color-store-kicks);}
+.phone[data-store="boutique"] {--checkin-badge-bg: #fff; --checkin-badge-text: var(--mds-color-store-boutique);}
+.phone[data-store="outlet"] {--checkin-badge-bg: #fff; --checkin-badge-text: var(--mds-color-store-outlet);}
+.phone[data-store="sports"] {--checkin-badge-bg: var(--mds-color-store-sports);}
+.phone[data-store="kids"] {--checkin-badge-bg: var(--mds-color-store-kids); --checkin-badge-text: #3734B8;} /* 글자: 키즈 헤더색 */
+.phone[data-store="used"] {--checkin-badge-bg: #000;}
+.phone .my-header {--checkin-badge-bg: #245EFF; --checkin-badge-text: #fff;}
+
+.appbar-checkin-badge {
+  --checkin-badge-first-delay: 1s;  /* 랜딩(처음 열기 · 지면 전환 · 아이콘 옵션 전환) 후 첫 등장까지 */
+  --checkin-badge-show: 3s;         /* 등장 모션이 끝난 뒤 보이는 시간 */
+  --checkin-badge-hide: 6s;         /* 완전히 사라진 뒤 다시 등장까지 */
+  --checkin-badge-fade: 0.15s;      /* opacity linear */
+  --checkin-badge-spring-stiffness: var(--mds-motion-spring-bouncy-stiffness); /* scale: mds.spring.bouncy */
+  --checkin-badge-spring-damping: var(--mds-motion-spring-bouncy-damping);
+  position: absolute;
+  top: -2px;
+  left: 15px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 16px;
+  height: 13px;
+  padding: 1.5px 3px;
+  border-radius: 18px;
+  background: var(--checkin-badge-bg);
+  color: var(--checkin-badge-text);
+  font-family: var(--mds-font-family);
+  font-size: 8px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;               /* 처음엔 숨김 → type_1.js가 등장시킴 */
+  transform: scale(0);
+  transform-origin: 0 100%; /* 좌하단 */
+}
+
+/* ════════════════════════════════════════════════════
+   앱테크 아이콘: 모든 스토어, 아이콘 색별 투명 로티(ic_appbar_apptech_white · black · kids)를 28 칸에 맞춰 표시
+   (어떤 스토어가 어떤 파일인지 · 재생은 type_1.js)
+   닷(앱테크 · 알림): 무신사 파랑, 진한 헤더는 흰색, 스포츠 · 키즈는 스토어 색, 유즈드는 검정 (앱테크진입점모션 2nd 와 같은 규칙)
+   ════════════════════════════════════════════════════ */
+.phone {--appbar-dot: #245EFF;}
+.phone[data-store="beauty"],
+.phone[data-store="kicks"],
+.phone[data-store="boutique"],
+.phone[data-store="outlet"] {--appbar-dot: #fff;}
+.phone[data-store="sports"] {--appbar-dot: var(--mds-color-store-sports);}
+.phone[data-store="kids"] {--appbar-dot: var(--mds-color-store-kids);}
+.phone[data-store="used"] {--appbar-dot: #000;}
+
+.appbar-reward-dot {position: absolute; top: 0; right: 0; z-index: 1; width: 4px; height: 4px; border-radius: 100px; background: var(--appbar-dot); pointer-events: none;}
+.phone .appbar-icon--alarm .appbar-badge {display: block; background: var(--appbar-dot);}
+
+.appbar-reward-lottie {display: block; width: 28px; height: 28px; pointer-events: none;}
+/* storeheader.css가 리워드 칸의 svg(정지 아이콘)를 숨기는 규칙에 로티 svg도 걸려서 다시 보이게 */
+.phone[data-store] .appbar-icon--reward .appbar-reward-lottie svg {display: block;}

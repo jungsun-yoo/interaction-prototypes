@@ -283,10 +283,10 @@
     /* 자동 재생 중: 프로토타입 안을 사람이 만지지 못하게 (클릭 · 터치 · 휠 · 키보드 모두 막음, 자동 재생의 가짜 탭 · 스크롤은 그대로) */
     .stage.is-autoplaying .stage-frame {pointer-events: none;}
     .stage-frame {position: absolute; top: 50%; left: 50%; width: var(--frame-w); height: var(--frame-h); border: 0; background: transparent; transform: translate(calc(-50% - var(--frame-shift, 0px)), -50%) scale(var(--frame-scale, 1));} /* --frame-shift: 폰 + 툴바 + 카드 묶음을 한 덩어리로 가운데 두려고 왼쪽으로 옮기는 거리 (fitFrame) */
-    /* 확대 보기 (툴바 돋보기 · Z): 폰을 바탕에 꽉 차게 (위아래 여백 24, 스크롤 없음). QR · MOTION · FILES 카드는 가림
+    /* 확대 보기 (툴바 돋보기 · Z): 폰을 바탕에 꽉 차게 (위아래 여백 24, 스크롤 없음). MOTION · FILES 카드는 가림 · QR 카드는 접혀서 툴바 QR 버튼으로
        조작용 카드(OPTIONS · FLOW)는 남김: 폰 옆에 자리가 나면 그대로 두고(폰을 조금 덜 키움 · script zoomScale),
        자리가 모자라면 접어 두고(.is-options-folded) 툴바 아래 옵션 버튼(O)으로 폰 위에 펼침(.is-open) */
-    .stage.is-zoomed .qr-card, .stage.is-zoomed .motion-card, .stage.is-zoomed .files-card {display: none;}
+    .stage.is-zoomed .motion-card, .stage.is-zoomed .files-card {display: none;} /* QR 카드는 숨기지 않고 접어서 툴바 QR 버튼으로 (fitFrame) */
     .stage.is-zoomed.is-no-controls .side-stack {display: none;}
     .stage.is-options-folded .side-stack {z-index: 2;}
     .stage.is-options-folded .side-stack:not(.is-open) {display: none;}
@@ -1250,11 +1250,11 @@
         var phoneLeft = !zoomed && visualW + outside + 48 <= stage.clientWidth ? (stage.clientWidth - visualW - outside) / 2 : centered;
         frame.style.setProperty('--frame-shift', centered - phoneLeft + 'px');
         var qrRoom = phoneLeft - 24 - 16;
-        var folded = qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w'));
+        var folded = zoomed || qrRoom < parseFloat(style.getPropertyValue('--qr-mini-w')); /* 확대 중엔 항상 접어서 툴바 QR 버튼으로 */
         qrCard.classList.toggle('is-mini', !folded && qrRoom < parseFloat(style.getPropertyValue('--qr-card-w')));
         qrCard.classList.toggle('is-folded', folded);
-        qrButton.hidden = zoomed || !folded || qrCard.hidden; /* 확대 중엔 QR 숨김 */
-        if (!folded || zoomed) qrCard.classList.remove('is-open');
+        qrButton.hidden = !folded || qrCard.hidden;
+        if (!folded) qrCard.classList.remove('is-open');
 
         /* 툴바를 폰 오른쪽 12px·폰 윗선에 붙임. 오른쪽 여백(16px 포함)이 모자라면 바탕 우상단
            프로토타입이 --phone-screen-w를 정하면(폰 옆에 옵션창·설명창이 있어 --phone-w가 더 넓을 때) 그 폰 화면 오른쪽에 붙임 */
