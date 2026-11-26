@@ -1,6 +1,20 @@
 {
   "items": [
     {
+      "id": "1123_quickmenu_highlight-border",
+      "title": "하이라이트 보더(퀵메뉴)",
+      "date": "2026-11-23",
+      "team": "Discovery",
+      "path": "2026/1123_quickmenu_highlight-border/1st/",
+      "round": "1st",
+      "tags": [
+        "퀵메뉴",
+        "하이라이트보더"
+      ],
+      "thumb": "thumb.webp",
+      "desc": "퀵메뉴 1px 테두리를 따라 흐르는 그라디언트 빛 (칩스·아웃라인탭 공통 효과)"
+    },
+    {
       "id": "1118_order_plusorder",
       "title": "[주문서] 무배당발 플러스오더",
       "date": "2026-11-18",
