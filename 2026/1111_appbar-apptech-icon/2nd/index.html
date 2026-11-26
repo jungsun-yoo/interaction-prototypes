@@ -451,7 +451,7 @@
       title: '[앱바] 앱테크 아이콘 모션',
       sub: '26-1111 · Prototype',
       label: 'TYPES',
-      version: '20261125-01',
+      version: '20261126-01',
       qrHost: '192.168.0.79', // proto_server.py 없이 localhost로 열 때만 쓰는 예비값 (서버로 띄우면 지금 IP를 자동으로 씀)
       figma: 'https://www.figma.com/design/o0jTKUbX15ampUa9e8VUEP/MDS-2.0-%EB%B3%80%EA%B2%BD-%EB%A1%9C%EA%B7%B8-%EA%B3%B5%EC%9C%A0?node-id=9373-12156&t=Xd5vaxGnlqC6HeJw-4',
       jira: 'https://jira.team.musinsa.com/browse/PD-10142',
@@ -459,10 +459,12 @@
       download: '',
       downloadNote: '압축 파일 안의 <b>*_motion-guide.md</b>를 확인해 주세요.', // zip 버튼 아래 안내 (비우면 숨김)
       locked: [],
-      /* 이벤트 아이콘 · 스토어: 프로토타입 <html data-checkin · data-store> → optioncontrol.js가 setCheckin · setStore 로 반영 */
+      /* 이벤트 아이콘 · 스토어: 프로토타입 <html data-checkin · data-store> → type_1.js가 반영 */
       options: [
-        { id: 'checkin', label: '이벤트 아이콘', on: 'on', off: 'off', default: 'on',
-          note: '끄면 체크인 아이콘이 없는 경우 (로티 랜딩 즉시 재생)' },
+        { id: 'checkin', label: '이벤트 아이콘', default: 'badge', choices: [
+          { value: 'badge', label: '배지 모션' }, { value: 'lottie', label: '로티' },
+          { value: 'static', label: '정지 이미지' }, { value: 'off', label: '없음' }
+        ], note: '동전 로티 딜레이: 배지 모션 <b>4.5초</b> · 로티 <b>2.8초</b> · 정지 이미지 · 없음 <b>0초</b><br>로티는 체크인 로티 파일이 없어 정지 핀으로 보여 줍니다.' },
         { id: 'store', label: '스토어', default: 'musinsa', choices: [
           { value: 'musinsa', label: '무신사' }, { value: 'beauty', label: '뷰티' },
           { value: 'sports', label: '스포츠' }, { value: 'outlet', label: '아울렛' },

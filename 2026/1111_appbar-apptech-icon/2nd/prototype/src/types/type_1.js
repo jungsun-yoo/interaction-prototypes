@@ -2,32 +2,41 @@
    각 영역(앱바 · 헤더 · 빅배너 · 퀵메뉴 · 캠페인 섹션 · 광고판 · FAB · 바텀네비 등)은 src/common/영역.js */
 
 /* 인덱스 OPTIONS 카드 → 프로토타입 (프로토타입 안에는 옵션창을 두지 않음 · 공용 틀 규칙)
-   '이벤트 아이콘'(checkin: on · off) · '스토어'(store) 값은 common.js protoOptions가 <html data-checkin · data-store>에 넣음
-   (인덱스 · 주소 ?opt-checkin=off&opt-store=kids · 폰 동기화 모두 같은 길)
-   - 이벤트 아이콘 끔: .phone에 is-no-checkin (type_1.css가 체크인 칸을 숨김) + 'checkinchange' 이벤트 (detail: 켜짐 여부)
+   '이벤트 아이콘'(checkin) · '스토어'(store) 값은 common.js protoOptions가 <html data-checkin · data-store>에 넣음
+   (인덱스 · 주소 ?opt-checkin=static&opt-store=kids · 폰 동기화 모두 같은 길)
+   - 이벤트 아이콘 상태(checkin): badge 배지 모션 · lottie 로티로 재생 · static 정지 이미지 · off 없음
+     .phone[data-checkin]에 넣고 'checkinchange' 이벤트 (detail: 상태). off 면 is-no-checkin (type_1.css가 체크인 칸을 숨김)
+     lottie: 체크인 아이콘 로티 파일이 없어 프로토타입은 정지 핀으로 보여 줌 (동전 로티 딜레이만 다름)
    - 스토어: common.js setStore → 'storechange' */
 (function () {
+  var MODES = ['badge', 'lottie', 'static', 'off'];
   var phone = document.querySelector('.phone');
   var root = document.documentElement;
   if (!phone) return;
 
-  window.isCheckinOn = function () { return !phone.classList.contains('is-no-checkin'); };
-  window.setCheckin = function (on) {
-    if (on === window.isCheckinOn()) return;
-    phone.classList.toggle('is-no-checkin', !on);
-    window.dispatchEvent(new CustomEvent('checkinchange', { detail: on }));
-  };
-
-  function syncFromOptions() {
-    var store = root.getAttribute('data-store');
-    if (store && store !== phone.dataset.store && window.setStore) window.setStore(store);
-    phone.classList.toggle('is-no-checkin', root.getAttribute('data-checkin') === 'off'); /* 처음 값 (이벤트 없이) */
+  function modeFromOptions() {
+    var value = root.getAttribute('data-checkin');
+    return MODES.indexOf(value) === -1 ? 'badge' : value;
   }
-  syncFromOptions();
-  new MutationObserver(function () {
+  function apply(mode) {
+    phone.dataset.checkin = mode;
+    phone.classList.toggle('is-no-checkin', mode === 'off');
+  }
+
+  window.getCheckinMode = function () { return phone.dataset.checkin; };
+
+  function syncStore() {
     var store = root.getAttribute('data-store');
     if (store && store !== phone.dataset.store && window.setStore) window.setStore(store);
-    window.setCheckin(root.getAttribute('data-checkin') !== 'off');
+  }
+  syncStore();
+  apply(modeFromOptions()); /* 처음 값 (이벤트 없이) */
+  new MutationObserver(function () {
+    syncStore();
+    var mode = modeFromOptions();
+    if (mode === phone.dataset.checkin) return;
+    apply(mode);
+    window.dispatchEvent(new CustomEvent('checkinchange', { detail: mode }));
   }).observe(root, { attributes: true, attributeFilter: ['data-store', 'data-checkin'] });
 })();
 
@@ -65,24 +74,15 @@
     });
   }
 
-  /* 배지 시점을 알림 → 아래 앱테크 영상이 맞춰 재생 ('checkinbadge', detail: 'hidden' 완전히 사라짐 · 'reappear' 다시 등장) */
-  function notify(moment) {
-    window.dispatchEvent(new CustomEvent('checkinbadge', { detail: moment }));
-  }
-
-  function loop(id, first) {
-    if (!first) notify('reappear');
+  function loop(id) {
     return animate([0, 1], [0, 1], id)
       .then(function () { return wait(cssNumber('--checkin-badge-show'), id); })
       .then(function () {
         animate([1, 0], [1, 0], id); /* 스프링이 끝나길 기다리지 않음: 투명도가 0이 된 순간 = 완전히 사라짐 */
         return wait(cssNumber('--checkin-badge-fade'), id);
       })
-      .then(function () {
-        notify('hidden');
-        return wait(cssNumber('--checkin-badge-hide'), id);
-      })
-      .then(function () { return loop(id, false); });
+      .then(function () { return wait(cssNumber('--checkin-badge-hide'), id); })
+      .then(function () { return loop(id); });
   }
 
   function start() {
@@ -91,22 +91,21 @@
     clearTimeout(timer);
     if (animation) animation.stop();
     Motion.animate(badge, { scale: 0, opacity: 0 }, { duration: 0 });
-    if (!window.isCheckinOn()) return; /* 체크인 아이콘이 없으면 배지 모션 없음 */
-    wait(cssNumber('--checkin-badge-first-delay'), id).then(function () { return loop(id, true); });
+    if (window.getCheckinMode() !== 'badge') return; /* 배지 모션은 이벤트 아이콘이 '배지 모션'일 때만 */
+    wait(cssNumber('--checkin-badge-first-delay'), id).then(function () { return loop(id); });
   }
 
   window.addEventListener('storechange', start);
-  window.addEventListener('checkinchange', start); /* 다시 켜면 랜딩처럼 1초 후 첫 등장부터 */
+  window.addEventListener('checkinchange', start); /* 상태를 바꾸면 랜딩처럼 1초 후 첫 등장부터 */
   (window.protoReady || Promise.resolve()).then(start); /* 처음 랜딩은 페이지 로딩이 끝난 뒤부터 (common.js) */
 })();
 
-/* 모든 스토어: 아이콘 색별 앱테크 아이콘 로티(src/lottie/ic_appbar_apptech_white · black · kids.json)를 체크인 배지에 맞춰 재생
+/* 모든 스토어: 아이콘 색별 앱테크 아이콘 로티(src/lottie/ic_appbar_apptech_white · black · kids.json)
    어떤 스토어가 어떤 파일인지는 LOTTIE_FILES (앱바 아이콘 색 --store-icon과 같게). 파일이 바뀌는 스토어로 가면 다시 불러옴
-   재생 기준 (체크인 아이콘 켜짐 여부, window.isCheckinOn)
-   - 체크인 아이콘 있음: 랜딩 직후엔 첫 프레임에서 멈춤 → 배지가 투명도로 완전히 사라지면 재생 시작, 이후 루프
-     로티 길이(291프레임 ≒ 9.7초) ≒ 배지 한 바퀴(등장 0.52 + 노출 3 + 사라짐 0.15 + 대기 6)
-     조금씩 밀리지 않게, 배지가 사라질 때마다 0프레임부터 다시 재생. 배지가 다시 등장할 때는 건드리지 않음
-   - 체크인 아이콘 없음: 랜딩(처음 열기 · 스토어 전환 · 체크박스 끔)하자마자 0프레임부터 루프 재생
+   재생 타이밍 (2026-11-26 변경): 랜딩 후 이벤트 아이콘 상태별 딜레이 → 0프레임부터 재생 → 계속 루핑
+     배지 모션 4.5초 · 로티 2.8초 · 정지 이미지 0초 · 없음 0초 (값은 type_1.css --apptech-delay-*)
+     딜레이 동안은 첫 프레임에서 멈춤. 재생을 시작한 뒤에는 배지가 사라지거나 다시 나와도 건드리지 않음
+     랜딩: 처음 열기(페이지 로딩 끝) · 스토어 전환 · 이벤트 아이콘 상태 변경
    배경이 투명해서 광고판 진입 · 이탈 때도 같은 로티를 끊김 없이 계속 재생
    필요: lottie-web (CDN) */
 (function () {
@@ -116,7 +115,7 @@
     kids: 'kids'
   };
   var DEFAULT_FILE = 'white';
-  var VERSION = '?v=20261125-01';
+  var VERSION = '?v=20261126-01';
   var phone = document.querySelector('.phone');
   var container = document.getElementById('rewardLottie');
   if (!container || !window.lottie) return;
@@ -124,12 +123,26 @@
   var animation = null;
   var loadedFile = null;
   var landed = false; /* 페이지 로딩이 끝났는지 (그 전엔 첫 프레임에서 멈춰 둠) */
+  var landedAt = 0;   /* 마지막 랜딩 시각 (로티 파일을 늦게 받아도 딜레이는 랜딩부터 셈) */
+  var timer = null;
 
-  /* 랜딩 시작점: 체크인 있으면 첫 프레임에서 대기(배지 기다림), 없으면 바로 루프 재생 */
+  function delayOf(mode) {
+    var value = parseFloat(getComputedStyle(phone).getPropertyValue('--apptech-delay-' + mode));
+    return isNaN(value) ? 0 : value;
+  }
+
+  /* 랜딩: 첫 프레임에서 멈춤 → 이벤트 아이콘 상태별 딜레이 뒤 0프레임부터 루프 재생 */
   function land() {
+    landedAt = Date.now();
+    schedule();
+  }
+  function schedule() {
+    clearTimeout(timer);
     if (!animation || !animation.isLoaded) return;
-    if (!landed || window.isCheckinOn()) animation.goToAndStop(0, true);
-    else animation.goToAndPlay(0, true);
+    animation.goToAndStop(0, true);
+    if (!landed) return;
+    var left = delayOf(window.getCheckinMode()) * 1000 - (Date.now() - landedAt);
+    timer = setTimeout(function () { animation.goToAndPlay(0, true); }, Math.max(0, left));
   }
 
   /* 지금 스토어의 로티를 불러와 랜딩. 같은 파일을 쓰는 스토어끼리 옮길 땐 다시 불러오지 않음 */
@@ -148,17 +161,12 @@
       autoplay: false,
       path: 'src/lottie/ic_appbar_apptech_' + file + '.json' + VERSION
     });
-    animation.addEventListener('DOMLoaded', land);
-  }
-
-  function playFromStart(event) {
-    if (!animation || !window.isCheckinOn() || event.detail !== 'hidden') return; /* 체크인 있음: 배지가 완전히 사라졌을 때만 */
-    animation.goToAndPlay(0, true);
+    animation.addEventListener('DOMLoaded', schedule);
+    land();
   }
 
   window.addEventListener('storechange', load);
   window.addEventListener('checkinchange', land);
-  window.addEventListener('checkinbadge', playFromStart);
   load();
   /* 처음 랜딩은 페이지 로딩이 끝난 뒤 (common.js). 그 전엔 체크인이 없어도 첫 프레임에서 멈춰 있음 */
   (window.protoReady || Promise.resolve()).then(function () { landed = true; land(); });
