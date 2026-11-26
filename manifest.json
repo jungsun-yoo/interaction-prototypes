@@ -1,6 +1,20 @@
 {
   "items": [
     {
+      "id": "1123_appbar-recap-icon",
+      "title": "[앱바] 2026 리캡 아이콘",
+      "date": "2026-11-26",
+      "team": "Core UX",
+      "path": "2026/1123_appbar-recap-icon/4th/",
+      "round": "4th",
+      "tags": [
+        "앱바",
+        "로티"
+      ],
+      "thumb": "thumb.webp",
+      "desc": "홈·마이 앱바의 연말결산 리캡 아이콘 로티와 앱테크 코인 재생 타이밍"
+    },
+    {
       "id": "1123_quickmenu_highlight-border",
       "title": "하이라이트 보더(퀵메뉴)",
       "date": "2026-11-23",
